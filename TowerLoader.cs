@@ -14,25 +14,17 @@ using UnityEngine;
 using Color=UnityEngine.Color;
 using Image=UnityEngine.UI.Image;
 using SC2Towers.Utils;
-using BTD_Mod_Helper;
 
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly: MelonInfo(typeof(SC2Towers.SC2Towers),"SC2Towers","1.0","Silentstorm#5336")]
 
 namespace SC2Towers{
-    public class SC2Towers:BloonsTD6Mod{
+    public class SC2Towers:MelonMod{
         public override void OnApplicationStart(){
             //should figure out how to make it do a foreach thing instead of like this
-            Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.model);
-        }
-        [HarmonyPatch(typeof(UpgradeScreen),"UpdateUi")]
-        public class AddShopDetails{
-            [HarmonyPrefix]
-            public static bool Prefix(ref UpgradeScreen __instance,ref string towerId){
-                foreach(var tower in towers)
-                    if(towerId.Contains(tower.Item1.baseId))towerId="DartMonkey";
-                return true;
-            }
+            //Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.model);
+            //HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.model);
+            SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.model);
         }
         [HarmonyPatch(typeof(StandardTowerPurchaseButton),nameof(StandardTowerPurchaseButton.UpdateTowerDisplay))]
         public class SetBG{
@@ -41,6 +33,12 @@ namespace SC2Towers{
                 __instance.bg=__instance.gameObject.GetComponent<Image>();
                 if(__instance.baseTowerModel.emoteSpriteLarge!=null)
                     switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef){
+                        case "Protoss":
+                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
+                            break;
+                        case "Terran":
+                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.TerranContainer));
+                            break;
                         case "Zerg":
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ZergContainer));
                             break;
@@ -74,7 +72,10 @@ namespace SC2Towers{
         public static class GameStart{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                towers.Add(Hydralisk.GetTower(__result));
+                //towers.Add(Hydralisk.GetTower(__result));
+                //towers.Add(HighTemplar.GetTower(__result));
+                towers.Add(SC2Marine.GetTower(__result));
+                MelonLogger.Msg("SC2Marine loaded");
                 foreach(var tower in towers){
                     __result.towers=__result.towers.Add(tower.Item3);
                     __result.towerSet=__result.towerSet.Add(tower.Item2);

@@ -69,15 +69,5 @@ namespace SC2Towers.Models {
                 return ((byte[])(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ZergContainer {
-            get {
-                object obj = ResourceManager.GetObject("ZergContainer", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

@@ -63,6 +63,26 @@ namespace SC2Towers.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] ProtossContainer {
+            get {
+                object obj = ResourceManager.GetObject("ProtossContainer", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TerranContainer {
+            get {
+                object obj = ResourceManager.GetObject("TerranContainer", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] ZergContainer {
             get {
                 object obj = ResourceManager.GetObject("ZergContainer", resourceCulture);
