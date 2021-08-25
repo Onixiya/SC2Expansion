@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SC2Towers.Models {
+namespace SC2Expansion.Models {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SC2Towers.Models {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC2Towers.Models.Models", typeof(Models).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC2Expansion.Models.Models", typeof(Models).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,29 @@ namespace SC2Towers.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] model {
+        internal static byte[] hightemplar {
             get {
-                object obj = ResourceManager.GetObject("model", resourceCulture);
+                object obj = ResourceManager.GetObject("hightemplar", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] hydralisk {
+            get {
+                object obj = ResourceManager.GetObject("hydralisk", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] sc2marine {
+            get {
+                object obj = ResourceManager.GetObject("sc2marine", resourceCulture);
                 return ((byte[])(obj));
             }
         }

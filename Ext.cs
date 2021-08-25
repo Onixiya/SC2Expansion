@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Models;
 using UnhollowerBaseLib;
 
-namespace SC2Towers.Utils{
+namespace SC2Expansion.Utils{
     public static class Ext{
         public static Il2CppReferenceArray<T>Remove<T>(this Il2CppReferenceArray<T>reference,Func<T,bool>predicate)where T:Model{
             List<T>bases=new List<T>();
