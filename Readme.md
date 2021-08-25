@@ -8,3 +8,6 @@ You can find a exported unitypackage containing all the assets used to build thi
 Keep in mind valid asset bundles appear to only be built with v2019.4.1f1 so make sure you use that version
 
 Code is based from the BTD6 Expansion Modules made by Kosmic#4494, you can find the discord server here https://discord.gg/hFhEuJBNrH
+
+
+Ik T5 upgrades are in the code but for some weird reason it just breaks the T4 completely so they aren't added into the available upgrades

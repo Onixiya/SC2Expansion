@@ -344,27 +344,6 @@ namespace SC2Expansion.Towers{
                     protos.Add(objectId,udn);
                     return false;
                 }
-                /*if(objectId.Equals("SC2MarineBulletDisplay")){
-                    UnityDisplayNode udn=null;
-                    __instance.FindAndSetupPrototypeAsync("bdbeaa256e6c63b45829535831843376",
-                        new Action<UnityDisplayNode>(oudn=>{
-                            var nudn=Object.Instantiate(oudn,__instance.PrototypeRoot);
-                            nudn.name=objectId+"(Clone)";
-                            nudn.isSprite=true;
-                            nudn.RecalculateGenericRenderers();
-                            for(var i=0;i<nudn.genericRenderers.Length;i++){
-                                if(nudn.genericRenderers[i].GetIl2CppType()==Il2CppType.Of<SpriteRenderer>()){
-                                    var smr=nudn.genericRenderers[i].Cast<SpriteRenderer>();
-                                    var text=Assets.LoadAsset("Bone").Cast<Texture2D>();
-                                    smr.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new(0.5f,0.5f),5.4f);
-                                    nudn.genericRenderers[i]=smr;
-                                }
-                            }
-                            udn=nudn;
-                            onComplete.Invoke(udn);
-                        }));
-                    return false;
-                }*/
                 if(protos.ContainsKey(objectId)){
                     onComplete.Invoke(protos[objectId]);
                     return false;

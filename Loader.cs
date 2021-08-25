@@ -77,7 +77,7 @@ namespace SC2Expansion{
                 towers.Add(Hydralisk.GetTower(__result));
                 towers.Add(HighTemplar.GetTower(__result));
                 towers.Add(SC2Marine.GetTower(__result));
-                MelonLogger.Msg("SC2Marine loaded");
+                MelonLogger.Msg("3 Towers loaded");
                 foreach(var tower in towers){
                     __result.towers=__result.towers.Add(tower.Item3);
                     __result.towerSet=__result.towerSet.Add(tower.Item2);

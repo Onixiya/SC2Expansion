@@ -107,7 +107,6 @@
     <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="boomerang.json" />
     <None Include="Resources\ProtossContainer.png" />
     <None Include="Resources\TerranContainer.png" />
     <Content Include="Resources\ZergContainer.png" />

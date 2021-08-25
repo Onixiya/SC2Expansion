@@ -30,8 +30,11 @@ namespace SC2Expansion.Towers{
         public static string name="High Templar";
         public static UpgradeModel[]GetUpgrades(){
             return new UpgradeModel[]{
-                new("Khaydarin Amulet",250,0,new("HighTemplarKhaydarinAmuletIcon"),0,1,0,"","Khaydarin Amulet"),
-                new("Psi Storm",800,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storm")
+                new("Khaydarin Amulet",300,0,new("HighTemplarKhaydarinAmuletIcon"),0,1,0,"","Khaydarin Amulet"),
+                new("Psi Storm",950,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storm"),
+                new("Plasma Surge",1125,0,new("HighTemplarPlasmaSurgeIcon"),0,3,0,"","Plasma Surge"),
+                new("Merge into Archon",1500,0,new("HighTemplarArchonIcon"),0,4,0,"","Merge into Archon")
+                //new("High Archon",3000,0,new("HighTemplarHighArchonIcon"),0,5,0,"","High Archon")
             };
         }
         public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
@@ -42,15 +45,15 @@ namespace SC2Expansion.Towers{
                     Add("Khaydarin Amulet Description","Decreases cooldown of abilities and increases attack range");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Psi Storm Description"))LocalizationManager.Instance.textTable.
                     Add("Psi Storm Description","Casts a Psionic Storm into the track damaging everything that goes through it");
-            /*if(!LocalizationManager.Instance.textTable.ContainsKey("Plasma Surge Description"))LocalizationManager.Instance.textTable.
+            if(!LocalizationManager.Instance.textTable.ContainsKey("Plasma Surge Description"))LocalizationManager.Instance.textTable.
                     Add("Plasma Surge Description","Increases the radius and damage of Psi Storm");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Archon Description"))LocalizationManager.Instance.textTable.
-                    Add("Archon Description","Merges with the nearest High Templar in a Archon, Archon's cannot use abilities but have high damage");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("High Archon Description"))LocalizationManager.Instance.textTable.
+                    Add("Archon Description","Merges with the nearest High Templar into an Archon, Archon's cannot use abilities but have high damage");
+            /*if(!LocalizationManager.Instance.textTable.ContainsKey("High Archon Description"))LocalizationManager.Instance.textTable.
                     Add("High Archon Description","Lets the Archon use abilities again with buffed damage and range");*/
-            return (GetT000(gameModel),HighTemplarDetails,new[]{GetT000(gameModel),GetT100(gameModel),GetT200(gameModel)},GetUpgrades());
+            return (GetT0(gameModel),HighTemplarDetails,new[]{GetT0(gameModel),GetT1(gameModel),GetT2(gameModel)/*,GetT3(gameModel,GetT4(gameModel)*/},GetUpgrades());
         }
-        public static TowerModel GetT000(GameModel gameModel){
+        public static TowerModel GetT0(GameModel gameModel){
             var HighTemplar=gameModel.towers[0].Clone().Cast<TowerModel>();
             HighTemplar.name=name;
             HighTemplar.baseId=name;
@@ -71,17 +74,16 @@ namespace SC2Expansion.Towers{
             for(var i=0;i<HighTemplar.behaviors.Count;i++){
                 var b=HighTemplar.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
-                    var att=gameModel.towers.First(a=>a.name.Contains("Wizard")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
+                    var att=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
                     att.weapons[0].name="HighTemplarPsiBolt";
-                    att.weapons[0].rate=0.7f;
-                    att.weapons[0].rateFrames=200;
+                    att.weapons[0].rate=1;
+                    att.weapons[0].rateFrames=1;
                     att.range=45;
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
                             d.damage=1;
-                            d.maxDamage=2;
                             pb=d;
                         }
                     }
@@ -95,7 +97,7 @@ namespace SC2Expansion.Towers{
             }
             return HighTemplar;
         }
-        public static TowerModel GetT100(GameModel gameModel){
+        public static TowerModel GetT1(GameModel gameModel){
             var HighTemplar=gameModel.towers[0].Clone().Cast<TowerModel>();
             HighTemplar.name=name+"-100";
             HighTemplar.baseId=name;
@@ -107,7 +109,7 @@ namespace SC2Expansion.Towers{
             HighTemplar.towerSet="Magicc";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=60;
+            HighTemplar.range=55;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -118,32 +120,25 @@ namespace SC2Expansion.Towers{
             for(var i=0;i<HighTemplar.behaviors.Count;i++){
                 var b=HighTemplar.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
-                    var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey-001")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-                    att.weapons[0].rate=0.95f*5;
-                    att.weapons[0].rateFrames=56*5;
-                    att.range=60;
+                    var att=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
+                    att.weapons[0].rate=1;
+                    att.weapons[0].rateFrames=1;
+                    att.range=55;
                     att.weapons[0].projectile.display="HighTemplarSpine";
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
                             d.damage=1;
-                            d.maxDamage=2;
                             pb=d;
                         }
                     }
                 }
-                if(b.GetIl2CppType()==Il2CppType.Of<DisplayModel>()){
-                    var display=b.Cast<DisplayModel>();
-                    display.display="HighTemplarModel";
-                    b=display;
-                }
             }
             return HighTemplar;
         }
-        public static TowerModel GetT200(GameModel gameModel){
+        public static TowerModel GetT2(GameModel gameModel){
             var HighTemplar=gameModel.towers[0].Clone().Cast<TowerModel>();
-            var aa=GetT000(gameModel).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
             HighTemplar.name=name+"-200";
             HighTemplar.baseId=name;
             HighTemplar.tier=200;
@@ -154,7 +149,7 @@ namespace SC2Expansion.Towers{
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=150;
+            HighTemplar.range=55;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -162,36 +157,31 @@ namespace SC2Expansion.Towers{
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storm"});
             HighTemplar.upgrades=new(0);
+            var att = gameModel.towers.First(a => a.name.Contains("WizardMonkey")).behaviors.First(a => a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
             for(var i=0;i<HighTemplar.behaviors.Count;i++){
                 var b=HighTemplar.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
-                    var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-                    att.weapons[0].rate=0.95f*3;
-                    att.weapons[0].rateFrames=200;
-                    att.range=150;
+                    att.weapons[0].rate=1;
+                    att.weapons[0].rateFrames=1;
+                    att.range=55;
                     att.weapons[0].projectile.display="HighTemplarPsiBolt";
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
-                            d.damage=350;
-                            d.maxDamage=500;
+                            d.damage=1;
                             pb=d;
                         }
                     }
                 }
-                if(b.GetIl2CppType()==Il2CppType.Of<DisplayModel>()){
-                    var display=b.Cast<DisplayModel>();
-                    display.display="HighTemplarModel";
-                    b=display;
-                }
             }
-            var ab=gameModel.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AbilityModel>()).Clone().Cast<AbilityModel>();
-            ab.name="HighTemplarPsiStorm";
+            var ab=gameModel.towers.First(a=>a.name.Equals("Gwendolin 3")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AbilityModel>()).Clone().Cast<AbilityModel>();
+            ab.name="Psi Storm";
             ab.displayName="Psi Storm";
             ab.icon=new("HighTemplarPsiStormIcon");
-            var aam=ab.behaviors[0].Cast<CreateEffectOnAbilityModel>();
-            HighTemplar.behaviors.Add(aam);
+            ab.cooldown=5;
+            MelonLogger.Msg(ab.displayName);
+            HighTemplar.behaviors.Add(ab,att);
             return HighTemplar;
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
@@ -208,27 +198,6 @@ namespace SC2Expansion.Towers{
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
-                    return false;
-                }
-                if(objectId.Equals("HighTemplarPsiBolt")){
-                    UnityDisplayNode udn=null;
-                    __instance.FindAndSetupPrototypeAsync("bdbeaa256e6c63b45829535831843376",
-                        new Action<UnityDisplayNode>(oudn=>{
-                            var nudn=Object.Instantiate(oudn,__instance.PrototypeRoot);
-                            nudn.name=objectId+"(Clone)";
-                            nudn.isSprite=true;
-                            nudn.RecalculateGenericRenderers();
-                            for(var i=0;i<nudn.genericRenderers.Length;i++){
-                                if(nudn.genericRenderers[i].GetIl2CppType()==Il2CppType.Of<SpriteRenderer>()){
-                                    var smr=nudn.genericRenderers[i].Cast<SpriteRenderer>();
-                                    var text=Assets.LoadAsset("Bone").Cast<Texture2D>();
-                                    smr.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new(0.5f,0.5f),5.4f);
-                                    nudn.genericRenderers[i]=smr;
-                                }
-                            }
-                            udn=nudn;
-                            onComplete.Invoke(udn);
-                        }));
                     return false;
                 }
                 if(protos.ContainsKey(objectId)){

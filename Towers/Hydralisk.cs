@@ -31,22 +31,25 @@ namespace SC2Expansion.Towers{
         public static UpgradeModel[]GetUpgrades(){
             return new UpgradeModel[]{
                 new("Grooved Spines",250,0,new("HydraliskGroovedSpinesIcon"),0,1,0,"","Grooved Spines"),
-                new("Frenzy",800,0,new("HydraliskFrenzyIcon"),0,2,0,"","Frenzy")
+                new("Frenzy",725,0,new("HydraliskFrenzyIcon"),0,2,0,"","Frenzy"),
+                new("Morph into Lurker",975,0,new("HydraliskLurkerIcon"),0,3,0,"","Morph into Lurker"),
+                new("Seismic Spines",1250,0,new("HydraliskSeismicSpinesIcon"),0,4,0,"","Seismic Spines")
+                //new("Morph into Impaler",1750,0,new("HydraliskImpalerIcon"),0,5,0,"","Morph into Impaler")
             };
         }
         public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
             var HydraliskDetails=gameModel.towerSet[0].Clone().Cast<TowerDetailsModel>();
             HydraliskDetails.towerId=name;
-            HydraliskDetails.towerIndex=32;
+            HydraliskDetails.towerIndex=33;
             if(!LocalizationManager.Instance.textTable.ContainsKey("Grooved Spines Description"))LocalizationManager.Instance.textTable.
                     Add("Grooved Spines Description","Increases attack range");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Frenzy Description"))LocalizationManager.Instance.textTable.
                     Add("Frenzy Description","Increases attack speed by 50% for 15 seconds");
-            /*if(!LocalizationManager.Instance.textTable.ContainsKey("Morph into Lurker Description"))LocalizationManager.Instance.textTable.
+            if(!LocalizationManager.Instance.textTable.ContainsKey("Morph into Lurker Description"))LocalizationManager.Instance.textTable.
                     Add("Morph into Lurker Description","Morphs into a lurker changing the attack into a straight line that damages everything in its path");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Seismec Spines Description"))LocalizationManager.Instance.textTable.
                     Add("Seismic Spines Description","Increases attack range and damage");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Morph into Impaler Description"))LocalizationManager.Instance.textTable.
+            /*if(!LocalizationManager.Instance.textTable.ContainsKey("Morph into Impaler Description"))LocalizationManager.Instance.textTable.
                     Add("Morph into Impaler Description","Deals massive damage to a single target with long range");*/
             return (GetT0(gameModel),HydraliskDetails,new[]{GetT0(gameModel),GetT1(gameModel),GetT2(gameModel)},GetUpgrades());
         }
@@ -61,7 +64,7 @@ namespace SC2Expansion.Towers{
             Hydralisk.emoteSpriteLarge=new("Zerg");
             Hydralisk.radius=7;
             Hydralisk.cost=500;
-            Hydralisk.range=45;
+            Hydralisk.range=40;
             Hydralisk.towerSize=TowerModel.TowerSize.XL;
             Hydralisk.footprint.ignoresPlacementCheck=true;
             Hydralisk.cachedThrowMarkerHeight=10;
@@ -75,13 +78,12 @@ namespace SC2Expansion.Towers{
                     att.weapons[0].name="HydraliskSpine";
                     att.weapons[0].rate=0.7f;
                     att.weapons[0].rateFrames=200;
-                    att.range=45;
+                    att.range=40;
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
-                            d.damage=1;
-                            d.maxDamage=2;
+                            d.damage=2;
                             pb=d;
                         }
                     }
@@ -107,7 +109,7 @@ namespace SC2Expansion.Towers{
             Hydralisk.towerSet="Primary";
             Hydralisk.emoteSpriteLarge=new("Zerg");
             Hydralisk.radius=15;
-            Hydralisk.range=60;
+            Hydralisk.range=50;
             Hydralisk.towerSize=TowerModel.TowerSize.XL;
             Hydralisk.footprint.ignoresPlacementCheck=true;
             Hydralisk.cachedThrowMarkerHeight=10;
@@ -119,16 +121,15 @@ namespace SC2Expansion.Towers{
                 var b=Hydralisk.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
                     var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey-001")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-                    att.weapons[0].rate=0.95f*5;
+                    att.weapons[0].rate=0.82f;
                     att.weapons[0].rateFrames=56*5;
-                    att.range=60;
+                    att.range=50;
                     att.weapons[0].projectile.display="HydraliskSpine";
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
-                            d.damage=1;
-                            d.maxDamage=2;
+                            d.damage=2;
                             pb=d;
                         }
                     }
@@ -148,7 +149,7 @@ namespace SC2Expansion.Towers{
             Hydralisk.towerSet="Primary";
             Hydralisk.emoteSpriteLarge=new("Zerg");
             Hydralisk.radius=15;
-            Hydralisk.range=150;
+            Hydralisk.range=50;
             Hydralisk.towerSize=TowerModel.TowerSize.XL;
             Hydralisk.footprint.ignoresPlacementCheck=true;
             Hydralisk.cachedThrowMarkerHeight=10;
@@ -160,16 +161,15 @@ namespace SC2Expansion.Towers{
             for(var i=0;i<Hydralisk.behaviors.Count;i++){
                 var b=Hydralisk.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
-                    att.weapons[0].rate=0.95f*3;
-                    att.weapons[0].rateFrames=200;
-                    att.range=150;
+                    att.weapons[0].rate=0.82f;
+                    att.weapons[0].rateFrames=1;
+                    att.range=50;
                     att.weapons[0].projectile.display="HydraliskSpine";
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                             var d=pb.Cast<DamageModel>();
-                            d.damage=350;
-                            d.maxDamage=500;
+                            d.damage=2;
                             pb=d;
                         }
                     }
@@ -178,9 +178,8 @@ namespace SC2Expansion.Towers{
             var ab=gameModel.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AbilityModel>()).Clone().Cast<AbilityModel>();
             ab.name="Frenzy";
             ab.displayName="Frenzy";
-            ab.icon=new("SC2MarineStimpacksIcon");
+            ab.icon=new("HydraliskFrenzyIcon");
             ab.cooldown=10;
-            ab.maxActivationsPerRound=1;
             Hydralisk.behaviors=Hydralisk.behaviors.Add(att,ab);
             return Hydralisk;
         }
@@ -198,26 +197,6 @@ namespace SC2Expansion.Towers{
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
-                    return false;
-                }
-                if(objectId.Equals("HydraliskSpine")){
-                    UnityDisplayNode udn=null;
-                    __instance.FindAndSetupPrototypeAsync("bdbeaa256e6c63b45829535831843376",new Action<UnityDisplayNode>(oudn=>{
-                        var nudn=Object.Instantiate(oudn,__instance.PrototypeRoot);
-                        nudn.name=objectId+"(Clone)";
-                        nudn.isSprite=true;
-                        nudn.RecalculateGenericRenderers();
-                        for(var i=0;i<nudn.genericRenderers.Length;i++){
-                            if(nudn.genericRenderers[i].GetIl2CppType()==Il2CppType.Of<SpriteRenderer>()){
-                                var smr=nudn.genericRenderers[i].Cast<SpriteRenderer>();
-                                var text=Assets.LoadAsset("Bone").Cast<Texture2D>();
-                                smr.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new(0.5f,0.5f),5.4f);
-                                nudn.genericRenderers[i]=smr;
-                            }
-                        }
-                        udn=nudn;
-                        onComplete.Invoke(udn);
-                    }));
                     return false;
                 }
                 if(protos.ContainsKey(objectId)){
