@@ -4,3 +4,5 @@ obj
 *.json
 *.zip
 .editorconfig
+Towers/Towerplans.txt
+TowerJSON

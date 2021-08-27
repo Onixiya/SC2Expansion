@@ -25,32 +25,36 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object=UnityEngine.Object;
 using MelonLoader;
+using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
+using Assets.Scripts.Simulation.Towers.Filters;
+using Assets.Scripts.Models.Towers.Filters;
+
 namespace SC2Expansion.Towers{
     public class HighTemplar{
         public static string name="High Templar";
         public static UpgradeModel[]GetUpgrades(){
             return new UpgradeModel[]{
                 new("Khaydarin Amulet",300,0,new("HighTemplarKhaydarinAmuletIcon"),0,1,0,"","Khaydarin Amulet"),
-                new("Psi Storm",950,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storm"),
+                new("Psi Storms",950,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storms"),
                 new("Plasma Surge",1125,0,new("HighTemplarPlasmaSurgeIcon"),0,3,0,"","Plasma Surge"),
-                new("Merge into Archon",1500,0,new("HighTemplarArchonIcon"),0,4,0,"","Merge into Archon")
-                //new("High Archon",3000,0,new("HighTemplarHighArchonIcon"),0,5,0,"","High Archon")
+                new("Ascendant",1500,0,new("HighTemplarAscendantIcon"),0,4,0,"","Ascendant"),
+                new("Power Overwhelming",3000,0,new("HighTemplarPowerOverwhelmingIcon"),0,5,0,"","Power Overwhelming")
             };
         }
         public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
             var HighTemplarDetails=gameModel.towerSet[0].Clone().Cast<TowerDetailsModel>();
             HighTemplarDetails.towerId=name;
-            HighTemplarDetails.towerIndex=34;
+            HighTemplarDetails.towerIndex=32;
             if(!LocalizationManager.Instance.textTable.ContainsKey("Khaydarin Amulet Description"))LocalizationManager.Instance.textTable.
-                    Add("Khaydarin Amulet Description","Decreases cooldown of abilities and increases attack range");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Psi Storm Description"))LocalizationManager.Instance.textTable.
-                    Add("Psi Storm Description","Casts a Psionic Storm into the track damaging everything that goes through it");
+                    Add("Khaydarin Amulet Description","Increases attack range");
+            if(!LocalizationManager.Instance.textTable.ContainsKey("Psi Storms Description"))LocalizationManager.Instance.textTable.
+                    Add("Psi Storms Description","Casts mini Psi Storms into the track damaging everything that goes through it");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Plasma Surge Description"))LocalizationManager.Instance.textTable.
-                    Add("Plasma Surge Description","Increases the radius and damage of Psi Storm");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Archon Description"))LocalizationManager.Instance.textTable.
-                    Add("Archon Description","Merges with the nearest High Templar into an Archon, Archon's cannot use abilities but have high damage");
-            /*if(!LocalizationManager.Instance.textTable.ContainsKey("High Archon Description"))LocalizationManager.Instance.textTable.
-                    Add("High Archon Description","Lets the Archon use abilities again with buffed damage and range");*/
+                    Add("Plasma Surge Description","Psi Storms are bigger and do more damage");
+            if(!LocalizationManager.Instance.textTable.ContainsKey("Ascendant Description"))LocalizationManager.Instance.textTable.
+                    Add("Ascendant Description","Gains the Sacrifice, Mind Blast and Psionic Orb abilities");
+            if(!LocalizationManager.Instance.textTable.ContainsKey("Power Overwhelming Description"))LocalizationManager.Instance.textTable.
+                    Add("Power Overwhelming Description","Sacrifice buffs are now permament and more powerful");
             return (GetT0(gameModel),HighTemplarDetails,new[]{GetT0(gameModel),GetT1(gameModel),GetT2(gameModel)/*,GetT3(gameModel,GetT4(gameModel)*/},GetUpgrades());
         }
         public static TowerModel GetT0(GameModel gameModel){
@@ -106,7 +110,7 @@ namespace SC2Expansion.Towers{
             HighTemplar.display="HighTemplarModel";
             HighTemplar.portrait=new("HighTemplarIcon");
             HighTemplar.icon=new("HighTemplarIcon");
-            HighTemplar.towerSet="Magicc";
+            HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
             HighTemplar.range=55;
@@ -116,15 +120,16 @@ namespace SC2Expansion.Towers{
             HighTemplar.areaTypes=new(1);
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet"});
-            HighTemplar.upgrades=new[]{new UpgradePathModel("Psi Storm",name+"-200")};
+            HighTemplar.upgrades=new[]{new UpgradePathModel("Psi Storms",name+"-200")};
             for(var i=0;i<HighTemplar.behaviors.Count;i++){
                 var b=HighTemplar.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
                     var att=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
+                    att.weapons[0].name="HighTemplarPsiBolt";
                     att.weapons[0].rate=1;
                     att.weapons[0].rateFrames=1;
                     att.range=55;
-                    att.weapons[0].projectile.display="HighTemplarSpine";
+                    att.weapons[0].projectile.display="HighTemplarPsiBolt";
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
                         if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
@@ -149,39 +154,37 @@ namespace SC2Expansion.Towers{
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=55;
+            HighTemplar.range=40;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
             HighTemplar.areaTypes=new(1);
             HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storm"});
+            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms"});
             HighTemplar.upgrades=new(0);
-            var att = gameModel.towers.First(a => a.name.Contains("WizardMonkey")).behaviors.First(a => a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-            for(var i=0;i<HighTemplar.behaviors.Count;i++){
+            var att=gameModel.towers.First(a=>a.name.Contains("WizardMonkey-020")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
+            /*for(var i=0;i<HighTemplar.behaviors.Count;i++){
                 var b=HighTemplar.behaviors[i];
                 if(b.GetIl2CppType()==Il2CppType.Of<AttackModel>()){
+                    att.weapons[0].name="AttackModel_Attack Wall of Fire_";
                     att.weapons[0].rate=1;
                     att.weapons[0].rateFrames=1;
-                    att.range=55;
-                    att.weapons[0].projectile.display="HighTemplarPsiBolt";
+                    att.weapons[0].projectile.display="1bcadf028b193714e8ab7886a0c480ad";
+                    att.weapons[0].projectile.behaviors.Add(new TargetTrackOrDefaultModel("TargetTrackOrDefaultModel_",40,true,true,true,false,true,4).Cast<Model>());
+                    att.weapons[0].projectile.filters.Add(new FilterInvisibleModel("FilterInvisibleModel_",true,false));
                     for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                         var pb=att.weapons[0].projectile.behaviors[j];
-                        if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
+                        if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {
                             var d=pb.Cast<DamageModel>();
                             d.damage=1;
                             pb=d;
                         }
                     }
                 }
-            }
-            var ab=gameModel.towers.First(a=>a.name.Equals("Gwendolin 3")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AbilityModel>()).Clone().Cast<AbilityModel>();
-            ab.name="Psi Storm";
-            ab.displayName="Psi Storm";
-            ab.icon=new("HighTemplarPsiStormIcon");
-            ab.cooldown=5;
-            MelonLogger.Msg(ab.displayName);
-            HighTemplar.behaviors.Add(ab,att);
+            }*/
+            att.weapons[0].projectile.behaviors=att.weapons[0].projectile.behaviors.Add(new TargetTrackOrDefaultModel("TargetTrackOrDefaultModel_",40,true,true,true,false,true,4).Cast<Model>());
+            att.weapons[0].projectile.filters=att.weapons[0].projectile.filters.Add(new FilterInvisibleModel("FilterInvisibleModel_",true,false));
+            HighTemplar.behaviors=HighTemplar.behaviors.Add(att);
             return HighTemplar;
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]

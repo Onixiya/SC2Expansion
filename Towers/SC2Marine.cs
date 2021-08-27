@@ -252,7 +252,7 @@ namespace SC2Expansion.Towers{
                 att.weapons[0].rate=0.55f;
                 att.weapons[0].rateFrames=1;
                 att.range=50;
-                att.weapons[0].projectile.display="SC2MarineBulletDisplay";
+                att.weapons[0].projectile.display=null;
                 for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++) {
                     var pb=att.weapons[0].projectile.behaviors[j];
                     if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {

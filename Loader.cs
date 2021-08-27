@@ -5,28 +5,37 @@ using Assets.Scripts.Models.Towers.Upgrades;
 using Assets.Scripts.Models.TowerSets;
 using Assets.Scripts.Simulation.Towers;
 using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
-using Assets.Scripts.Unity.UI_New.Upgrade;
 using SC2Expansion.Towers;
+using SC2Expansion.Utils;
 using HarmonyLib;
 using MelonLoader;
 using System.Collections.Generic;
 using UnityEngine;
 using Color=UnityEngine.Color;
 using Image=UnityEngine.UI.Image;
-using SC2Expansion.Utils;
-using Assets.Scripts.Simulation.Towers.Weapons;
-using System.Threading.Tasks;
+using BTD_Mod_Helper;
+using System.IO;
+using BTD_Mod_Helper.Api.ModOptions;
 
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.0","Silentstorm#5336")]
 
 namespace SC2Expansion{
-    public class SC2Expansion:MelonMod{
+    public class SC2Expansion:BloonsTD6Mod{
+        private static readonly ModSettingBool ProtossEnabled=true;
+        private static readonly ModSettingBool TerranEnabled=true;
+        private static readonly ModSettingBool ZergEnabled=true;
+        //private static readonly ModSettingBool HeroesEnabled=true;
         public override void OnApplicationStart(){
-            //should figure out how to make it do a foreach thing instead of like this
-            Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
-            HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
-            SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.sc2marine);
+            if(ProtossEnabled){
+                HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
+            }
+            if(TerranEnabled){
+                SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.sc2marine);
+            }
+            if(ZergEnabled){
+                Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
+            }
         }
         [HarmonyPatch(typeof(StandardTowerPurchaseButton),nameof(StandardTowerPurchaseButton.UpdateTowerDisplay))]
         public class SetBG{
@@ -74,10 +83,9 @@ namespace SC2Expansion{
         public static class GameStart{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                towers.Add(Hydralisk.GetTower(__result));
+                //towers.Add(Hydralisk.GetTower(__result));
                 towers.Add(HighTemplar.GetTower(__result));
-                towers.Add(SC2Marine.GetTower(__result));
-                MelonLogger.Msg("3 Towers loaded");
+                //towers.Add(SC2Marine.GetTower(__result));
                 foreach(var tower in towers){
                     __result.towers=__result.towers.Add(tower.Item3);
                     __result.towerSet=__result.towerSet.Add(tower.Item2);
