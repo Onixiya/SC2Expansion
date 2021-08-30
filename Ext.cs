@@ -18,7 +18,7 @@ namespace SC2Expansion.Utils{
             foreach(var tmp in newPart)bases.Add(tmp);
             return new(bases.ToArray());
         }
-        //this is the json settingscode which i was working on til i decided to look at mod helpers settings menu thing, i'll keep it here in case it might be useful for another project or something
+        //this is the json settings code which i was working on til i decided to look at mod helpers settings menu thing, i'll keep it here in case it might be useful for another project or something
         //but for now, its useless
         /*public static T LoadFromFile<T>(string filePath)where T:class{
             string json=File.ReadAllText(filePath);

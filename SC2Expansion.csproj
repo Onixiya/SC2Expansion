@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DefaultMap.cs" />
     <Compile Include="Towers\Gateway.cs" />
     <Compile Include="Towers\Zealot.cs" />
     <None Include="assets.unitypackage" />
@@ -1805,6 +1806,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
+    <Content Include="Towers\TextFile1.txt" />
     <Content Include="Towers\Towerplans.txt" />
     <None Include="Resources\ProtossContainer.png" />
     <None Include="Resources\TerranContainer.png" />

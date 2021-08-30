@@ -27,18 +27,18 @@ using MelonLoader;
 //Stuff's called SC2Marine to avoid any potential conflict with the already existing marine
 namespace SC2Expansion.Towers{
     public class SC2Marine{
-        public static string name="Marine "; //Space in the name to avoid messing with the existing marine
+        public static string name="Marine "; //Space in the name to avoid messing with the existing marine, closest we get to any conflict
         public static UpgradeModel[]GetUpgrades(){
             return new UpgradeModel[]{
                 new("U-238 Shells",350,0,new("SC2MarineU238ShellsIcon"),0,1,0,"","U-238 Shells"),
                 new("Laser Targeting System",500,0,new("SC2MarineLaserTargetingSystemIcon"),0,2,0,"","Laser Targeting System"),
                 new("Stimpacks",875,0,new("SC2MarineStimpacksIcon"),0,3,0,"","Stimpacks"),
                 new("Warpig",1400,0,new("SC2MarineWarpigIcon"),0,4,0,"","Warpig")
-                //new("Super Stimpacks",2500,0,new("SC2MarineSuperStimpacksIcon"),0,5,0,"","Super Stimpacks")
+                //new("Tychus Findlay",2500,0,new("SC2MarineTychusIcon"),0,5,0,"","Tychus Findlay")
             };
         }
         public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
-            var SC2MarineDetails=gameModel.towerSet[0].Clone().Cast<TowerDetailsModel>();
+            var SC2MarineDetails=gameModel.towerSet.First((a=>a.name.Contains("DartMonkey"))).Clone().Cast<TowerDetailsModel>();
             SC2MarineDetails.towerId=name;
             SC2MarineDetails.towerIndex=32;
             if(!LocalizationManager.Instance.textTable.ContainsKey("U-238 Shells Description"))LocalizationManager.Instance.textTable.
@@ -49,8 +49,8 @@ namespace SC2Expansion.Towers{
                     Add("Stimpacks Description","Increases attack speed by 50% for 10 seconds");
             if(!LocalizationManager.Instance.textTable.ContainsKey("Warpig Description"))LocalizationManager.Instance.textTable.
                     Add("Warpig Description","Increases damage and attack speed slightly");
-            /*if(!LocalizationManager.Instance.textTable.ContainsKey("Super Stimpacks Description"))LocalizationManager.Instance.textTable.
-                    Add("Super Stimpacks Description","Stimpacks last x5 longer, increases attack speed by 100% and damage by 2");*/
+            /*if(!LocalizationManager.Instance.textTable.ContainsKey("Tychus Findlay Description"))LocalizationManager.Instance.textTable.
+                    Add("Tychus Findlay Description","Increases attack speed, increases damage and throws a grenade occasionally");*/
             return (GetT0(gameModel),SC2MarineDetails,new[]{GetT0(gameModel),GetT1(gameModel),GetT2(gameModel),GetT3(gameModel),GetT4(gameModel)/*,GetT5(gameModel)*/},GetUpgrades());
         }
         public static TowerModel GetT0(GameModel gameModel){
@@ -163,16 +163,16 @@ namespace SC2Expansion.Towers{
             SC2Marine.appliedUpgrades=new(new[]{"U-238 Shells","Laser Targeting System"});
             SC2Marine.upgrades=new[]{new UpgradePathModel("Stimpacks",name+"-300")};
             var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-            for(var i=0;i<SC2Marine.behaviors.Count;i++) {
+            for(var i=0;i<SC2Marine.behaviors.Count;i++){
                 var b=SC2Marine.behaviors[i];
                 att.weapons[0].name="SC2MarineBullet";
                 att.weapons[0].rate=0.7f;
                 att.weapons[0].rateFrames=1;
                 att.range=50;
                 att.weapons[0].projectile.display="SC2MarineBulletDisplay";
-                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++) {
+                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                     var pb=att.weapons[0].projectile.behaviors[j];
-                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {
+                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                         var d=pb.Cast<DamageModel>();
                         d.damage=2;
                         pb=d;
@@ -202,15 +202,15 @@ namespace SC2Expansion.Towers{
             SC2Marine.appliedUpgrades=new(new[]{"U-238 Shells","Laser Targeting System","Stimpacks"});
             SC2Marine.upgrades=new[]{new UpgradePathModel("Warpig",name+"-400")};
             var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-            for(var i=0;i<SC2Marine.behaviors.Count;i++) {
+            for(var i=0;i<SC2Marine.behaviors.Count;i++){
                 var b=SC2Marine.behaviors[i];
                 att.weapons[0].rate=0.7f;
                 att.weapons[0].rateFrames=1;
                 att.range=50;
                 att.weapons[0].projectile.display="SC2MarineBulletDisplay";
-                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++) {
+                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                     var pb=att.weapons[0].projectile.behaviors[j];
-                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {
+                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                         var d=pb.Cast<DamageModel>();
                         d.damage=2;
                         pb=d;
@@ -245,17 +245,16 @@ namespace SC2Expansion.Towers{
             SC2Marine.areaTypes[0]=AreaType.land;
             SC2Marine.appliedUpgrades=new(new[]{"U-238 Shells","Laser Targeting System","Stimpacks","Warpig"});
             SC2Marine.upgrades=new(0);
-            //SC2Marine.upgrades=new[]{new UpgradePathModel("Super Stimpacks",name+"-500")};
             var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-            for(var i=0;i<SC2Marine.behaviors.Count;i++) {
+            for(var i=0;i<SC2Marine.behaviors.Count;i++){
                 var b=SC2Marine.behaviors[i];
                 att.weapons[0].rate=0.55f;
                 att.weapons[0].rateFrames=1;
                 att.range=50;
                 att.weapons[0].projectile.display=null;
-                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++) {
+                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                     var pb=att.weapons[0].projectile.behaviors[j];
-                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {
+                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                         var d=pb.Cast<DamageModel>();
                         d.damage=4;
                         pb=d;
@@ -271,7 +270,7 @@ namespace SC2Expansion.Towers{
             SC2Marine.behaviors=SC2Marine.behaviors.Add(att,new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true),ab);
             return SC2Marine;
         }
-        public static TowerModel GetT500(GameModel gameModel){
+        /*public static TowerModel GetT5(GameModel gameModel){
             var SC2Marine=gameModel.towers[0].Clone().Cast<TowerModel>();
             SC2Marine.name=name+"-500";
             SC2Marine.baseId=name;
@@ -291,15 +290,15 @@ namespace SC2Expansion.Towers{
             SC2Marine.appliedUpgrades=new(new[]{"U-238 Shells","Laser Targeting System","Stimpacks","Super Stimpacks"});
             SC2Marine.upgrades=new(0);
             var att=gameModel.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.First(a=>a.GetIl2CppType()==Il2CppType.Of<AttackModel>()).Clone().Cast<AttackModel>();
-            for(var i=0;i<SC2Marine.behaviors.Count;i++) {
+            for(var i=0;i<SC2Marine.behaviors.Count;i++){
                 var b=SC2Marine.behaviors[i];
                 att.weapons[0].rate=0.7f;
                 att.weapons[0].rateFrames=1;
                 att.range=50;
                 att.weapons[0].projectile.display="SC2MarineBulletDisplay";
-                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++) {
+                for(var j=0;j<att.weapons[0].projectile.behaviors.Length;j++){
                     var pb=att.weapons[0].projectile.behaviors[j];
-                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()) {
+                    if(pb.GetIl2CppType()==Il2CppType.Of<DamageModel>()){
                         var d=pb.Cast<DamageModel>();
                         d.damage=2;
                         pb=d;
@@ -314,7 +313,7 @@ namespace SC2Expansion.Towers{
             ab.maxActivationsPerRound=1;
             SC2Marine.behaviors=SC2Marine.behaviors.Add(att,new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             return SC2Marine;
-        }
+        }*/
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
@@ -380,7 +379,7 @@ namespace SC2Expansion.Towers{
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineWarpigIcon")) {
+                if(reference!=null&&reference.guidRef.Equals("SC2MarineWarpigIcon")){
                     var b = Assets.LoadAsset("SC2MarineWarpigIcon");
                     var text = b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
@@ -398,13 +397,13 @@ namespace SC2Expansion.Towers{
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineStimpacksIcon")) {
+                if(reference!=null&&reference.guidRef.Equals("SC2MarineStimpacksIcon")){
                     var b=Assets.LoadAsset("SC2MarineStimpacksIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineSuperStimpacksIcon")) {
+                if(reference!=null&&reference.guidRef.Equals("SC2MarineSuperStimpacksIcon")){
                     var b = Assets.LoadAsset("SC2MarineSuperStimpacksIcon");
                     var text = b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
