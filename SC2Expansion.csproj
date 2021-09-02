@@ -1806,7 +1806,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="Towers\TextFile1.txt" />
     <Content Include="Towers\Towerplans.txt" />
     <None Include="Resources\ProtossContainer.png" />
     <None Include="Resources\TerranContainer.png" />

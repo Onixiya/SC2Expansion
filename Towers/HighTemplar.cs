@@ -13,7 +13,6 @@ using HarmonyLib;
 using NinjaKiwi.Common;
 using Il2CppSystem.Collections.Generic;
 using System.Threading.Tasks;
-using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 using Object=UnityEngine.Object;
@@ -22,8 +21,7 @@ using System.Linq;
 using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-using Assets.Scripts.Simulation.Towers.Behaviors.Abilities.Behaviors;
+using System.IO;
 
 namespace SC2Expansion.Towers{
     public class HighTemplar{
@@ -34,7 +32,7 @@ namespace SC2Expansion.Towers{
                 new("Psi Storms",950,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storms"),
                 new("Plasma Surge",1125,0,new("HighTemplarPlasmaSurgeIcon"),0,3,0,"","Plasma Surge"),
                 new("Ascendant",1500,0,new("HighTemplarAscendantIcon"),0,4,0,"","Ascendant")
-                //new("Power Overwhelming",3000,0,new("HighTemplarPowerOverwhelmingIcon"),0,5,0,"","Power Overwhelming")*/
+                //new("Ji'nara",3000,0,new("HighTemplarJinaraIcon"),0,5,0,"","Ji'nara")*/
             };
         }
         public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
@@ -57,22 +55,24 @@ namespace SC2Expansion.Towers{
             var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).Clone().Cast<TowerModel>();
             HighTemplar.name=name;
             HighTemplar.baseId=name;
-            HighTemplar.display="HighTemplarModel";
-            HighTemplar.portrait=new("HighTemplarIcon");
-            HighTemplar.icon=new("HighTemplarIcon");
+            HighTemplar.display="HighTemplarPrefab";
+            HighTemplar.portrait=new("HighTemplarPortrait");
+            HighTemplar.icon=new("HighTemplarPortrait");
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=7;
             HighTemplar.cost=500;
-            HighTemplar.range=45;
+            HighTemplar.range=40;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
             HighTemplar.areaTypes=new(1);
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.upgrades=new UpgradePathModel[]{new("Khaydarin Amulet",name+"-100")};
-            HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>().name="HighTemplarPsiBolt";
-            HighTemplar.behaviors.First(a=>a.name.Contains("DisplayModel")).Cast<DisplayModel>().display="HighTemplarModel";
+            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.range=40;
+            HighTemplar.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HighTemplarPrefab";
             return HighTemplar;
         }
         public static TowerModel GetT1(GameModel gameModel){
@@ -81,13 +81,13 @@ namespace SC2Expansion.Towers{
             HighTemplar.baseId=name;
             HighTemplar.tier=100;
             HighTemplar.tiers=new int[]{1,0,0};
-            HighTemplar.display="HighTemplarModel";
-            HighTemplar.portrait=new("HighTemplarIcon");
-            HighTemplar.icon=new("HighTemplarIcon");
+            HighTemplar.display="HighTemplarPrefab";
+            HighTemplar.portrait=new("HighTemplarPortrait");
+            HighTemplar.icon=new("HighTemplarPortrait");
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=55;
+            HighTemplar.range=52;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -95,8 +95,9 @@ namespace SC2Expansion.Towers{
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet"});
             HighTemplar.upgrades=new[]{new UpgradePathModel("Psi Storms",name+"-200")};
-            HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>().name="HighTemplarPsiBolt";
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarPsiBolt")).Cast<AttackModel>().range=55;
+            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.range=52;
             return HighTemplar;
         }
         public static TowerModel GetT2(GameModel gameModel){
@@ -105,13 +106,13 @@ namespace SC2Expansion.Towers{
             HighTemplar.baseId=name;
             HighTemplar.tier=200;
             HighTemplar.tiers=new int[]{2,0,0};
-            HighTemplar.display="HighTemplarModel";
-            HighTemplar.portrait=new("HighTemplarIcon");
-            HighTemplar.icon=new("HighTemplarIcon");
+            HighTemplar.display="HighTemplarPrefab";
+            HighTemplar.portrait=new("HighTemplarPortrait");
+            HighTemplar.icon=new("HighTemplarPortrait");
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=55;
+            HighTemplar.range=52;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -119,13 +120,14 @@ namespace SC2Expansion.Towers{
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms"});
             HighTemplar.upgrades=new[]{new UpgradePathModel("Plasma Surge",name+"-300")};
-            HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>().name="HighTemplarMiniPsiStorm";
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarMiniPsiStorm")).Cast<AttackModel>().weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarMiniPsiStorm")).Cast<AttackModel>().weapons[0].projectile.behaviors=
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarMiniPsiStorm")).Cast<AttackModel>().weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
-            HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>().name="HighTemplarPsiBolt";
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarPsiBolt")).Cast<AttackModel>().range=55;
-            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack Fireball_"));
+            var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>();
+            PsiStorm.weapons[0].projectile.name="HighTemplarMiniPsiStorm";
+            PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
+            PsiStorm.weapons[0].projectile.behaviors=PsiStorm.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
+            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
+            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.range=52;
+            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("Fireball"));
             return HighTemplar;
         }
         public static TowerModel GetT3(GameModel gameModel){
@@ -134,13 +136,13 @@ namespace SC2Expansion.Towers{
             HighTemplar.baseId=name;
             HighTemplar.tier=300;
             HighTemplar.tiers=new int[]{3,0,0};
-            HighTemplar.display="HighTemplarModel";
-            HighTemplar.portrait=new("HighTemplarIcon");
-            HighTemplar.icon=new("HighTemplarIcon");
+            HighTemplar.display="HighTemplarPrefab";
+            HighTemplar.portrait=new("HighTemplarPortrait");
+            HighTemplar.icon=new("HighTemplarPortrait");
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=55;
+            HighTemplar.range=52;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -149,29 +151,30 @@ namespace SC2Expansion.Towers{
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms","Plasma Surge"});
             HighTemplar.upgrades=new[]{new UpgradePathModel("Ascendant",name+"-400")};
             var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>();
-            PsiStorm.name="HighTemplarMiniPsiStorm";
+            PsiStorm.weapons[0].projectile.name="HighTemplarMiniPsiStorm";
             PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
             PsiStorm.weapons[0].projectile.behaviors=PsiStorm.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
             PsiStorm.weapons[0].projectile.radius=50;
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarMiniPsiStorm")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=2;
-            HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>().name="HighTemplarPsiBolt";
-            HighTemplar.behaviors.First(a=>a.name.Equals("HighTemplarPsiBolt")).Cast<AttackModel>().range=55;
+            PsiStorm.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=2;
+            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
+            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.range=52;
             HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack Fireball_"));
             return HighTemplar;
         }
         public static TowerModel GetT4(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey-020")).Clone().Cast<TowerModel>();
+            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).Clone().Cast<TowerModel>();
             HighTemplar.name=name+"-400";
             HighTemplar.baseId=name;
             HighTemplar.tier=400;
             HighTemplar.tiers=new int[]{4,0,0};
-            HighTemplar.display="HighTemplarAscendantModel";
-            HighTemplar.portrait=new("HighTemplarAscendantIcon");
+            HighTemplar.display="HighTemplarAscendantPrefab";
+            HighTemplar.portrait=new("HighTemplarAscendantPortrait");
             HighTemplar.icon=new("HighTemplarAscendantIcon");
             HighTemplar.towerSet="Magic";
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=15;
-            HighTemplar.range=55;
+            HighTemplar.range=52;
             HighTemplar.towerSize=TowerModel.TowerSize.XL;
             HighTemplar.footprint.ignoresPlacementCheck=true;
             HighTemplar.cachedThrowMarkerHeight=10;
@@ -179,32 +182,40 @@ namespace SC2Expansion.Towers{
             HighTemplar.areaTypes[0]=AreaType.land;
             HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms","Plasma Surge","Ascendant"});
             HighTemplar.upgrades=new(0);
-            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("Wall"));
-            //var PsiOrb=HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>();
+            var PsiOrb=gameModel.towers.First(a=>a.name.Equals("Druid-400")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
             var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
-            var Sacrifice=gameModel.towers.First(a=>a.name.Contains("Adora 7")).behaviors.First(a=>a.name.Contains("Sacrifice")).Clone().Cast<AbilityModel>();
+            //i would love to use adoras sacrifice thing but afaik, it would require assembly editing to get it to not crash
+            var Sacrifice=gameModel.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Clone().Cast<AbilityModel>();
             //originally was directly copying pats squeeze ability but idfk how to make the bloons not go to the tower and stay on the track
             var MindBlast=gameModel.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
-            /*PsiOrb.name="MiniPsiOrb";
-            PsiOrb.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
-            PsiOrb.weapons[0].projectile.behaviors=PsiStorm.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
-            PsiOrb.weapons[0].rate=10;*/
-            Sacrifice.behaviors.First(a=>a.name.Contains("BloodSacrificeModel")).Cast<BloodSacrificeModel>().xpMultiplier=0;
+            PsiOrb.weapons[0].projectile.name="HighTemplarPsiOrb";
+            Sacrifice.name="Sacrifice";
+            Sacrifice.displayName="Sacrifice";
             Sacrifice.cooldown=0.1f;
-            MelonLogger.Msg(BloodSacrifice.towerBanList);
-            PsiBolt.name="HighTemplarPsiBolt";
-            PsiBolt.range=55;
+            var temp=gameModel.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Cast<AbilityModel>().behaviors.
+                First(a=>a.name.Contains("Turbo")).Clone().Cast<TurboModel>();
+            temp.extraDamage=6;
+            temp.projectileDisplay.assetPath=null;
+            Sacrifice.icon=new("HighTemplarSacrificeIcon");
+            Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
+                First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().assetId=null;
+            Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
+                First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().endAssetId=null;
+            Sacrifice.behaviors=Sacrifice.behaviors.Add(temp);
+            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.range=52;
+            PsiBolt.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=2;
             MindBlast.name="Mind Blast";
             MindBlast.displayName="Mind Blast";
             MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=
                 gameModel.towers.First(a=>a.name.Equals("SniperMonkey-500")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
             MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
                 First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=400;
-            MindBlast.cooldown=0.1f;
-            //Sacrifice.cooldown=1;
-            MindBlast.icon=new("HighTemplarPsiStormIcon");
+            MindBlast.cooldown=5f;
+            MindBlast.icon=new("HighTemplarMindBlastIcon");
+            MindBlast.maxActivationsPerRound=1;
             HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack Fireball_"));
-            HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice);
+            HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
             return HighTemplar;
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
@@ -212,8 +223,8 @@ namespace SC2Expansion.Towers{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarModel")){
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarModel");
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarPrefab")){
+                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarPrefab");
                     udn.name="HighTemplar";
                     var a=Assets.LoadAsset("HighTemplarMaterial");
                     udn.genericRenderers[0].material=a.Cast<Material>();
@@ -223,8 +234,8 @@ namespace SC2Expansion.Towers{
                     protos.Add(objectId,udn);
                     return false;
                 }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarAscendantModel")) {
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarAscendantModel");
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarAscendantPrefab")){
+                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarAscendantPrefab");
                     udn.name="HighTemplar";
                     var a=Assets.LoadAsset("HighTemplarAscendantMaterial");
                     udn.genericRenderers[0].material=a.Cast<Material>();
@@ -264,8 +275,8 @@ namespace SC2Expansion.Towers{
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarIcon")){
-                    var b=Assets.LoadAsset("HighTemplarIcon");
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarPortrait")){
+                    var b=Assets.LoadAsset("HighTemplarPortrait");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
@@ -276,42 +287,67 @@ namespace SC2Expansion.Towers{
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarPlasmaSurgeIcon")){
+                    var b=Assets.LoadAsset("HighTemplarPlasmaSurgeIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
                 if(reference!=null&&reference.guidRef.Equals("HighTemplarKhaydarinAmuletIcon")){
                     var b=Assets.LoadAsset("HighTemplarKhaydarinAmuletIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarAscendantIcon")) {
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarAscendantIcon")){
                     var b=Assets.LoadAsset("HighTemplarAscendantIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarAscendantPortrait")) {
+                    var b=Assets.LoadAsset("HighTemplarAscendantPortrait");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarMindBlastIcon")){
+                    var b=Assets.LoadAsset("HighTemplarMindBlastIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarSacrificeIcon")){
+                    var b=Assets.LoadAsset("HighTemplarSacrificeIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        /*[HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
         public static class WI{
-            [HarmonyPrefix]
-            public static void Prefix(ref Weapon __instance)=>RunAnimations(__instance);
-            private static async Task RunAnimations(Weapon __instance){
-                if(__instance.weaponModel.name.Contains("HighTemplarPsiBolt")){
-                    //__instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().StopPlayback();
-                    //__instance.attack.tower.Node.graphic.GetComponent<Animation>().Play();
-                    MelonLogger.Msg("templar fire");
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("Armature Object|Armature ObjectAttack");
-                    /*__instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",true);
-                    var wait=23000f;
-                    await Task.Run(()=>{
-                        while(wait>0){
-                            wait-=TimeManager.timeScaleWithoutNetwork+1;
-                            Task.Delay(1);
-                        }
-                        return;
-                    });
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",false);*/
+        [HarmonyPrefix]
+        public static void Prefix(ref Weapon __instance)=>RunAnimations(__instance);
+        private static async Task RunAnimations(Weapon __instance){
+                MelonLogger.Msg("test");
+                var temp=__instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().runtimeAnimatorController.animationClips.GetEnumerator();
+                while(temp.MoveNext()){
+                    MelonLogger.Msg("name: "+temp.Current.name);
                 }
+                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("Armature Object|Armature ObjectSpell");
+                MelonLogger.Msg("test1");
+                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",true);
+                var wait=2300f;
+                await Task.Run(()=>{
+                    while(wait>0){
+                        wait-=TimeManager.timeScaleWithoutNetwork+1;
+                        Task.Delay(1);
+                    }
+                    return;
+                });
+                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",false);
             }
-        }
+        }*/
     }
 }

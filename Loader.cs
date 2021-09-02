@@ -15,7 +15,8 @@ using Color=UnityEngine.Color;
 using Image=UnityEngine.UI.Image;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api.ModOptions;
-using Assets.Scripts.Simulation.Towers.Projectiles.Behaviors;
+using Assets.Scripts.Simulation.Towers.Weapons;
+using System.Threading.Tasks;
 
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.0","Silentstorm#5336")]
