@@ -15,36 +15,34 @@ using Color=UnityEngine.Color;
 using Image=UnityEngine.UI.Image;
 using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api.ModOptions;
-using Assets.Scripts.Simulation.Towers.Weapons;
-using System.Threading.Tasks;
-
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.0","Silentstorm#5336")]
-
+[assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.1","Silentstorm#5336")]
 namespace SC2Expansion{
-    public class SC2Expansion:BloonsTD6Mod {
-        private static readonly ModSettingBool ProtossEnabled = true;
-        private static readonly ModSettingBool TerranEnabled = true;
-        private static readonly ModSettingBool ZergEnabled = true;
+    public class SC2Expansion:BloonsTD6Mod{
+        //public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
+        private static readonly ModSettingBool ProtossEnabled=true;
+        private static readonly ModSettingBool TerranEnabled=true;
+        private static readonly ModSettingBool ZergEnabled=true;
         //private static readonly ModSettingBool HeroesEnabled=true;
-        public override void OnApplicationStart() {
-            if(ProtossEnabled==true) {
+        public override void OnApplicationStart(){
+            if(ProtossEnabled==true){
                 HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
             }
-            if(TerranEnabled==true) {
+            if(TerranEnabled==true){
                 SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.sc2marine);
             }
-            if(ZergEnabled==true) {
+            if(ZergEnabled==true){
+                BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
             }
         }
         [HarmonyPatch(typeof(StandardTowerPurchaseButton),nameof(StandardTowerPurchaseButton.UpdateTowerDisplay))]
-        public class SetBG {
+        public class SetBG{
             [HarmonyPostfix]
-            public static void Postfix(ref StandardTowerPurchaseButton __instance) {
+            public static void Postfix(ref StandardTowerPurchaseButton __instance){
                 __instance.bg=__instance.gameObject.GetComponent<Image>();
                 if(__instance.baseTowerModel.emoteSpriteLarge!=null)
-                    switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef) {
+                    switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef){
                         case "Protoss":
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
                             break;
@@ -57,12 +55,12 @@ namespace SC2Expansion{
                     }
                 return;
             }
-            private static Texture2D LoadTextureFromBytes(byte[] FileData) {
-                Texture2D Tex2D = new(2,2);
+            private static Texture2D LoadTextureFromBytes(byte[] FileData){
+                Texture2D Tex2D=new(2,2);
                 if(ImageConversion.LoadImage(Tex2D,FileData)) return Tex2D;
                 return null;
             }
-            private static Sprite LoadSprite(Texture2D text) {
+            private static Sprite LoadSprite(Texture2D text){
                 return Sprite.Create(text,new(0,0,text.width,text.height),new());
             }
         }
@@ -94,6 +92,8 @@ namespace SC2Expansion{
                     towersloaded++;
                 }
                 if(ZergEnabled==true){
+                    towers.Add(BanelingNest.GetTower(__result));
+                    towersloaded++;
                     towers.Add(Hydralisk.GetTower(__result));
                     towersloaded++;
                 }
