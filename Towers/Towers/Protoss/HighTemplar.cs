@@ -1,25 +1,4 @@
-﻿using Assets.Scripts.Models;
-using Assets.Scripts.Models.GenericBehaviors;
-using Assets.Scripts.Models.Map;
-using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Models.Towers.Behaviors.Attack;
-using Assets.Scripts.Models.Towers.Upgrades;
-using Assets.Scripts.Models.TowerSets;
-using Assets.Scripts.Unity.Display;
-using Assets.Scripts.Utils;
-using SC2Expansion.Utils;
-using HarmonyLib;
-using NinjaKiwi.Common;
-using Il2CppSystem.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using Object=UnityEngine.Object;
-using System.Linq;
-using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
-using Assets.Scripts.Models.Towers.Behaviors.Abilities;
-using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
-
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class HighTemplar{
         public static string name="High Templar";
         public static UpgradeModel[]GetUpgrades(){

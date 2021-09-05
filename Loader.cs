@@ -1,28 +1,43 @@
-﻿using Assets.Scripts.Models;
-using Assets.Scripts.Models.Profile;
-using Assets.Scripts.Models.Towers;
-using Assets.Scripts.Models.Towers.Upgrades;
-using Assets.Scripts.Models.TowerSets;
-using Assets.Scripts.Simulation.Towers;
-using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
-using SC2Expansion.Towers;
-using SC2Expansion.Utils;
-using HarmonyLib;
-using MelonLoader;
-using System.Collections.Generic;
-using UnityEngine;
-using Color=UnityEngine.Color;
-using Image=UnityEngine.UI.Image;
-using BTD_Mod_Helper;
-using BTD_Mod_Helper.Api.ModOptions;
+﻿//saves so much space with global, no need to put separate usings in each file, just put them all in the main one
+global using Assets.Scripts.Models;
+global using Assets.Scripts.Models.Profile;
+global using Assets.Scripts.Models.Towers;
+global using Assets.Scripts.Models.Towers.Upgrades;
+global using Assets.Scripts.Models.TowerSets;
+global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
+global using SC2Expansion.Towers;
+global using SC2Expansion.Utils;
+global using HarmonyLib;
+global using MelonLoader;
+global using System.Collections.Generic;
+global using UnityEngine;
+global using Image=UnityEngine.UI.Image;
+global using BTD_Mod_Helper;
+global using BTD_Mod_Helper.Api.ModOptions;
+global using Assets.Scripts.Models.GenericBehaviors;
+global using Assets.Scripts.Models.Map;
+global using Assets.Scripts.Unity.Display;
+global using Assets.Scripts.Utils;
+global using System.Linq;
+global using Object=UnityEngine.Object;
+global using Assets.Scripts.Models.Towers.Behaviors.Attack;
+global using Assets.Scripts.Models.Towers.Behaviors;
+global using Assets.Scripts.Models.Towers.Behaviors.Emissions;
+global using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
+global using BTD_Mod_Helper.Api.Towers;
+global using BTD_Mod_Helper.Extensions;
+global using Assets.Scripts.Unity;
+global using NinjaKiwi.Common;
+global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
+global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.1","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         //public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
-        private static readonly ModSettingBool ProtossEnabled=true;
-        private static readonly ModSettingBool TerranEnabled=true;
-        private static readonly ModSettingBool ZergEnabled=true;
+        public static readonly ModSettingBool ProtossEnabled=true;
+        public static readonly ModSettingBool TerranEnabled=true;
+        public static readonly ModSettingBool ZergEnabled=true;
         //private static readonly ModSettingBool HeroesEnabled=true;
         public override void OnApplicationStart(){
             if(ProtossEnabled==true){
@@ -32,8 +47,8 @@ namespace SC2Expansion{
                 SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.sc2marine);
             }
             if(ZergEnabled==true){
-                BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
+                BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
             }
         }
         [HarmonyPatch(typeof(StandardTowerPurchaseButton),nameof(StandardTowerPurchaseButton.UpdateTowerDisplay))]
@@ -43,6 +58,18 @@ namespace SC2Expansion{
                 __instance.bg=__instance.gameObject.GetComponent<Image>();
                 if(__instance.baseTowerModel.emoteSpriteLarge!=null)
                     switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef){
+                        case "Protoss":
+                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
+                            break;
+                        case "Terran":
+                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.TerranContainer));
+                            break;
+                        case "Zerg":
+                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ZergContainer));
+                            break;
+                    }
+                if(__instance.baseTowerModel.emoteSpriteSmall!=null)
+                    switch(__instance.baseTowerModel.emoteSpriteSmall.guidRef) {
                         case "Protoss":
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
                             break;
@@ -92,8 +119,6 @@ namespace SC2Expansion{
                     towersloaded++;
                 }
                 if(ZergEnabled==true){
-                    towers.Add(BanelingNest.GetTower(__result));
-                    towersloaded++;
                     towers.Add(Hydralisk.GetTower(__result));
                     towersloaded++;
                 }
@@ -108,24 +133,6 @@ namespace SC2Expansion{
                     MelonLogger.Msg("1 tower loaded");
                 }else{
                     MelonLogger.Msg(towersloaded+" towers loaded");
-                }
-            }
-            [HarmonyPatch(typeof(Tower),nameof(Tower.Hilight))]
-            public static class TH{
-                [HarmonyPostfix]
-                public static void Postfix(ref Tower __instance){
-                    if(__instance?.Node?.graphic?.genericRenderers==null)return;
-                    foreach(var graphicGenericRenderer in __instance.Node.graphic.genericRenderers)
-                        graphicGenericRenderer.material.SetColor("_OutlineColor",Color.white);
-                }
-            }
-            [HarmonyPatch(typeof(Tower),nameof(Tower.UnHighlight))]
-            public static class TU{
-                [HarmonyPostfix]
-                public static void Postfix(ref Tower __instance){
-                    if(__instance?.Node?.graphic?.genericRenderers==null)return;
-                    foreach(var graphicGenericRenderer in __instance.Node.graphic.genericRenderers)
-                        graphicGenericRenderer.material.SetColor("_OutlineColor",Color.black);
                 }
             }
         }
