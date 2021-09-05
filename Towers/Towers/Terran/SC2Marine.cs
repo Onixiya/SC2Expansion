@@ -139,7 +139,7 @@ namespace SC2Expansion.Towers{
             set=>__asset=value;
         }
         public static UnityDisplayNode GetSC2Marine(Transform transform,string model){
-            var udn=Object.c(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
+            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
             udn.Active=false;
             udn.transform.position=new(-3000,0);
             return udn;
