@@ -1,194 +1,145 @@
 ﻿namespace SC2Expansion.Towers{
-    public class HighTemplar{
-        public static string name="High Templar";
-        public static UpgradeModel[]GetUpgrades(){
-            return new UpgradeModel[]{
-                new("Khaydarin Amulet",300,0,new("HighTemplarKhaydarinAmuletIcon"),0,1,0,"","Khaydarin Amulet"),
-                new("Psi Storms",950,0,new("HighTemplarPsiStormIcon"),0,2,0,"","Psi Storms"),
-                new("Plasma Surge",1125,0,new("HighTemplarPlasmaSurgeIcon"),0,3,0,"","Plasma Surge"),
-                new("Ascendant",1500,0,new("HighTemplarAscendantIcon"),0,4,0,"","Ascendant")
-            };
-        }
-        public static(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])GetTower(GameModel gameModel){
-            var HighTemplarDetails=gameModel.towerSet[0].Clone().Cast<TowerDetailsModel>();
-            HighTemplarDetails.towerId=name;
-            HighTemplarDetails.towerIndex=0;
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Khaydarin Amulet Description"))LocalizationManager.Instance.textTable.
-                    Add("Khaydarin Amulet Description","Increases attack range");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Psi Storms Description"))LocalizationManager.Instance.textTable.
-                    Add("Psi Storms Description","Casts mini Psi Storms into the track damaging everything that goes through it");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Plasma Surge Description"))LocalizationManager.Instance.textTable.
-                    Add("Plasma Surge Description","Psi Storms are bigger and do more damage");
-            if(!LocalizationManager.Instance.textTable.ContainsKey("Ascendant Description"))LocalizationManager.Instance.textTable.
-                    Add("Ascendant Description","Gains the Sacrifice and Mind Blast abilites. Replaces Psi Storms with Psionic Orb");
-            return (GetT0(gameModel),HighTemplarDetails,new[]{GetT0(gameModel),GetT1(gameModel),GetT2(gameModel),GetT3(gameModel),GetT4(gameModel)},GetUpgrades());
-        }
-        public static TowerModel GetT0(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).Clone().Cast<TowerModel>();
-            HighTemplar.name=name;
-            HighTemplar.baseId=name;
+    public class HighTemplar:ModTower{
+        public override string DisplayName=>"High Templar";
+        public override string TowerSet=>MAGIC;
+        public override string BaseTower=>"WizardMonkey";
+        public override int Cost=>400;
+        public override int TopPathUpgrades=>5;
+        public override int MiddlePathUpgrades=>0;
+        public override int BottomPathUpgrades=>0;
+        public override string Description=>"Ranged Protoss Caster";
+        public override void ModifyBaseTowerModel(TowerModel HighTemplar){
             HighTemplar.display="HighTemplarPrefab";
-            HighTemplar.portrait=new("HighTemplarPortrait");
-            HighTemplar.icon=new("HighTemplarPortrait");
-            HighTemplar.towerSet="Magic";
+            HighTemplar.portrait=new("HighTemplarIcon");
+            HighTemplar.icon=new("HighTemplarIcon");
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=7;
-            HighTemplar.cost=500;
             HighTemplar.range=40;
-            HighTemplar.towerSize=TowerModel.TowerSize.XL;
-            HighTemplar.footprint.ignoresPlacementCheck=true;
-            HighTemplar.cachedThrowMarkerHeight=10;
-            HighTemplar.areaTypes=new(1);
-            HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.upgrades=new UpgradePathModel[]{new("Khaydarin Amulet",name+"-100")};
             var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
-            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
+            PsiBolt.name="HighTemplarPsiBolt";
             PsiBolt.range=40;
             HighTemplar.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HighTemplarPrefab";
-            return HighTemplar;
         }
-        public static TowerModel GetT1(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).Clone().Cast<TowerModel>();
-            HighTemplar.name=name+"-100";
-            HighTemplar.baseId=name;
-            HighTemplar.tier=100;
-            HighTemplar.tiers=new int[]{1,0,0};
-            HighTemplar.display="HighTemplarPrefab";
-            HighTemplar.portrait=new("HighTemplarPortrait");
-            HighTemplar.icon=new("HighTemplarPortrait");
-            HighTemplar.towerSet="Magic";
-            HighTemplar.emoteSpriteLarge=new("Protoss");
-            HighTemplar.radius=15;
-            HighTemplar.range=52;
-            HighTemplar.towerSize=TowerModel.TowerSize.XL;
-            HighTemplar.footprint.ignoresPlacementCheck=true;
-            HighTemplar.cachedThrowMarkerHeight=10;
-            HighTemplar.areaTypes=new(1);
-            HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet"});
-            HighTemplar.upgrades=new[]{new UpgradePathModel("Psi Storms",name+"-200")};
-            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
-            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
-            PsiBolt.range=52;
-            return HighTemplar;
+        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
+            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
         }
-        public static TowerModel GetT2(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey-020")).Clone().Cast<TowerModel>();
-            HighTemplar.name=name+"-200";
-            HighTemplar.baseId=name;
-            HighTemplar.tier=200;
-            HighTemplar.tiers=new int[]{2,0,0};
-            HighTemplar.display="HighTemplarPrefab";
-            HighTemplar.portrait=new("HighTemplarPortrait");
-            HighTemplar.icon=new("HighTemplarPortrait");
-            HighTemplar.towerSet="Magic";
-            HighTemplar.emoteSpriteLarge=new("Protoss");
-            HighTemplar.radius=15;
-            HighTemplar.range=52;
-            HighTemplar.towerSize=TowerModel.TowerSize.XL;
-            HighTemplar.footprint.ignoresPlacementCheck=true;
-            HighTemplar.cachedThrowMarkerHeight=10;
-            HighTemplar.areaTypes=new(1);
-            HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms"});
-            HighTemplar.upgrades=new[]{new UpgradePathModel("Plasma Surge",name+"-300")};
-            var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>();
-            PsiStorm.weapons[0].projectile.name="HighTemplarMiniPsiStorm";
-            PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
-            PsiStorm.weapons[0].projectile.behaviors=PsiStorm.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
-            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
-            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
-            PsiBolt.range=52;
-            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("Fireball"));
-            return HighTemplar;
+        public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
+            public override string Name=>"KhaydarinAmulet";
+            public override string DisplayName=>"Khaydarin Amulet";
+            public override string Description=>"Khaydarin crystals help regulate the flow of energy from the Khala, letting the High Templar fire further";
+            public override int Cost=>750;
+            public override int Path=>TOP;
+            public override int Tier=>1;
+            public override void ApplyUpgrade(TowerModel HighTemplar){
+                GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
+                var Psibolt=HighTemplar.GetAttackModel();
+                Psibolt.range+=10;
+                HighTemplar.range=Psibolt.range;
+            }
         }
-        public static TowerModel GetT3(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey-020")).Clone().Cast<TowerModel>();
-            HighTemplar.name=name+"-300";
-            HighTemplar.baseId=name;
-            HighTemplar.tier=300;
-            HighTemplar.tiers=new int[]{3,0,0};
-            HighTemplar.display="HighTemplarPrefab";
-            HighTemplar.portrait=new("HighTemplarPortrait");
-            HighTemplar.icon=new("HighTemplarPortrait");
-            HighTemplar.towerSet="Magic";
-            HighTemplar.emoteSpriteLarge=new("Protoss");
-            HighTemplar.radius=15;
-            HighTemplar.range=52;
-            HighTemplar.towerSize=TowerModel.TowerSize.XL;
-            HighTemplar.footprint.ignoresPlacementCheck=true;
-            HighTemplar.cachedThrowMarkerHeight=10;
-            HighTemplar.areaTypes=new(1);
-            HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms","Plasma Surge"});
-            HighTemplar.upgrades=new[]{new UpgradePathModel("Ascendant",name+"-400")};
-            var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>();
-            PsiStorm.weapons[0].projectile.name="HighTemplarMiniPsiStorm";
-            PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
-            PsiStorm.weapons[0].projectile.behaviors=PsiStorm.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("CreateEffectOnExhausted"));
-            PsiStorm.weapons[0].projectile.radius=50;
-            PsiStorm.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=2;
-            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
-            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
-            PsiBolt.range=52;
-            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack Fireball_"));
-            return HighTemplar;
+        public class MiniPsiStorms:ModUpgrade<HighTemplar>{
+            public override string Name=>"MiniPsiStorms";
+            public override string DisplayName=>"Mini Psi Storms";
+            public override string Description=>"Further training allows the casting of Psionic Storms into the track damaging everything that passes through";
+            public override int Cost=>750;
+            public override int Path=>TOP;
+            public override int Tier=>2;
+            public override void ApplyUpgrade(TowerModel HighTemplar){
+                GetUpgradeModel().icon=new("HighTemplarPsiStormIcon");
+                var PsiStorm=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-020")).behaviors.First(a=>a.name.Contains("Wall")).Clone().Cast<AttackModel>();
+                PsiStorm.name="PsiStorms";
+                //PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
+                PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
+                HighTemplar.AddBehavior(PsiStorm);
+            }
         }
-        public static TowerModel GetT4(GameModel gameModel){
-            var HighTemplar=gameModel.towers.First(a=>a.name.Contains("WizardMonkey")).Clone().Cast<TowerModel>();
-            HighTemplar.name=name+"-400";
-            HighTemplar.baseId=name;
-            HighTemplar.tier=400;
-            HighTemplar.tiers=new int[]{4,0,0};
-            HighTemplar.display="HighTemplarAscendantPrefab";
-            HighTemplar.portrait=new("HighTemplarAscendantPortrait");
-            HighTemplar.icon=new("HighTemplarAscendantIcon");
-            HighTemplar.towerSet="Magic";
-            HighTemplar.emoteSpriteLarge=new("Protoss");
-            HighTemplar.radius=15;
-            HighTemplar.range=52;
-            HighTemplar.towerSize=TowerModel.TowerSize.XL;
-            HighTemplar.footprint.ignoresPlacementCheck=true;
-            HighTemplar.cachedThrowMarkerHeight=10;
-            HighTemplar.areaTypes=new(1);
-            HighTemplar.areaTypes[0]=AreaType.land;
-            HighTemplar.appliedUpgrades=new(new[]{"Khaydarin Amulet","Psi Storms","Plasma Surge","Ascendant"});
-            HighTemplar.upgrades=new(0);
-            var PsiOrb=gameModel.towers.First(a=>a.name.Equals("Druid-400")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("AttackModel_Attack_")).Cast<AttackModel>();
-            //i would love to use adoras sacrifice thing but afaik, it would require assembly editing to get it to not crash
-            var Sacrifice=gameModel.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Clone().Cast<AbilityModel>();
-            //originally was directly copying pats squeeze ability but idfk how to make the bloons not go to the tower and stay on the track
-            var MindBlast=gameModel.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
-            PsiOrb.weapons[0].projectile.name="HighTemplarPsiOrb";
-            Sacrifice.name="Sacrifice";
-            Sacrifice.displayName="Sacrifice";
-            Sacrifice.cooldown=0.1f;
-            var temp=gameModel.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Cast<AbilityModel>().behaviors.
-                First(a=>a.name.Contains("Turbo")).Clone().Cast<TurboModel>();
-            temp.extraDamage=6;
-            temp.projectileDisplay.assetPath=null;
-            Sacrifice.icon=new("HighTemplarSacrificeIcon");
-            Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().assetId=null;
-            Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().endAssetId=null;
-            Sacrifice.behaviors=Sacrifice.behaviors.Add(temp);
-            PsiBolt.weapons[0].projectile.name="HighTemplarPsiBolt";
-            PsiBolt.range=52;
-            PsiBolt.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=2;
-            MindBlast.name="Mind Blast";
-            MindBlast.displayName="Mind Blast";
-            MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=
-                gameModel.towers.First(a=>a.name.Equals("SniperMonkey-500")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-            MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=400;
-            MindBlast.cooldown=5f;
-            MindBlast.icon=new("HighTemplarMindBlastIcon");
-            MindBlast.maxActivationsPerRound=1;
-            HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack Fireball_"));
-            HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
-            return HighTemplar;
+        public class PlasmaSurge:ModUpgrade<HighTemplar>{
+            public override string Name=>"PlasmasSurge";
+            public override string DisplayName=>"Plasma Surge";
+            public override string Description=>"Focuses more power when casting Psi Storms increasing their radius and damage";
+            public override int Cost=>750;
+            public override int Path=>TOP;
+            public override int Tier=>3;
+            public override void ApplyUpgrade(TowerModel HighTemplar){
+                GetUpgradeModel().icon=new("HighTemplarPlasmaSurgeIcon");
+                var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("PsiStorms")).Cast<AttackModel>();
+                PsiStorm.weapons[0].projectile.radius=50;
+                PsiStorm.weapons[0].projectile.GetDamageModel().damage+=1;
+            }
+        }
+        public class Ascendant:ModUpgrade<HighTemplar>{
+            public override string Name=>"Ascendant";
+            public override string DisplayName=>"Ascendant";
+            public override string Description=>"Ascendants are high ranking Tal'darim and have grown very powerful after years of absorbing terrazine";
+            public override int Cost=>750;
+            public override int Path=>TOP;
+            public override int Tier=>4;
+            public override void ApplyUpgrade(TowerModel HighTemplar){
+                GetUpgradeModel().icon=new("HighTemplarAscendantIcon");
+                var PsiOrb=Game.instance.model.towers.First(a=>a.name.Equals("Druid-400")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
+                //i would love to use adoras sacrifice thing but afaik, it would require assembly editing to get it to not crash
+                var Sacrifice=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Clone().Cast<AbilityModel>();
+                //originally was directly copying pats squeeze ability but idfk how to make the bloons not go to the tower and stay on the track
+                var MindBlast=Game.instance.model.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
+                //compiler didn't like me using a enumerator on it, next best thing ig
+                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Weapon"));
+                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Tornado"));
+                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Lightning"));
+                var temp=PsiOrb.weapons[0].projectile.behaviors.GetEnumerator();
+                PsiOrb.name="HighTemplarPsiOrb";
+                Sacrifice.name="Sacrifice";
+                Sacrifice.displayName="Sacrifice";
+                Sacrifice.cooldown=60f;
+                var AtkSpd=Game.instance.model.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Cast<AbilityModel>().behaviors.
+                    First(a=>a.name.Contains("Turbo")).Clone().Cast<TurboModel>();
+                AtkSpd.extraDamage=6;
+                AtkSpd.projectileDisplay.assetPath=null;
+                Sacrifice.icon=new("HighTemplarSacrificeIcon");
+                Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
+                    First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().assetId=null;
+                Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
+                    First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().endAssetId=null;
+                Sacrifice.maxActivationsPerRound=1;
+                Sacrifice.behaviors=Sacrifice.behaviors.Add(AtkSpd);
+                MindBlast.name="MindBlast";
+                MindBlast.displayName="Mind Blast";
+                MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=
+                    Game.instance.model.towers.First(a=>a.name.Equals("SniperMonkey-500")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
+                MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
+                    First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=400;
+                MindBlast.cooldown=80f;
+                MindBlast.icon=new("HighTemplarMindBlastIcon");
+                MindBlast.maxActivationsPerRound=1;
+                HighTemplar.display="HighTemplarAscendantPrefab";
+                HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
+                HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
+            }
+        }
+        public class Jinara:ModUpgrade<HighTemplar>{
+            public override string Name=>"Jinara";
+            public override string DisplayName=>"Ji'nara";
+            public override string Description=>"As the first Ascendant of the Tal'darim, her power is second only to the highlord";
+            public override int Cost=>750;
+            public override int Path=>TOP;
+            public override int Tier=>5;
+            public override void ApplyUpgrade(TowerModel HighTemplar){
+                GetUpgradeModel().icon=new("HighTemplarJinaraPortrait");
+                HighTemplar.portrait=new("HighTemplarJinaraPortrait");
+                HighTemplar.display="HighTemplarJinaraPrefab";
+                var PsiOrb=HighTemplar.behaviors.First(a=>a.name.Contains("PsiOrb")).Cast<AttackModel>();
+                var Sacrifice=HighTemplar.behaviors.First(a=>a.name.Contains("Sacrifice")).Cast<AbilityModel>();
+                var SacrificeAttack=Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
+                SacrificeAttack.behaviors.First(a=>a.name.Contains("Filter")).Cast<AttackFilterModel>();
+                var MindBlast=HighTemplar.behaviors.First(a=>a.name.Contains("MindBlast")).Cast<AbilityModel>();
+                var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("PsiBolt")).Cast<AttackModel>();
+                PsiOrb.weapons[0].rate=0.8f;
+                MindBlast.cooldown=50;
+                Sacrifice.cooldown=40;
+                MindBlast.maxActivationsPerRound=-1;
+                Sacrifice.maxActivationsPerRound=-1;
+                SacrificeAttack.behaviors.First(a=>a.name.Contains("Grapp")).Cast<TargetGrapplableModel>().canHitZomg=true;
+                SacrificeAttack.behaviors=SacrificeAttack.behaviors.Remove(a=>a.name.Contains("AttackFilterModel"));
+            }
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
@@ -210,6 +161,17 @@
                     var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarAscendantPrefab");
                     udn.name="HighTemplar";
                     var a=Assets.LoadAsset("HighTemplarAscendantMaterial");
+                    udn.genericRenderers[0].material=a.Cast<Material>();
+                    udn.RecalculateGenericRenderers();
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarJinaraPrefab")){
+                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarJinaraPrefab");
+                    udn.name="HighTemplar";
+                    var a=Assets.LoadAsset("HighTemplarJinaraMaterial");
                     udn.genericRenderers[0].material=a.Cast<Material>();
                     udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
@@ -247,8 +209,8 @@
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarPortrait")){
-                    var b=Assets.LoadAsset("HighTemplarPortrait");
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarIcon")){
+                    var b=Assets.LoadAsset("HighTemplarIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
@@ -291,6 +253,12 @@
                 }
                 if(reference!=null&&reference.guidRef.Equals("HighTemplarSacrificeIcon")){
                     var b=Assets.LoadAsset("HighTemplarSacrificeIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HighTemplarJinaraPortrait")){
+                    var b=Assets.LoadAsset("HighTemplarJinaraPortrait");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

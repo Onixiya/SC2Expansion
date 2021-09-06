@@ -27,9 +27,10 @@ global using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Extensions;
 global using Assets.Scripts.Unity;
-global using NinjaKiwi.Common;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
+global using Assets.Scripts.Simulation.Towers;
+global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 [assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.1","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -44,11 +45,33 @@ namespace SC2Expansion{
                 HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
             }
             if(TerranEnabled==true){
-                SC2Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.sc2marine);
+                Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
             }
             if(ZergEnabled==true){
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
                 BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
+            }
+        }
+        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {
+            base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
+            if(upgradeName.Contains("Primal")){
+                var Rand=new System.Random();
+                int RandNum=Rand.Next(1,3);
+                if(tower.namedMonkeyKey.Contains("Hydralisk")){
+                    if(RandNum==1){
+                        MelonLogger.Msg(1);
+                        newBaseTowerModel.GetAttackModel().range+=5;
+                        newBaseTowerModel.range=newBaseTowerModel.GetAttackModel().range;
+                    }
+                    if(RandNum==2){
+                        MelonLogger.Msg(2);
+                        newBaseTowerModel.GetAttackModel().weapons[0].rate-=0.2f;
+                    }
+                    if(RandNum==3){
+                        MelonLogger.Msg(3);
+                        newBaseTowerModel.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                    }
+                }
             }
         }
         [HarmonyPatch(typeof(StandardTowerPurchaseButton),nameof(StandardTowerPurchaseButton.UpdateTowerDisplay))]
@@ -58,18 +81,6 @@ namespace SC2Expansion{
                 __instance.bg=__instance.gameObject.GetComponent<Image>();
                 if(__instance.baseTowerModel.emoteSpriteLarge!=null)
                     switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef){
-                        case "Protoss":
-                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
-                            break;
-                        case "Terran":
-                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.TerranContainer));
-                            break;
-                        case "Zerg":
-                            __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ZergContainer));
-                            break;
-                    }
-                if(__instance.baseTowerModel.emoteSpriteSmall!=null)
-                    switch(__instance.baseTowerModel.emoteSpriteSmall.guidRef) {
                         case "Protoss":
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
                             break;
@@ -109,30 +120,10 @@ namespace SC2Expansion{
         public static class GameStart{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                int towersloaded=0;
-                if(ProtossEnabled==true){
-                    towers.Add(HighTemplar.GetTower(__result));
-                    towersloaded++;
-                }
-                if(TerranEnabled==true){
-                    towers.Add(SC2Marine.GetTower(__result));
-                    towersloaded++;
-                }
-                if(ZergEnabled==true){
-                    towers.Add(Hydralisk.GetTower(__result));
-                    towersloaded++;
-                }
                 foreach(var tower in towers){
                     __result.towers=__result.towers.Add(tower.Item3);
                     __result.towerSet=__result.towerSet.Add(tower.Item2);
                     __result.upgrades=__result.upgrades.Add(tower.Item4);
-                }
-                if(towersloaded==0){
-                    MelonLogger.Msg("No towers loaded");
-                }else if(towersloaded==1){
-                    MelonLogger.Msg("1 tower loaded");
-                }else{
-                    MelonLogger.Msg(towersloaded+" towers loaded");
                 }
             }
         }

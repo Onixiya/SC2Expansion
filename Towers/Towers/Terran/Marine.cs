@@ -1,125 +1,145 @@
-﻿//Stuff's called SC2Marine to avoid any potential conflict with the already existing marine
-namespace SC2Expansion.Towers{
-    public class SC2Marine:ModTower{
-        public static string name="Marine "; //Space in the name to avoid messing with the existing marine, closest we get to any conflict
+﻿namespace SC2Expansion.Towers{
+    public class Marine:ModTower{
+        public override string DisplayName=>"Marine";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"SniperMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override string Description=>"Basic soldier with automatic gauss rifle";
-        public override void ModifyBaseTowerModel(TowerModel SC2Marine){
-            SC2Marine.display="SC2MarinePrefab";
-            SC2Marine.portrait=new("SC2MarineIcon");
-            SC2Marine.icon=new("SC2MarineIcon");
-            SC2Marine.emoteSpriteLarge=new("Terran");
-            SC2Marine.radius=5;
-            SC2Marine.cost=400;
-            SC2Marine.range=35;
-            SC2Marine.footprint.ignoresPlacementCheck=true;
-            SC2Marine.cachedThrowMarkerHeight=10;
-            SC2Marine.areaTypes=new(1);
-            SC2Marine.areaTypes[0]=AreaType.land;
-            var Bullet=SC2Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
-            Bullet.weapons[0].name="SC2MarineBullet";
+        public override string Description=>"Basic Terran soldier with automatic gauss rifle";
+        public override void ModifyBaseTowerModel(TowerModel Marine){
+            Marine.display="MarinePrefab";
+            Marine.portrait=new("MarineIcon");
+            Marine.icon=new("MarineIcon");
+            Marine.emoteSpriteLarge=new("Terran");
+            Marine.radius=5;
+            Marine.cost=400;
+            Marine.range=35;
+            var Bullet=Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
+            Bullet.name="MarineBullet";
+            Bullet.weapons[0].name="MarineBullet";
             Bullet.weapons[0].rate=0.25f;
             Bullet.weapons[0].rateFrames=1;
             Bullet.range=35;
             Bullet.weapons[0].projectile.display=null;
-            SC2Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="SC2MarinePrefab";
+            Bullet.weapons[0].projectile.GetDamageModel().damage=1;
+            Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MarinePrefab";
         }
         public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
             return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
         }
-        public class U238Shells:ModUpgrade<SC2Marine> {
+        public class U238Shells:ModUpgrade<Marine>{
             public override string Name=>"U238Shells";
             public override string DisplayName=>"U-238 Shells";
             public override string Description=>"Making the ammunition casing out of depleted Uranium 238 increases range and damage";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>1;
-            public override void ApplyUpgrade(TowerModel SC2Marine){
-                var Bullet=SC2Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
+            public override void ApplyUpgrade(TowerModel Marine){
+                GetUpgradeModel().icon=new("MarineU238ShellsIcon");
+                var Bullet=Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>();
                 Bullet.range=45;
-                Bullet.weapons[0].projectile.behaviors[0].Cast<DamageModel>().damage=2;
+                Bullet.weapons[0].projectile.GetDamageModel().damage=2;
+            }
         }
-        public class LTS:ModUpgrade<SC2Marine> {
+        public class LTS:ModUpgrade<Marine> {
             public override string Name=>"LTS";
-            public override string DisplayName=>"Laser Targetting System";
-            public override string Description=>"Adding laser pointer allows targetting camo bloons and slightly increases range";
+            public override string DisplayName=>"Laser Targeting System";
+            public override string Description=>"Adding a laser pointer allows targetting camo bloons and slightly increases range";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>2;
-            public override void ApplyUpgrade(TowerModel SC2Marine){
-                SC2Marine.range=50;
-                SC2Marine.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>().range=50;
-                SC2Marine.behaviors=SC2Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+            public override void ApplyUpgrade(TowerModel Marine){
+                GetUpgradeModel().icon=new("MarineLaserTargetingSystemIcon");
+                Marine.range=50;
+                Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>().range=50;
+                Marine.behaviors=Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+            }
         }
-        public class Stimpacks:ModUpgrade<SC2Marine> {
+        public class Stimpacks:ModUpgrade<Marine> {
             public override string Name=>"Stimpacks";
             public override string DisplayName=>"Stimpacks";
             public override string Description=>"Stimpacks increase attack speed by 50% for a short while";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>3;
-            public override void ApplyUpgrade(TowerModel SC2Marine){
+            public override void ApplyUpgrade(TowerModel Marine){
+                GetUpgradeModel().icon=new("MarineStimpacksIcon");
                 var Stimpacks=Game.instance.model.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Clone().Cast<AbilityModel>();
                 Stimpacks.name="Stimpacks";
                 Stimpacks.displayName="Stimpacks";
-                Stimpacks.icon=new("SC2MarineStimpacksIcon");
+                Stimpacks.icon=new("MarineStimpacksIcon");
                 Stimpacks.cooldown=40;
                 Stimpacks.maxActivationsPerRound=1;
                 Stimpacks.behaviors.First(a=>a.name.Contains("Turbo")).Cast<TurboModel>().projectileDisplay=null;
-                SC2Marine.behaviors=SC2Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true),Stimpacks);
+                Marine.behaviors=Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true),Stimpacks);
+            }
         }
-        public class Warpig:ModUpgrade<SC2Marine> {
+        public class Warpig:ModUpgrade<Marine> {
             public override string Name=>"Warpig";
             public override string DisplayName=>"Warpig";
-            public override string Description=>"Warpigs use upgraded (Don't ask if its legal) equipment. Increases damage and attack speed";
+            public override string Description=>"Warpig mercenaries use upgraded (Don't ask if its legal) equipment. Increases damage and attack speed";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
-            public override void ApplyUpgrade(TowerModel SC2Marine){
-                SC2Marine.display="SC2MarineWarpigPrefab";
-                SC2Marine.portrait=new("SC2MarineWarpigPortrait");
-                var Bullet=SC2Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
+            public override void ApplyUpgrade(TowerModel Marine){
+                GetUpgradeModel().icon=new("MarineWarpigIcon");
+                Marine.display="MarineWarpigPrefab";
+                Marine.portrait=new("MarineWarpigPortrait");
+                var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
                 Bullet.weapons[0].rate=0.17f;
                 Bullet.weapons[0].projectile.GetDamageModel().damage=3;
+            }
         }
-        public class Tychus:ModUpgrade<SC2Marine> {
-            public override string Name=>"Tychus";
-            public override string DisplayName=>"Tychus Findlay";
-            public override string Description=>"\"I'm a bad man\"";
+        public class Raynor:ModUpgrade<Marine>{
+            public override string Name=>"Raynor";
+            public override string DisplayName=>"James Raynor";
+            public override string Description=>"\"Jimmy here!\"";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>5;
-            public override void ApplyUpgrade(TowerModel SC2Marine){
-                SC2Marine.display="SC2MarineWarpigPrefab";
-                SC2Marine.portrait=new("SC2MarineWarpigPortrait");
-                var Bullet=SC2Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
-                Bullet.weapons[0].rate=0.1f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage=3;
+            public override void ApplyUpgrade(TowerModel Marine){
+                GetUpgradeModel().icon=new("MarineRaynorIcon");
+                Marine.display="MarineRaynorPrefab";
+                Marine.portrait=new("MarineRaynorIcon");
+                var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
+                Bullet.weapons[0].rate=0.13f;
+                Bullet.weapons[0].projectile.GetDamageModel().damage=5;
+                var FragGrenade=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("Attack")).
+                    Clone().Cast<AttackModel>();
+                Marine.AddBehavior(FragGrenade);
+            }
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SC2MarinePrefab")){
-                    var udn=GetSC2Marine(__instance.PrototypeRoot,"SC2MarinePrefab");
-                    udn.name="SC2Marine";
-                    udn.genericRenderers[0].material=Assets.LoadAsset("SC2MarineMaterial").Cast<Material>();
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarinePrefab")){
+                    var udn=GetMarine(__instance.PrototypeRoot,"MarinePrefab");
+                    udn.name="SC2Expansion-Marine";
+                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineMaterial").Cast<Material>();
                     udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
                     return false;
                 }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SC2MarineWarpigPrefab")){
-                    var udn=GetSC2Marine(__instance.PrototypeRoot,"SC2MarineWarpigPrefab");
-                    udn.name="SC2Marine";
-                    udn.genericRenderers[0].material=Assets.LoadAsset("SC2MarineWarpigMaterial").Cast<Material>();
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineWarpigPrefab")){
+                    var udn=GetMarine(__instance.PrototypeRoot,"MarineWarpigPrefab");
+                    udn.name="SC2Expansion-Marine";
+                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineWarpigMaterial").Cast<Material>();
+                    udn.RecalculateGenericRenderers();
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineRaynorPrefab")){
+                    var udn=GetMarine(__instance.PrototypeRoot,"MarineRaynorPrefab");
+                    udn.name="SC2Expansion-Marine";
+                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineRaynorMaterial").Cast<Material>();
                     udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -138,7 +158,7 @@ namespace SC2Expansion.Towers{
             get=>__asset;
             set=>__asset=value;
         }
-        public static UnityDisplayNode GetSC2Marine(Transform transform,string model){
+        public static UnityDisplayNode GetMarine(Transform transform,string model){
             var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
             udn.Active=false;
             udn.transform.position=new(-3000,0);
@@ -156,38 +176,44 @@ namespace SC2Expansion.Towers{
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineIcon")){
-                    var b=Assets.LoadAsset("SC2MarineIcon");
+                if(reference!=null&&reference.guidRef.Equals("MarineIcon")){
+                    var b=Assets.LoadAsset("MarineIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineWarpigPortrait")){
-                    var b=Assets.LoadAsset("SC2MarineWarpigPortrait");
+                if(reference!=null&&reference.guidRef.Equals("MarineWarpigPortrait")){
+                    var b=Assets.LoadAsset("MarineWarpigPortrait");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineWarpigIcon")){
-                    var b=Assets.LoadAsset("SC2MarineWarpigIcon");
+                if(reference!=null&&reference.guidRef.Equals("MarineWarpigIcon")){
+                    var b=Assets.LoadAsset("MarineWarpigIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineU238ShellsIcon")){
-                    var b=Assets.LoadAsset("SC2Marineu238ShellsIcon");
+                if(reference!=null&&reference.guidRef.Equals("MarineU238ShellsIcon")){
+                    var b=Assets.LoadAsset("Marineu238ShellsIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineLaserTargetingSystemIcon")){
-                    var b=Assets.LoadAsset("SC2MarineLaserTargetingSystemIcon");
+                if(reference!=null&&reference.guidRef.Equals("MarineLaserTargetingSystemIcon")){
+                    var b=Assets.LoadAsset("MarineLaserTargetingSystemIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("SC2MarineStimpacksIcon")){
-                    var b=Assets.LoadAsset("SC2MarineStimpacksIcon");
+                if(reference!=null&&reference.guidRef.Equals("MarineStimpacksIcon")){
+                    var b=Assets.LoadAsset("MarineStimpacksIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("MarineRaynorIcon")){
+                    var b=Assets.LoadAsset("MarineRaynorIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

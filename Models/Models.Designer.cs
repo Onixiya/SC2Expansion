@@ -103,9 +103,9 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] sc2marine {
+        internal static byte[] marine {
             get {
-                object obj = ResourceManager.GetObject("sc2marine", resourceCulture);
+                object obj = ResourceManager.GetObject("marine", resourceCulture);
                 return ((byte[])(obj));
             }
         }

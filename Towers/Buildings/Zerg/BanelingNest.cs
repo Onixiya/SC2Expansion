@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Models.Towers.Projectiles;
-
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class BanelingNest:ModTower{
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"WizardMonkey-004";
