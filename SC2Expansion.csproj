@@ -37,8 +37,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="BloonsTD6 Mod Helper">
-      <HintPath>F:\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
+    <Reference Include="BloonsTD6_Mod_Helper, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>F:\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6_Mod_Helper.dll</HintPath>
     </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
@@ -110,6 +111,7 @@
     <None Include="Readme.md" />
     <None Include="Resources\archon.bundle" />
     <None Include="Resources\banelingnest.bundle" />
+    <None Include="Resources\gateway.bundle" />
     <None Include="Resources\hightemplar.bundle" />
     <None Include="Resources\hydralisk.bundle" />
     <Compile Include="Towers\Buildings\Zerg\BanelingNest.cs" />

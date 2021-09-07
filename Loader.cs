@@ -1,4 +1,4 @@
-﻿//saves so much space with global, no need to put separate usings in each file, just put them all in the main one
+﻿//saves so much space with global using, no need to put separate usings in each file, just put them all in the main one
 global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Profile;
 global using Assets.Scripts.Models.Towers;
@@ -42,14 +42,58 @@ namespace SC2Expansion{
         //private static readonly ModSettingBool HeroesEnabled=true;
         public override void OnApplicationStart(){
             if(ProtossEnabled==true){
+                //Adept.Assets=AssetBundle.LoadFromMemory(Models.Models.adept);
+                //Archon.Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
+                //Carrier.Assets=AssetBundle.LoadFromMemory(Models.Models.carrier);
+                //Colossus.Assets=AssetBundle.LoadFromMemory(Models.Models.colossus);
+                //DarkShrine.Assets=AssetBundle.LoadFromMemory(Models.Models.darkshrine);
+                //FleetBeacon.Assets=AssetBundle.LoadFromMemory(Models.Models.fleetbeacon);
+                Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
+                //Immortal.Assets=AssetBundle.LoadFromMemory(Models.Models.immortal);
                 HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
+                //Nexus.Assets=AssetBundle.LoadFromMemory(Models.Models.nexus);
+                //Observer.Assets=AssetBundle.LoadFromMemory(Models.Models.observer);
+                //PhotonCannon.Assets=AssetBundle.LoadFromMemory(Models.Models.photoncannon);
+                //Pylon.Assets=AssetBundle.LoadFromMemory(Models.Models.pylon);
+                //Sentry.Assets=AssetBundle.LoadFromMemory(Models.Models.sentry);
+                //Stalker.Assets=AssetBundle.LoadFromMemory(Models.Models.stalker);
+                //Tempest.Assets=AssetBundle.LoadFromMemory(Models.Models.tempest);
+                //VoidRay.Assets=AssetBundle.LoadFromMemory(Models.Models.voidray);
             }
             if(TerranEnabled==true){
+                //Banshee.Assets=AssetBundle.LoadFromMemory(Models.Models.banshee);
+                //CommandCenter.Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
+                //Cyclone.Assets=AssetBundle.LoadFromMemory(Models.Models.cyclone);
+                //Firebat.Assets=AssetBundle.LoadFromMemory(Models.Models.firebat);
+                //GhostAcademy.Assets=AssetBundle.LoadFromMemory(Models.Models.ghostacademy);
+                //Ghost.Assets=AssetBundle.LoadFromMemory(Models.Models.ghost);
+                //Liberator.Assets=AssetBundle.LoadFromMemory(Models.Models.liberator);
                 Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
+                //Maurader.Assets=AssetBundle.LoadFromMemory(Models.Models.maurader);
+                //MissileTurret.Assets=AssetBundle.LoadFromMemory(Models.Models.missileturret);
+                //raven.Assets=AssetBundle.LoadFromMemory(Models.Models.raven);
+                //Reaper.Assets=AssetBundle.LoadFromMemory(Models.Models.reaper);
+                //SeigeTank.Assets=AssetBundle.LoadFromMemory(Models.Models.seigetank);
+                //Thor.Assets=AssetBundle.LoadFromMemory(Models.Models.thor);
+                //Viking.Assets=AssetBundle.LoadFromMemory(Models.Models.viking);
             }
             if(ZergEnabled==true){
-                Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
                 BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
+                //BroodLord.Assets=AssetBundle.LoadFromMemory(Models.Models.broodlord);
+                //CreepTumor.Assets=AssetBundle.LoadFromMemory(Models.Models.creeptumor);
+                //Defiler.Assets=AssetBundle.LoadFromMemory(Models.Models.defiler);
+                //Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
+                Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
+                //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
+                //Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
+                //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
+                //Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
+                //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
+                //SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
+                //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
+                //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
+                //SwarmHost.Assets=AssetBundle.LoadFromMemory(Models.Models.swarmhost);
+                //UltraliskCavern.Assets=AssetBundle.LoadFromMemory(Models.Models.ultraliskcavern);
             }
         }
         public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {

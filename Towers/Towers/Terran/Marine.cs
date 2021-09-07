@@ -29,6 +29,16 @@
         public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
             return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
         }
+        //not being used rn bc this loads the asset bundle differently then how the icons and portraits need it, i'll enable it whenever the hell i get around to
+        //getting everything fully done in mod helper but for now, disabled
+        /*public class MarineDisplay:ModTowerCustomDisplay<Marine>{
+            public override string AssetBundleName=>"marine";
+            public override string PrefabName=>"MarinePrefab";
+            public override string MaterialName=>"MarineMaterial";
+            public override bool UseForTower(int[] tiers){
+                return tiers.Sum()==0;
+            }
+        }*/
         public class U238Shells:ModUpgrade<Marine>{
             public override string Name=>"U238Shells";
             public override string DisplayName=>"U-238 Shells";
@@ -119,8 +129,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("MarinePrefab")){
                     var udn=GetMarine(__instance.PrototypeRoot,"MarinePrefab");
                     udn.name="SC2Expansion-Marine";
-                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineMaterial").Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -129,8 +137,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineWarpigPrefab")){
                     var udn=GetMarine(__instance.PrototypeRoot,"MarineWarpigPrefab");
                     udn.name="SC2Expansion-Marine";
-                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineWarpigMaterial").Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -139,8 +145,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineRaynorPrefab")){
                     var udn=GetMarine(__instance.PrototypeRoot,"MarineRaynorPrefab");
                     udn.name="SC2Expansion-Marine";
-                    udn.genericRenderers[0].material=Assets.LoadAsset("MarineRaynorMaterial").Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);

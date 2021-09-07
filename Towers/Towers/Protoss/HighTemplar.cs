@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override string Description=>"Ranged Protoss Caster";
+        public override string Description=>"High ranking ranged Protoss Caster";
         public override void ModifyBaseTowerModel(TowerModel HighTemplar){
             HighTemplar.display="HighTemplarPrefab";
             HighTemplar.portrait=new("HighTemplarIcon");
@@ -18,11 +18,13 @@
             var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
             PsiBolt.name="HighTemplarPsiBolt";
             PsiBolt.range=40;
+            PsiBolt.weapons[0].projectile.GetDamageModel().damage=2;
             HighTemplar.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HighTemplarPrefab";
         }
         public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
             return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
         }
+        //Ik the khala isn't used now but for some weird reason, blender didn't like the nerve cords and just deleted it
         public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
             public override string Name=>"KhaydarinAmulet";
             public override string DisplayName=>"Khaydarin Amulet";
@@ -81,6 +83,8 @@
                 var Sacrifice=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Clone().Cast<AbilityModel>();
                 //originally was directly copying pats squeeze ability but idfk how to make the bloons not go to the tower and stay on the track
                 var MindBlast=Game.instance.model.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
+                var MindBlastAttack=MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
+                var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("PsiBolt")).Cast<AttackModel>();
                 //compiler didn't like me using a enumerator on it, next best thing ig
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Weapon"));
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Tornado"));
@@ -105,11 +109,11 @@
                 MindBlast.displayName="Mind Blast";
                 MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=
                     Game.instance.model.towers.First(a=>a.name.Equals("SniperMonkey-500")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-                MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                    First(a=>a.name.Contains("DamageModel")).Cast<DamageModel>().damage=400;
+                MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=120;
                 MindBlast.cooldown=80f;
                 MindBlast.icon=new("HighTemplarMindBlastIcon");
                 MindBlast.maxActivationsPerRound=1;
+                PsiBolt.weapons[0].projectile.GetDamageModel().damage=5;
                 HighTemplar.display="HighTemplarAscendantPrefab";
                 HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
                 HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
@@ -129,16 +133,19 @@
                 var PsiOrb=HighTemplar.behaviors.First(a=>a.name.Contains("PsiOrb")).Cast<AttackModel>();
                 var Sacrifice=HighTemplar.behaviors.First(a=>a.name.Contains("Sacrifice")).Cast<AbilityModel>();
                 var SacrificeAttack=Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
-                SacrificeAttack.behaviors.First(a=>a.name.Contains("Filter")).Cast<AttackFilterModel>();
                 var MindBlast=HighTemplar.behaviors.First(a=>a.name.Contains("MindBlast")).Cast<AbilityModel>();
+                var MindBlastAttack=MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
                 var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("PsiBolt")).Cast<AttackModel>();
                 PsiOrb.weapons[0].rate=0.8f;
                 MindBlast.cooldown=50;
-                Sacrifice.cooldown=40;
+                Sacrifice.cooldown=50;
                 MindBlast.maxActivationsPerRound=-1;
                 Sacrifice.maxActivationsPerRound=-1;
                 SacrificeAttack.behaviors.First(a=>a.name.Contains("Grapp")).Cast<TargetGrapplableModel>().canHitZomg=true;
                 SacrificeAttack.behaviors=SacrificeAttack.behaviors.Remove(a=>a.name.Contains("AttackFilterModel"));
+                MindBlast.cooldown=40;
+                MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=400;
+                PsiBolt.weapons[0].projectile.GetDamageModel().damage=40;
             }
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
