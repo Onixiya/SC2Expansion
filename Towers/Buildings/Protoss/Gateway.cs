@@ -1,4 +1,4 @@
-﻿namespace SC2Expansion.Towers{
+﻿/*namespace SC2Expansion.Towers{
     public class Gateway:ModTower{
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"WizardMonkey-004";
@@ -238,4 +238,4 @@
             }
         }
     }
-}
+}*/
