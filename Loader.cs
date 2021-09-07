@@ -48,7 +48,7 @@ namespace SC2Expansion{
                 //Colossus.Assets=AssetBundle.LoadFromMemory(Models.Models.colossus);
                 //DarkShrine.Assets=AssetBundle.LoadFromMemory(Models.Models.darkshrine);
                 //FleetBeacon.Assets=AssetBundle.LoadFromMemory(Models.Models.fleetbeacon);
-                Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
+                //Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
                 //Immortal.Assets=AssetBundle.LoadFromMemory(Models.Models.immortal);
                 HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
                 //Nexus.Assets=AssetBundle.LoadFromMemory(Models.Models.nexus);
