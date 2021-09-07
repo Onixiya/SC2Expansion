@@ -35,7 +35,7 @@ global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 [assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.1","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
-        //public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
+        public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
         public static readonly ModSettingBool ProtossEnabled=true;
         public static readonly ModSettingBool TerranEnabled=true;
         public static readonly ModSettingBool ZergEnabled=true;
