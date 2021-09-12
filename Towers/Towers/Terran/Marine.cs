@@ -23,7 +23,7 @@
             Bullet.weapons[0].rateFrames=1;
             Bullet.range=35;
             Bullet.weapons[0].projectile.display=null;
-            Bullet.weapons[0].projectile.GetDamageModel().damage=1;
+            Bullet.weapons[0].projectile.GetDamageModel().damage=2.5f;
             Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MarinePrefab";
         }
         public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
@@ -50,10 +50,11 @@
                 GetUpgradeModel().icon=new("MarineU238ShellsIcon");
                 var Bullet=Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>();
                 Bullet.range=45;
-                Bullet.weapons[0].projectile.GetDamageModel().damage=2;
+                Marine.range=Bullet.range;
+                Bullet.weapons[0].projectile.GetDamageModel().damage+=1;
             }
         }
-        public class LTS:ModUpgrade<Marine> {
+        public class LTS:ModUpgrade<Marine>{
             public override string Name=>"LTS";
             public override string DisplayName=>"Laser Targeting System";
             public override string Description=>"Adding a laser pointer allows targetting camo bloons and slightly increases range";
@@ -62,12 +63,13 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineLaserTargetingSystemIcon");
-                Marine.range=50;
-                Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>().range=50;
+                var Bullet=Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>();
+                Bullet.range=50;
+                Marine.range=Bullet.range;
                 Marine.behaviors=Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             }
         }
-        public class Stimpacks:ModUpgrade<Marine> {
+        public class Stimpacks:ModUpgrade<Marine>{
             public override string Name=>"Stimpacks";
             public override string DisplayName=>"Stimpacks";
             public override string Description=>"Stimpacks increase attack speed by 50% for a short while";
@@ -82,11 +84,12 @@
                 Stimpacks.icon=new("MarineStimpacksIcon");
                 Stimpacks.cooldown=40;
                 Stimpacks.maxActivationsPerRound=1;
+                Stimpacks.behaviors.First(a=>a.name.Contains("Turbo")).Cast<TurboModel>().extraDamage=0;
                 Stimpacks.behaviors.First(a=>a.name.Contains("Turbo")).Cast<TurboModel>().projectileDisplay=null;
-                Marine.behaviors=Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true),Stimpacks);
+                Marine.behaviors=Marine.behaviors.Add(Stimpacks);
             }
         }
-        public class Warpig:ModUpgrade<Marine> {
+        public class Warpig:ModUpgrade<Marine>{
             public override string Name=>"Warpig";
             public override string DisplayName=>"Warpig";
             public override string Description=>"Warpig mercenaries use upgraded (Don't ask if its legal) equipment. Increases damage and attack speed";
@@ -99,14 +102,14 @@
                 Marine.portrait=new("MarineWarpigPortrait");
                 var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
                 Bullet.weapons[0].rate=0.17f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage=3;
+                Bullet.weapons[0].projectile.GetDamageModel().damage+=1.5f;
             }
         }
         public class Raynor:ModUpgrade<Marine>{
             public override string Name=>"Raynor";
             public override string DisplayName=>"James Raynor";
             public override string Description=>"\"Jimmy here!\"";
-            public override int Cost=>750;
+            public override int Cost=>9000;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Marine){
@@ -115,7 +118,7 @@
                 Marine.portrait=new("MarineRaynorIcon");
                 var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
                 Bullet.weapons[0].rate=0.13f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage=5;
+                Bullet.weapons[0].projectile.GetDamageModel().damage+=3;
                 var FragGrenade=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("Attack")).
                     Clone().Cast<AttackModel>();
                 Marine.AddBehavior(FragGrenade);

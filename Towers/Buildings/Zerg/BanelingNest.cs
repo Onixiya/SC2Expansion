@@ -15,9 +15,6 @@
             BanelingNest.emoteSpriteSmall=new("Zerg");
             BanelingNest.radius=11.5f;
             BanelingNest.range=15;
-            BanelingNest.towerSize=TowerModel.TowerSize.XL;
-            BanelingNest.areaTypes=new(1);
-            BanelingNest.areaTypes[0]=AreaType.land;
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Shimmer"));
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
             var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();

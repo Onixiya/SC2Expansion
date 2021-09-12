@@ -83,6 +83,16 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] battlecruiser {
+            get {
+                object obj = ResourceManager.GetObject("battlecruiser", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] gateway {
             get {
                 object obj = ResourceManager.GetObject("gateway", resourceCulture);
@@ -116,6 +126,16 @@ namespace SC2Expansion.Models {
         internal static byte[] marine {
             get {
                 object obj = ResourceManager.GetObject("marine", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mutalisk {
+            get {
+                object obj = ResourceManager.GetObject("mutalisk", resourceCulture);
                 return ((byte[])(obj));
             }
         }

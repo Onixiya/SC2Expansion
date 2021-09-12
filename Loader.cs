@@ -31,8 +31,9 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-[assembly: MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly: MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.1","Silentstorm#5336")]
+global using Assets.Scripts.Simulation.Towers.Behaviors.Attack.Behaviors;
+[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.2","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
@@ -48,7 +49,7 @@ namespace SC2Expansion{
                 //Colossus.Assets=AssetBundle.LoadFromMemory(Models.Models.colossus);
                 //DarkShrine.Assets=AssetBundle.LoadFromMemory(Models.Models.darkshrine);
                 //FleetBeacon.Assets=AssetBundle.LoadFromMemory(Models.Models.fleetbeacon);
-                //Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
+                Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
                 //Immortal.Assets=AssetBundle.LoadFromMemory(Models.Models.immortal);
                 HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
                 //Nexus.Assets=AssetBundle.LoadFromMemory(Models.Models.nexus);
@@ -62,6 +63,7 @@ namespace SC2Expansion{
             }
             if(TerranEnabled==true){
                 //Banshee.Assets=AssetBundle.LoadFromMemory(Models.Models.banshee);
+                Battlecruiser.Assets=AssetBundle.LoadFromMemory(Models.Models.battlecruiser);
                 //CommandCenter.Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
                 //Cyclone.Assets=AssetBundle.LoadFromMemory(Models.Models.cyclone);
                 //Firebat.Assets=AssetBundle.LoadFromMemory(Models.Models.firebat);
@@ -85,7 +87,7 @@ namespace SC2Expansion{
                 //Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
                 //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
-                //Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
+                Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
                 //Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
                 //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
@@ -93,7 +95,7 @@ namespace SC2Expansion{
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
                 //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
                 //SwarmHost.Assets=AssetBundle.LoadFromMemory(Models.Models.swarmhost);
-                //UltraliskCavern.Assets=AssetBundle.LoadFromMemory(Models.Models.ultraliskcavern);
+                //Ultralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.ultralisk);
             }
         }
         public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {
@@ -103,17 +105,38 @@ namespace SC2Expansion{
                 int RandNum=Rand.Next(1,3);
                 if(tower.namedMonkeyKey.Contains("Hydralisk")){
                     if(RandNum==1){
-                        MelonLogger.Msg(1);
                         newBaseTowerModel.GetAttackModel().range+=5;
                         newBaseTowerModel.range=newBaseTowerModel.GetAttackModel().range;
                     }
                     if(RandNum==2){
-                        MelonLogger.Msg(2);
                         newBaseTowerModel.GetAttackModel().weapons[0].rate-=0.2f;
                     }
                     if(RandNum==3){
-                        MelonLogger.Msg(3);
                         newBaseTowerModel.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                    }
+                }
+                if(tower.namedMonkeyKey.Contains("Mutalisk")){
+                    if(RandNum==1){
+                        newBaseTowerModel.GetAttackModel().range+=8;
+                        newBaseTowerModel.range=newBaseTowerModel.GetAttackModel().range;
+                    }
+                    if(RandNum==2){
+                        newBaseTowerModel.GetAttackModel().weapons[0].rate-=0.25f;
+                    }
+                    if(RandNum==3){
+                        newBaseTowerModel.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
+                    }
+                }
+                if(tower.namedMonkeyKey.Contains("Ultralisk")){
+                    if(RandNum==1){
+                        newBaseTowerModel.GetAttackModel().range+=8;
+                        newBaseTowerModel.range=newBaseTowerModel.GetAttackModel().range;
+                    }
+                    if(RandNum==2){
+                        newBaseTowerModel.GetAttackModel().weapons[0].rate-=0.25f;
+                    }
+                    if(RandNum==3){
+                        newBaseTowerModel.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
                     }
                 }
             }

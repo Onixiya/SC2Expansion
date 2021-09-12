@@ -117,7 +117,7 @@
         }
         //see loader.cs for the main code on this one
         public class Primal:ModUpgrade<Hydralisk>{
-            public override string Name=>"Primal";
+            public override string Name=>"HydraliskPrimal";
             public override string DisplayName=>"Primal Evolution";
             public override string Description=>"Gains a random bonus to attack speed, damage or range";
             public override int Cost=>750;
@@ -177,9 +177,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskPrefab")){
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -188,9 +185,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskLurkerPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskLurkerPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskLurkerMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -199,9 +193,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskLurkerSpinesPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskLurkerSpinesPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskLurkerMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -210,9 +201,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskPrimalPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskPrimalPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskPrimalMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -221,9 +209,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskImpalerPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskImpalerPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskImpalerMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -232,9 +217,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskImpalerAttackPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskImpalerAttackPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskImpalerAttackMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -243,9 +225,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskHunterKillerPrefab")) {
                     var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskHunterKillerPrefab");
                     udn.name="Hydralisk";
-                    var a=Assets.LoadAsset("HydraliskHunterKillerMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);

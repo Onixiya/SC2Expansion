@@ -106,19 +106,23 @@
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
+    <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="Readme.md" />
     <None Include="Resources\archon.bundle" />
     <None Include="Resources\banelingnest.bundle" />
+    <None Include="Resources\battlecruiser.bundle" />
     <None Include="Resources\gateway.bundle" />
     <None Include="Resources\hightemplar.bundle" />
     <None Include="Resources\hydralisk.bundle" />
     <Compile Include="Towers\Buildings\Zerg\BanelingNest.cs" />
     <Compile Include="Towers\Towers\Protoss\HighTemplar.cs" />
+    <Compile Include="Towers\Towers\Terran\Battlecruiser.cs" />
     <Compile Include="Towers\Towers\Zerg\Hydralisk.cs" />
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
     <None Include="Resources\marine.bundle" />
+    <None Include="Resources\mutalisk.bundle" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 10.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 11.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 12.json" />
@@ -1814,6 +1818,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="temp.txt" />
+    <Content Include="temp1.txt" />
     <Content Include="Towers\Towerplans.txt" />
     <None Include="Resources\ProtossContainer.png" />
     <None Include="Resources\TerranContainer.png" />

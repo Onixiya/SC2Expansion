@@ -7,4 +7,5 @@ obj
 Towers/Towerplans.txt
 TowerJSON
 Decompilation
-temp.txt
+tem*.txt
+*.unitypackage

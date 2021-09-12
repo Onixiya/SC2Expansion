@@ -50,7 +50,7 @@
                 GetUpgradeModel().icon=new("HighTemplarPsiStormIcon");
                 var PsiStorm=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-020")).behaviors.First(a=>a.name.Contains("Wall")).Clone().Cast<AttackModel>();
                 PsiStorm.name="PsiStorms";
-                //PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
+                PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
                 PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
                 HighTemplar.AddBehavior(PsiStorm);
             }
@@ -156,9 +156,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarPrefab")){
                     var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarPrefab");
                     udn.name="HighTemplar";
-                    var a=Assets.LoadAsset("HighTemplarMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -167,9 +164,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarAscendantPrefab")){
                     var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarAscendantPrefab");
                     udn.name="HighTemplar";
-                    var a=Assets.LoadAsset("HighTemplarAscendantMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -178,9 +172,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarJinaraPrefab")){
                     var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarJinaraPrefab");
                     udn.name="HighTemplar";
-                    var a=Assets.LoadAsset("HighTemplarJinaraMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
