@@ -163,7 +163,7 @@ namespace SC2Expansion.Towers{
                 Mutalisk.display="MutaliskBroodLordPrefab";
                 var Glaive=Mutalisk.behaviors.First(a=>a.name.Contains("Glaive")).Cast<AttackModel>();
                 Glaive.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.
-                    Contains("AttackModel_Attack Necromancer_")).Cast<AttackModel>().weapons[0].projectile;
+                    Contains("AttackModel_Attack Necromancer_")).Clone().Cast<AttackModel>().weapons[0].projectile;
                 Glaive.weapons[0].projectile.pierce=5;
                 Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>().disableRotateWithPathDirection=false;
                 Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>().speedFrames=0.6f;

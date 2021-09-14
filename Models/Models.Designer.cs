@@ -139,5 +139,15 @@ namespace SC2Expansion.Models {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] voidray {
+            get {
+                object obj = ResourceManager.GetObject("voidray", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

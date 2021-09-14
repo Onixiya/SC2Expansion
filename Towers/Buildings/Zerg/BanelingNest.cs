@@ -1,7 +1,7 @@
 ﻿namespace SC2Expansion.Towers{
     public class BanelingNest:ModTower{
         public override string TowerSet=>PRIMARY;
-        public override string BaseTower=>"WizardMonkey-004";
+        public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
@@ -13,27 +13,23 @@
             BanelingNest.icon=new("BanelingNestIcon");
             BanelingNest.emoteSpriteLarge=new("Zerg");
             BanelingNest.emoteSpriteSmall=new("Zerg");
-            BanelingNest.radius=11.5f;
+            BanelingNest.radius=20;
             BanelingNest.range=15;
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Shimmer"));
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
-            var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
-            var SpawnBanelingsZone=BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>();
-            //Cloning the 005 wizards moab track path model thing as that actually tracks what way the track is going so the banelings don't all look in one direction
-            var GhostMoabPath=Game.instance.model.GetTowerFromId("WizardMonkey-005").Cast<TowerModel>().behaviors.
-                First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Clone().Cast<AttackModel>().weapons[1].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>();
-            SpawnBanelings.weapons[0].projectile.behaviors=SpawnBanelings.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("Path"));
-            SpawnBanelings.weapons[0].projectile.behaviors=SpawnBanelings.weapons[0].projectile.behaviors.Add(GhostMoabPath);
-            SpawnBanelings.weapons[0].projectile.display="BanelingNestBanelingPrefab";
-            SpawnBanelings.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeStored=2147483646;
-            //Pierce acts as the hp for the unit here, setting it really low 'cus banelings aren't exactly the sorta thing you reuse after they've attacked
-            SpawnBanelings.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=1;
-            SpawnBanelings.weapons[0].rate=4.5f;
-            SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=2147483646;
-            SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=4;
-            SpawnBanelings.name="SpawnBanelings";
-            SpawnBanelingsZone.attackUsedForRangeModel.range=500;
-            SpawnBanelingsZone.name="SpawnBanelingsZone";
+            BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Buff"));
+            var SpawnBaneling=BanelingNest.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            SpawnBaneling.weapons[1].projectile.display="BanelingNestBanelingPrefab";
+            SpawnBaneling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
+            SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=1;
+            SpawnBaneling.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
+            SpawnBaneling.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+            SpawnBaneling.weapons[1].projectile.GetDamageModel().damage=3;
+            SpawnBaneling.weapons[1].projectile.radius=4;
+            SpawnBaneling.name="SpawnBaneling";
+            SpawnBaneling.weapons[1].projectile.pierce=1;
+            SpawnBaneling.weapons[1].rate=1.7f;
+            BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BanelingNestPrefab";
         }
         public override int GetTowerIndex(List<TowerDetailsModel> towerSet) {
@@ -48,7 +44,7 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestCentrifugalHooksIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBanelings")).Cast<AttackModel>();
+                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
                 SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.7f;
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBanelingRollPrefab";
             }
@@ -62,7 +58,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestRuptureIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBanelings")).Cast<AttackModel>();
+                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
                 SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=6;
                 SpawnBanelings.weapons[0].projectile.radius=7;
             }
@@ -76,7 +72,7 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestCorrosiveAcidIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBanelings")).Cast<AttackModel>();
+                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
                 SpawnBanelings.weapons[0].projectile.behaviors=SpawnBanelings.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.
                     First(a=>a.name.Contains("EngineerMonkey-030")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>()
                     .weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")));
@@ -96,8 +92,8 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestRateIncreaseIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBanelings")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].rate=2;
+                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
+                SpawnBanelings.weapons[0].rate=1.15f;
                 SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=9;
             }
         }
@@ -110,11 +106,11 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestKaboomerIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBanelings")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.4f;
-                SpawnBanelings.weapons[0].rate=6;
-                SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=100;
-                SpawnBanelings.weapons[0].projectile.display="BanelingNestKaboomerPrefab";
+                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
+                SpawnBanelings.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.5f;
+                SpawnBanelings.weapons[1].rate=3.25f;
+                SpawnBanelings.weapons[1].projectile.GetDamageModel().damage=100;
+                SpawnBanelings.weapons[1].projectile.display="BanelingNestKaboomerPrefab";
             }
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]

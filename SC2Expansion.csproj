@@ -123,6 +123,7 @@
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
     <None Include="Resources\marine.bundle" />
     <None Include="Resources\mutalisk.bundle" />
+    <None Include="Resources\voidray.bundle" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 10.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 11.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 12.json" />

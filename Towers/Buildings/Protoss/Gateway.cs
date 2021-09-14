@@ -1,7 +1,7 @@
 ﻿namespace SC2Expansion.Towers{
     public class Gateway:ModTower{
         public override string TowerSet=>PRIMARY;
-        public override string BaseTower=>"WizardMonkey-004";
+        public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
@@ -16,27 +16,25 @@
             Gateway.range=31;
             Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Shimmer"));
             Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
+            Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Buff"));
             var ZealotWarp=Gateway.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
-            var ZealotWarpZone=Gateway.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>();
-            var GhostMoabPath=Game.instance.model.GetTowerFromId("WizardMonkey-005").Cast<TowerModel>().behaviors.
-                First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Clone().Cast<AttackModel>().weapons[1].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>();
-            GhostMoabPath.speedFrames=0.5f;
-            ZealotWarp.weapons[0].projectile.behaviors=ZealotWarp.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("Path"));
-            ZealotWarp.weapons[0].projectile.behaviors=ZealotWarp.weapons[0].projectile.behaviors.Add(GhostMoabPath);
-            ZealotWarp.weapons[0].projectile.display="GatewayZealotPrefab";
-            ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeStored=2147483646;
-            ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=40;
-            ZealotWarp.weapons[0].rate=5.5f;
-            ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=2147483646;
-            ZealotWarp.weapons[0].projectile.GetDamageModel().damage=2;
-            ZealotWarp.weapons[0].projectile.radius=5;
+            ZealotWarp.weapons[1].projectile.display="GatewayZealotPrefab";
+            ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=3;
+            //tried removing the first weapon entirely, it didn't like it at all and kept crashing, setting maxrbespawned prevents the normal necrobloons from spawning at all
+            ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
+            ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
+            ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.525f;
+            ZealotWarp.weapons[1].projectile.GetDamageModel().damage=2;
+            ZealotWarp.weapons[1].projectile.radius=5;
             ZealotWarp.name="ZealotWarp";
-            ZealotWarpZone.attackUsedForRangeModel.range=999;
-            ZealotWarpZone.name="ZealotWarpZone";
+            ZealotWarp.weapons[1].projectile.pierce=3;
+            ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=ZealotWarp.weapons[1].projectile;
+            ZealotWarp.weapons[1].rate=4.7f;
+            Gateway.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             Gateway.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="GatewayPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel> towerSet) {
-            return towerSet.First(model => model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
+        public override int GetTowerIndex(List<TowerDetailsModel> towerSet){
+            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
         }
         public class Charge:ModUpgrade<Gateway> {
             public override string Name=>"Charge";
@@ -48,7 +46,7 @@
             public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewayChargeIcon");
                 var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.9f;
+                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.9f;
             }
         }
         public class Solarite:ModUpgrade<Gateway> {
@@ -61,10 +59,9 @@
             public override void ApplyUpgrade(TowerModel Gateway) {
                 GetUpgradeModel().icon=new("GatewaySolariteIcon");
                 var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[0].projectile.GetDamageModel().damage=6;
-                ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=50;
-                ZealotWarp.weapons[0].projectile.radius=8;
-                ZealotWarp.weapons[0].projectile.display="GatewaySolaritePrefab";
+                ZealotWarp.weapons[1].projectile.GetDamageModel().damage=5;
+                ZealotWarp.weapons[1].projectile.radius=8;
+                ZealotWarp.weapons[1].projectile.display="GatewaySolaritePrefab";
             }
         }
         public class Sentinel:ModUpgrade<Gateway> {
@@ -78,9 +75,10 @@
                 GetUpgradeModel().icon=new("GatewaySentinelIcon");
                 Gateway.display="GatewayPurifierPrefab";
                 var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=350;
-                ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=120;
-                ZealotWarp.weapons[0].projectile.display="GatewaySentinelPrefab";
+                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=350;
+                ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=13;
+                ZealotWarp.weapons[1].projectile.pierce=13;
+                ZealotWarp.weapons[1].projectile.display="GatewaySentinelPrefab";
             }
         }
         public class Legionnaire:ModUpgrade<Gateway> {
@@ -93,10 +91,11 @@
             public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewayLegionnaireIcon");
                 var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=550;
-                ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=160;
-                ZealotWarp.weapons[0].projectile.GetDamageModel().damage=25;
-                ZealotWarp.weapons[0].projectile.display="GatewayLegionnairePrefab";
+                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=550;
+                ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=25;
+                ZealotWarp.weapons[1].projectile.GetDamageModel().damage=10;
+                ZealotWarp.weapons[1].projectile.pierce=25;
+                ZealotWarp.weapons[1].projectile.display="GatewayLegionnairePrefab";
             }
         }
         public class Kaldalis:ModUpgrade<Gateway>{
@@ -110,12 +109,13 @@
                 //i really need to figure out what that ring thing is on the back of hero purifier units and how it works, would be fucking amazing for this
                 GetUpgradeModel().icon=new("GatewayKaldalisIcon");
                 var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=2147483646;
-                ZealotWarp.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=1.1f;
-                ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=600;
-                ZealotWarp.weapons[0].rate=6;
-                ZealotWarp.weapons[0].projectile.GetDamageModel().damage=80;
-                //ZealotWarp.weapons[0].projectile.display="GatewayKaldalisPrefab";
+                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
+                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=1.1f;
+                ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=50;
+                ZealotWarp.weapons[1].rate=6;
+                ZealotWarp.weapons[1].projectile.pierce=50;
+                ZealotWarp.weapons[1].projectile.GetDamageModel().damage=35;
+                ZealotWarp.weapons[1].projectile.display="GatewayKaldalisPrefab";
             }
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
