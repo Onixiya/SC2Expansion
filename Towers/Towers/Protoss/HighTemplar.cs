@@ -263,29 +263,5 @@
                 }
             }
         }
-        /*[HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
-        [HarmonyPrefix]
-        public static void Prefix(ref Weapon __instance)=>RunAnimations(__instance);
-        private static async Task RunAnimations(Weapon __instance){
-                MelonLogger.Msg("test");
-                var temp=__instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().runtimeAnimatorController.animationClips.GetEnumerator();
-                while(temp.MoveNext()){
-                    MelonLogger.Msg("name: "+temp.Current.name);
-                }
-                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("Armature Object|Armature ObjectSpell");
-                MelonLogger.Msg("test1");
-                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",true);
-                var wait=2300f;
-                await Task.Run(()=>{
-                    while(wait>0){
-                        wait-=TimeManager.timeScaleWithoutNetwork+1;
-                        Task.Delay(1);
-                    }
-                    return;
-                });
-                __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",false);
-            }
-        }*/
     }
 }

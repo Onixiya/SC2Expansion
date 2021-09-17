@@ -106,6 +106,7 @@
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
+    <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
@@ -124,6 +125,7 @@
     <None Include="Resources\marine.bundle" />
     <None Include="Resources\mutalisk.bundle" />
     <None Include="Resources\voidray.bundle" />
+    <None Include="temp.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 10.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 11.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 12.json" />
@@ -1815,15 +1817,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include=".gitignore" />
-    <Content Include="temp.txt" />
-    <Content Include="temp1.txt" />
-    <Content Include="Towers\Towerplans.txt" />
+    <None Include=".gitignore" />
+    <None Include="Towers\Towerplans.txt" />
     <None Include="Resources\ProtossContainer.png" />
     <None Include="Resources\TerranContainer.png" />
-    <Content Include="Resources\ZergContainer.png" />
+    <None Include="Resources\ZergContainer.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Models\Models.resx">
@@ -1844,5 +1842,4 @@
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetFileName)" "F:\Steam\steamapps\common\BloonsTD6\Mods\$(TargetFileName)" /y &gt;NUL</PostBuildEvent>
   </PropertyGroup>
-  <!-- Anyone who tries to copy my code (Matthew from 1330 Studios LLC) has a small pp -->
 </Project>
