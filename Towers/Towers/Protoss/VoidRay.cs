@@ -4,7 +4,7 @@
         public override string TowerSet=>MAGIC;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>1900;
-        public override int TopPathUpgrades=>4;
+        public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override string Description=>"Flying Protoss ranged craft. Deals double damage against Moab's";
@@ -22,7 +22,7 @@
             VoidRay.areaTypes[3]=AreaType.water;
             var Beam=VoidRay.GetAttackModel();
             Beam.weapons[0]=Game.instance.model.towers.First(a=>a.name.Contains("Adora 10")).behaviors.First(a=>a.name.Contains("Ball")).Cast<AbilityModel>().behaviors.
-                First(a=>a.name.Contains("CreateTower")).Cast<AbilityCreateTowerModel>().towerModel.GetAttackModel().weapons[0];
+                First(a=>a.name.Contains("CreateTower")).Cast<AbilityCreateTowerModel>().towerModel.GetAttackModel().weapons[0].Duplicate();
             Beam.name="VoidRayBeam";
             Beam.range=VoidRay.range;
             Beam.weapons[0].projectile.GetDamageModel().damage=1.5f;
@@ -30,7 +30,7 @@
             Beam.weapons[0].rate=0.1f;
             Beam.weapons[0].projectile.behaviors=Beam.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).GetAttackModel().
                     weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProjectile")).Cast<CreateProjectileOnContactModel>().projectile.behaviors.First(a=>a.name.
-                    Contains("DamageModifierForTag")));
+                    Contains("DamageModifierForTag")).Duplicate());
             Beam.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>().damageAddative=0;
             Beam.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>().damageMultiplier=2;
             VoidRay.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="VoidRayPrefab";
@@ -94,7 +94,7 @@
                 var Shards=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).GetAttackModel().Duplicate();
                 VoidRay.behaviors=VoidRay.behaviors.Add();
                 Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile=
-                    Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().weapons[0].projectile;
+                    Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().weapons[0].projectile.Duplicate();
                 Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile.behaviors.First(a=>a.name.
                     Contains("Damage")).Cast<DamageModel>().immuneBloonProperties=0;
                 var ShardsProj=Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile;

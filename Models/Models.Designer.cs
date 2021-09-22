@@ -93,6 +93,16 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] commandcenter {
+            get {
+                object obj = ResourceManager.GetObject("commandcenter", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] gateway {
             get {
                 object obj = ResourceManager.GetObject("gateway", resourceCulture);

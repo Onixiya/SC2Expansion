@@ -106,7 +106,7 @@
                 Hydralisk.radius=10;
                 Hydralisk.behaviors=Hydralisk.behaviors.Remove(a=>a.name.Contains("Attack"));
                 Hydralisk.behaviors=Hydralisk.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-030")).Cast<TowerModel>().
-                behaviors.First(a=>a.name.Contains("Dragon")).Clone().Cast<AttackModel>());
+                    behaviors.First(a=>a.name.Contains("Dragon")).Clone().Cast<AttackModel>());
                 var Spines=Hydralisk.behaviors.First(a=>a.name.Equals("HydraliskSpine")).Cast<AttackModel>();
                 Spines.range+=10;
                 Hydralisk.range=Spines.range;

@@ -31,6 +31,7 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
+global using Assets.Scripts.Models.Bloons.Behaviors;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.3","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -63,7 +64,7 @@ namespace SC2Expansion{
             if(TerranEnabled==true){
                 //Banshee.Assets=AssetBundle.LoadFromMemory(Models.Models.banshee);
                 Battlecruiser.Assets=AssetBundle.LoadFromMemory(Models.Models.battlecruiser);
-                //CommandCenter.Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
+                CommandCenter.Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
                 //Cyclone.Assets=AssetBundle.LoadFromMemory(Models.Models.cyclone);
                 //Firebat.Assets=AssetBundle.LoadFromMemory(Models.Models.firebat);
                 //GhostAcademy.Assets=AssetBundle.LoadFromMemory(Models.Models.ghostacademy);

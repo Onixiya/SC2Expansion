@@ -227,28 +227,5 @@
                 }
             }
         }
-        /*[HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
-            [HarmonyPrefix]
-            public static void Prefix(ref Weapon __instance)=>RunAnimations(__instance);
-            private static async Task RunAnimations(Weapon __instance){
-                if(__instance.weaponModel.name.Contains("SC2MarineBullet")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().StopPlayback();
-                    __instance.attack.tower.Node.graphic.GetComponent<Animation>().Play();
-                    MelonLogger.Msg("hydra fire");
-                    __instance.attack.tower.Node.Graphic.gameObject.GetComponent<Animator>().Play("SC2MarinePrefab//Armature Object|Armature ObjectAttack",-1,0f);
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",true);
-                    var wait=23000f;
-                    await Task.Run(()=>{
-                        while(wait>0){
-                            wait-=TimeManager.timeScaleWithoutNetwork+1;
-                            Task.Delay(1);
-                        }
-                        return;
-                    });
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",false);
-                }
-            }
-        }*/
     }
 }
