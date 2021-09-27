@@ -1,4 +1,6 @@
-﻿namespace SC2Expansion.Towers{
+﻿using BTD_Mod_Helper.Api.Display;
+
+namespace SC2Expansion.Towers{
     public class HighTemplar:ModTower{
         public override string DisplayName=>"High Templar";
         public override string TowerSet=>MAGIC;
@@ -104,7 +106,7 @@
                 Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
                     First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().endAssetId=null;
                 Sacrifice.maxActivationsPerRound=1;
-                Sacrifice.behaviors=Sacrifice.behaviors.Add(AtkSpd);
+                Sacrifice.AddBehavior(AtkSpd);
                 MindBlast.name="MindBlast";
                 MindBlast.displayName="Mind Blast";
                 MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=

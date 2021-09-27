@@ -113,6 +113,16 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] hatchery {
+            get {
+                object obj = ResourceManager.GetObject("hatchery", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] hightemplar {
             get {
                 object obj = ResourceManager.GetObject("hightemplar", resourceCulture);
@@ -146,6 +156,16 @@ namespace SC2Expansion.Models {
         internal static byte[] mutalisk {
             get {
                 object obj = ResourceManager.GetObject("mutalisk", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ultraliskcavern {
+            get {
+                object obj = ResourceManager.GetObject("ultraliskcavern", resourceCulture);
                 return ((byte[])(obj));
             }
         }

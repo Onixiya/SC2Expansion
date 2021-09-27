@@ -1,4 +1,5 @@
 ﻿//saves so much space with global using, no need to put separate usings in each file, just put them all in the main one
+global using System;
 global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Profile;
 global using Assets.Scripts.Models.Towers;
@@ -31,7 +32,8 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-global using Assets.Scripts.Models.Bloons.Behaviors;
+global using UnhollowerBaseLib;
+global using BTD_Mod_Helper.Api.Display;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.3","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -73,7 +75,7 @@ namespace SC2Expansion{
                 Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
                 //Maurader.Assets=AssetBundle.LoadFromMemory(Models.Models.maurader);
                 //MissileTurret.Assets=AssetBundle.LoadFromMemory(Models.Models.missileturret);
-                //raven.Assets=AssetBundle.LoadFromMemory(Models.Models.raven);
+                //Raven.Assets=AssetBundle.LoadFromMemory(Models.Models.raven);
                 //Reaper.Assets=AssetBundle.LoadFromMemory(Models.Models.reaper);
                 //SeigeTank.Assets=AssetBundle.LoadFromMemory(Models.Models.seigetank);
                 //Thor.Assets=AssetBundle.LoadFromMemory(Models.Models.thor);
@@ -81,10 +83,9 @@ namespace SC2Expansion{
             }
             if(ZergEnabled==true){
                 BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
-                //BroodLord.Assets=AssetBundle.LoadFromMemory(Models.Models.broodlord);
                 //CreepTumor.Assets=AssetBundle.LoadFromMemory(Models.Models.creeptumor);
                 //Defiler.Assets=AssetBundle.LoadFromMemory(Models.Models.defiler);
-                //Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
+                Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
                 //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
                 Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
@@ -95,8 +96,12 @@ namespace SC2Expansion{
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
                 //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
                 //SwarmHost.Assets=AssetBundle.LoadFromMemory(Models.Models.swarmhost);
-                //Ultralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.ultralisk);
+                UltraliskCavern.Assets=AssetBundle.LoadFromMemory(Models.Models.ultraliskcavern);
             }
+            /*if(HeroesEnabled==true){
+                Artanis.Assets=AssetBundle.LoadFromMemory(Models.Models.artanis);
+                Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
+            }*/
         }
         public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);

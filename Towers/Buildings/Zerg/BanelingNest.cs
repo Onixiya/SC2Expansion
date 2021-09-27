@@ -12,7 +12,6 @@
             BanelingNest.portrait=new("BanelingNestIcon");
             BanelingNest.icon=new("BanelingNestIcon");
             BanelingNest.emoteSpriteLarge=new("Zerg");
-            BanelingNest.emoteSpriteSmall=new("Zerg");
             BanelingNest.radius=20;
             BanelingNest.range=15;
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Shimmer"));
@@ -29,6 +28,7 @@
             SpawnBaneling.name="SpawnBaneling";
             SpawnBaneling.weapons[1].projectile.pierce=1;
             SpawnBaneling.weapons[1].rate=1.7f;
+            SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnBaneling.weapons[1].projectile;
             BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BanelingNestPrefab";
         }
@@ -73,9 +73,8 @@
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestCorrosiveAcidIcon");
                 var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].projectile.behaviors=SpawnBanelings.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.
-                    First(a=>a.name.Contains("EngineerMonkey-030")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>()
-                    .weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")));
+                SpawnBanelings.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-030")).Cast<TowerModel>().behaviors.
+                    First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")));
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBaneling3Prefab";
                 var AcidPool=SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProj")).Cast<CreateProjectileOnExhaustFractionModel>();
                 AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>().cleanseFortified=true;

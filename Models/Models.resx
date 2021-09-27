@@ -133,6 +133,9 @@
   <data name="gateway" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gateway.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="hatchery" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hatchery.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="hightemplar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hightemplar.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -144,6 +147,9 @@
   </data>
   <data name="mutalisk" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mutalisk.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ultraliskcavern" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ultraliskcavern.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="voidray" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\voidray.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
