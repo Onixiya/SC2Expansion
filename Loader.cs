@@ -134,14 +134,13 @@ namespace SC2Expansion{
                 }
                 if(tower.namedMonkeyKey.Contains("Ultralisk")){
                     if(RandNum==1){
-                        newBaseTowerModel.GetAttackModel().range+=8;
-                        newBaseTowerModel.range=newBaseTowerModel.GetAttackModel().range;
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.pierce+=5;
                     }
                     if(RandNum==2){
-                        newBaseTowerModel.GetAttackModel().weapons[0].rate-=0.25f;
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.2f;
                     }
                     if(RandNum==3){
-                        newBaseTowerModel.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=3;
                     }
                 }
             }
