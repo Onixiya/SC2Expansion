@@ -115,7 +115,7 @@
     <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
     <Compile Include="Towers\Buildings\Terran\CommandCenter.cs" />
     <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
-    <None Include="Towers\Buildings\Zerg\SpawningPool.nocompile" />
+    <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
@@ -138,6 +138,7 @@
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
     <None Include="Resources\marine.bundle" />
     <None Include="Resources\mutalisk.bundle" />
+    <None Include="Resources\spawningpool.bundle" />
     <None Include="Resources\ultraliskcavern.bundle" />
     <None Include="Resources\voidray.bundle" />
     <None Include="temp.json" />

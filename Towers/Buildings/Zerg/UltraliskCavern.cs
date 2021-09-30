@@ -28,7 +28,7 @@
             SpawnUltralisk.weapons[1].projectile.radius=7;
             SpawnUltralisk.name="SpawnUltralisk";
             SpawnUltralisk.weapons[1].projectile.pierce=15;
-            SpawnUltralisk.weapons[1].rate=4.5f;
+            SpawnUltralisk.weapons[1].rate=45000;
             SpawnUltralisk.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnUltralisk.weapons[1].projectile;
             UltraliskCavern.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             UltraliskCavern.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=UltraliskCavern.display;
@@ -111,7 +111,7 @@
                 GetUpgradeModel().icon=new("UltraliskCavernApocaliskIcon");
                 var SpawnUltralisk=UltraliskCavern.behaviors.First(a=>a.name.Equals("SpawnUltralisk")).Cast<AttackModel>();
                 SpawnUltralisk.weapons[1].projectile.display="UltraliskCavernApocaliskPrefab";
-                SpawnUltralisk.weapons[1].projectile.pierce+=20;
+                SpawnUltralisk.weapons[1].projectile.pierce+=25;
                 SpawnUltralisk.weapons[1].projectile.GetDamageModel().damage+=6;
                 SpawnUltralisk.weapons[1].rate=7;
                 var ClusterRockets=SpawnUltralisk.weapons[1].projectile.GetBehavior<CreateProjectileOnIntervalModel>();
@@ -142,6 +142,47 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("GasPrefab")){
                     var udn=GetUltraliskCavern(__instance.PrototypeRoot,"GasPrefab");
                     udn.name="SC2Expansion-UltraliskCavern";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                //i fucking hate that i have to do this but it crashes if its done in the hatchery stuff
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryPrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryPrefab");
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNoCreepPrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryNoCreepPrefab");
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryLairPrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryLairPrefab");
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryHivePrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryHivePrefab");
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNydusWormPrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryNydusWormPrefab");
+                    udn.name="SC2Expansion-Hatchery";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);

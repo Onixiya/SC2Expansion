@@ -7,9 +7,9 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override string Description=>"Primary Zerg hub, provides income";
+        public override string Description=>"Primary Zerg hub, generates creep and provides income";
         public override void ModifyBaseTowerModel(TowerModel Hatchery){
-            Hatchery.display="CommandCenterPrefab";
+            Hatchery.display="HatcheryPrefab";
             Hatchery.portrait=new("HatcheryPortrait");
             Hatchery.icon=new("HatcheryIcon");
             Hatchery.emoteSpriteLarge=new("Zerg");
@@ -20,9 +20,19 @@
             var Income=Hatchery.GetAttackModel();
             Income.weapons[0].emission=new SingleEmissionModel("SingleEmissionModel",null);
             Income.weapons[0].behaviors=null;
-            Income.weapons[0].rate=4;
-            Hatchery.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=Hatchery.display;
-            //Hatchery.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("Alchemist-300")).behaviors.First(a=>a.name.Equals("AttackModel_BeserkerBrewAttack_")).Duplicate());
+            Income.weapons[0].rate=3.65f;
+            Income.name="Income";
+            Hatchery.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HatcheryNoCreepPrefab";
+            var CreepBuff=Game.instance.model.towers.First(a=>a.name.Contains("Alchemist-300")).behaviors.First(a=>a.name.Equals("AttackModel_BeserkerBrewAttack_")).Cast<AttackModel>().Duplicate();
+            CreepBuff.range=65;
+            CreepBuff.weapons[0].projectile.GetBehavior<AddBerserkerBrewToProjectileModel>().damageUp=0;
+            CreepBuff.weapons[0].projectile.GetBehavior<AddBerserkerBrewToProjectileModel>().pierceUp=0;
+            CreepBuff.weapons[0].projectile.GetBehavior<AddBerserkerBrewToProjectileModel>().rangeUp=0;
+            CreepBuff.weapons[0].projectile.GetBehavior<AddBerserkerBrewToProjectileModel>().rateUp=0.0001f;
+            CreepBuff.weapons[0].projectile.GetBehavior<AddBerserkerBrewToProjectileModel>().rebuffBlockTime=0;
+            CreepBuff.weapons[0].projectile.display=null;
+            CreepBuff.weapons[0].rate=0;
+            Hatchery.AddBehavior(CreepBuff);
         }
         public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
             return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
@@ -35,7 +45,8 @@
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Hatchery){
-                GetUpgradeModel().icon=new("HatcheryLairIcon");
+                GetUpgradeModel().icon=new("HatcheryDroneIcon");
+                Hatchery.GetAttackModel().weapons[0].rate=2.75f;
             }
         }
         public class Extractors:ModUpgrade<Hatchery>{
@@ -46,7 +57,10 @@
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Hatchery){
-                GetUpgradeModel().icon=new("HatcheryLairIcon");
+                GetUpgradeModel().icon=new("HatcheryExtractorsIcon");
+                var Income=Hatchery.GetAttackModel();
+                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().maximum+=10;
+                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().minimum+=10;
             }
         }
         public class Lair:ModUpgrade<Hatchery>{
@@ -58,101 +72,77 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Hatchery){
                 GetUpgradeModel().icon=new("HatcheryLairIcon");
-                Hatchery.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Contains("Zone")));
-                Hatchery.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")));
-                Hatchery.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
+                Hatchery.display="HatcheryLairPrefab";
+                Hatchery.portrait=new("HatcheryLairPortrait");
+                var SpawnZergling=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-005")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).
+                    Cast<AttackModel>().Duplicate();
+                var NecZone=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-005")).GetBehavior<NecromancerZoneModel>().Duplicate();
+                SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingWingPrefab";
+                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
+                SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=13;
+                SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnZergling.weapons[1].projectile;
+                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
+                SpawnZergling.weapons[1].projectile.GetDamageModel().damage=1;
+                SpawnZergling.weapons[1].projectile.radius=4;
+                SpawnZergling.name="SpawnZergling";
+                SpawnZergling.weapons[1].projectile.pierce=13;
+                SpawnZergling.weapons[1].rate=1.5f;
+                NecZone.attackUsedForRangeModel.range=999;
+                Hatchery.behaviors=Hatchery.behaviors.Add(SpawnZergling,NecZone);
+                var Income=Hatchery.behaviors.First(a=>a.name.Equals("Income")).Cast<AttackModel>();
+                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().maximum+=15;
+                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().minimum+=15;
             }
         }
         public class Nydus:ModUpgrade<Hatchery>{
             public override string Name=>"Nydus";
             public override string DisplayName=>"Nydus Network";
-            public override string Description=>"Connects Lair to the Nydus Worm network. Allows spawning of short lived Nydus Worms anywhere sending out lots of Zerg";
+            public override string Description=>"Connects Lair to the local Nydus Network. Allows spawning of short lived Nydus Worms anywhere sending out lots of Zerglings and Hydralisks";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Hatchery){
-                GetUpgradeModel().icon=new("HatcheryLairIcon");
+                GetUpgradeModel().icon=new("HatcheryNydusNetworkIcon");
+                var Nydus=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).GetBehavior<AbilityModel>().Duplicate();
+                var NydusAttack=Nydus.GetBehavior<ActivateAttackModel>();
+                NydusAttack.attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
+                var NydusWorm=NydusAttack.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                Nydus.icon=new("HatcheryNydusWormIcon");
+                Nydus.cooldown=0.1f;
+                NydusWorm.display="HatcheryNydusWormPrefab";
+                NydusWorm.GetAttackModel().GetBehavior<DisplayModel>().display=null;
+                NydusWorm.RemoveBehavior<AttackModel>();
+                MelonLogger.Msg(GetTowerModel<Hydralisk>(4,0,0).display);
+                NydusWorm.behaviors=NydusWorm.behaviors.Add(Hatchery.GetBehavior<NecromancerZoneModel>().Duplicate(),Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Duplicate());
+                NydusAttack.attacks[0].range=150;
+                NydusAttack.attacks[0].targetProvider.Cast<RandomPositionModel>().minDistance=100;
+                NydusAttack.attacks[0].targetProvider.Cast<RandomPositionModel>().maxDistance=150;
+                NydusAttack.attacks[0].GetBehavior<RandomPositionModel>().minDistance=100;
+                NydusAttack.attacks[0].GetBehavior<RandomPositionModel>().maxDistance=150;
+                Hatchery.AddBehavior(Nydus);
+                Hatchery.behaviors=Hatchery.behaviors.Remove(a=>a.name.Contains("Zergling"));
             }
         }
         public class Hive:ModUpgrade<Hatchery>{
             public override string Name=>"Hive";
             public override string DisplayName=>"Morph into Hive";
-            public override string Description=>"Morphes into Hive, now spawns T3 Ultralisks and upgrades Zerglings spawned to T5, decreases Nydus worm cooldown";
+            public override string Description=>"Morphes into Hive, now spawns T3 Ultralisks and upgrades Zerglings spawned to T4, Nydus Worm's spawns Ultralisks and upgrades Hydralisks to Hunter Killers";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Hatchery){
                 GetUpgradeModel().icon=new("HatcheryHiveIcon");
+                Hatchery.display="HatcheryHivePrefab";
+                Hatchery.portrait=new("HatcheryHivePortrait");
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
-            [HarmonyPrefix]
-            public static bool Prefix(Factory __instance,string objectId,Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryPrefab")){
-                    var udn=GetHatchery(__instance.PrototypeRoot,"HatcheryPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNoCreepPrefab")){
-                    var udn=GetHatchery(__instance.PrototypeRoot,"HatcheryNoCreepPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryLairPrefab")){
-                    var udn=GetHatchery(__instance.PrototypeRoot,"HatcheryLairPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryHivePrefab")){
-                    var udn=GetHatchery(__instance.PrototypeRoot,"HatcheryHivePrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
-                    return false;
-                }
-                return true;
-            }
-        }
+        //look in the ultralisk source for the prefab loading, it constantly crashes if its done in here
         private static AssetBundle __asset;
         public static AssetBundle Assets{
             get=>__asset;
             set=>__asset=value;
-        }
-        public static UnityDisplayNode GetHatchery(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            MelonLogger.Msg("==================================");
-            var temp=Assets.GetAllAssetNames().GetEnumerator();
-            while(temp.MoveNext()){
-                MelonLogger.Msg("Name: "+temp.Current);
-            }
-            MelonLogger.Msg(model);
-            return udn;
-        }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
         }
         [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
         public record ResourceLoader_Patch{
@@ -190,6 +180,18 @@
                 }
                 if(reference!=null&&reference.guidRef.Equals("HatcheryHivePortrait")){
                     var b=Assets.LoadAsset("HatcheryHivePortrait");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HatcheryNydusNetworkIcon")){
+                    var b=Assets.LoadAsset("HatcheryNydusNetworkIcon");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+                if(reference!=null&&reference.guidRef.Equals("HatcheryNydusWormIcon")){
+                    var b=Assets.LoadAsset("HatcheryNydusWormIcon");
                     var text=b.Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

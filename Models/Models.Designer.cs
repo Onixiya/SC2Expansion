@@ -163,6 +163,16 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] spawningpool {
+            get {
+                object obj = ResourceManager.GetObject("spawningpool", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] ultraliskcavern {
             get {
                 object obj = ResourceManager.GetObject("ultraliskcavern", resourceCulture);

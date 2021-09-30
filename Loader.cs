@@ -33,7 +33,7 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 global using UnhollowerBaseLib;
-global using BTD_Mod_Helper.Api.Display;
+global using BTD_Mod_Helper.Api;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.3","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -92,7 +92,7 @@ namespace SC2Expansion{
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
                 //Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
                 //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
-                //SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
+                SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
                 //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
                 //SwarmHost.Assets=AssetBundle.LoadFromMemory(Models.Models.swarmhost);
@@ -141,6 +141,17 @@ namespace SC2Expansion{
                     }
                     if(RandNum==3){
                         newBaseTowerModel.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=3;
+                    }
+                }
+                if(tower.namedMonkeyKey.Contains("SpawningPool")){
+                    if(RandNum==1){
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.pierce+=4;
+                    }
+                    if(RandNum==2){
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
+                    }
+                    if(RandNum==3){
+                        newBaseTowerModel.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=2;
                     }
                 }
             }

@@ -120,9 +120,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("BanelingNestPrefab")){
                     var udn=GetBanelingNest(__instance.PrototypeRoot,"BanelingNestPrefab");
                     udn.name="SC2Expansion-BanelingNest";
-                    var a=Assets.LoadAsset("BanelingNestMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -131,9 +128,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("BanelingNestBanelingPrefab")){
                     var udn=GetBanelingNest(__instance.PrototypeRoot,"BanelingNestBanelingPrefab");
                     udn.name="SC2Expansion-BanelingNest";
-                    var a=Assets.LoadAsset("BanelingNestBanelingMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -142,9 +136,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("BanelingNestBanelingRollPrefab")) {
                     var udn=GetBanelingNest(__instance.PrototypeRoot,"BanelingNestBanelingRollPrefab");
                     udn.name="SC2Expansion-BanelingNest";
-                    var a=Assets.LoadAsset("BanelingNestBanelingMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -153,9 +144,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("BanelingNestBaneling3Prefab")) {
                     var udn=GetBanelingNest(__instance.PrototypeRoot,"BanelingNestBaneling3Prefab");
                     udn.name="SC2Expansion-BanelingNest";
-                    var a=Assets.LoadAsset("BanelingNestBaneling3Material");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -164,9 +152,6 @@
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("BanelingNestKaboomerPrefab")) {
                     var udn=GetBanelingNest(__instance.PrototypeRoot,"BanelingNestKaboomerPrefab");
                     udn.name="SC2Expansion-BanelingNest";
-                    var a=Assets.LoadAsset("BanelingNestBanelingMaterial");
-                    udn.genericRenderers[0].material=a.Cast<Material>();
-                    udn.RecalculateGenericRenderers();
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
