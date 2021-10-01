@@ -1,6 +1,5 @@
 ﻿namespace SC2Expansion.Towers{
     public class Hydralisk:ModTower{
-        public override string DisplayName=>"Hydralisk";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
@@ -10,7 +9,7 @@
         public override string Description=>"Ranged Zerg shock trooper. Shoots spines";
         public override void ModifyBaseTowerModel(TowerModel Hydralisk){
             Hydralisk.display="HydraliskPrefab";
-            Hydralisk.portrait=new("HydraliskIcon");
+            Hydralisk.portrait=new("HydraliskPortrait");
             Hydralisk.icon=new("HydraliskIcon");
             Hydralisk.towerSet="Primary";
             Hydralisk.emoteSpriteLarge=new("Zerg");
@@ -86,10 +85,8 @@
             public override void ApplyUpgrade(TowerModel Hydralisk){
                 GetUpgradeModel().icon=new("HydraliskSeismicSpinesIcon");
                 var Spines=Hydralisk.behaviors.First(a=>a.name.Equals("HydraliskSpine")).Cast<AttackModel>();
-                Spines.weapons[0].projectile.GetDamageModel().damage+=5;
-                Spines.weapons=Spines.weapons.Add(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-020")).
-                behaviors.First(a=>a.name.Contains("Fireball")).Cast<AttackModel>().weapons[0]);
-                Spines.weapons[1].projectile.display=null;
+                Spines.weapons[0].projectile.GetDamageModel().damage+=2;
+                Spines.weapons[0].projectile.GetDamageModel().immuneBloonProperties=0;
             }
         }
         public class Lurker:ModUpgrade<Hydralisk>{
@@ -102,7 +99,7 @@
             public override void ApplyUpgrade(TowerModel Hydralisk){
                 GetUpgradeModel().icon=new("HydraliskLurkerIcon");
                 Hydralisk.display="HydraliskLurkerPrefab";
-                Hydralisk.portrait=new("HydraliskLurkerIcon");
+                Hydralisk.portrait=new("HydraliskLurkerPortrait");
                 Hydralisk.radius=10;
                 Hydralisk.behaviors=Hydralisk.behaviors.Remove(a=>a.name.Contains("Attack"));
                 Hydralisk.behaviors=Hydralisk.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-030")).Cast<TowerModel>().
@@ -138,6 +135,7 @@
             public override void ApplyUpgrade(TowerModel Hydralisk){
                 GetUpgradeModel().icon=new("HydraliskImpalerIcon");
                 Hydralisk.display="HydraliskImpalerPrefab";
+                Hydralisk.portrait=new("HydraliskImpalerPortrait");
                 var Spines=Hydralisk.behaviors.First(a=>a.name.Equals("HydraliskSpine")).Cast<AttackModel>();
                 var AttToAdd=Game.instance.model.towers.First(a=>a.name.Contains("SniperMonkey-500")).Cast<TowerModel>().behaviors.
                     First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
@@ -163,6 +161,7 @@
             public override void ApplyUpgrade(TowerModel Hydralisk){
                 GetUpgradeModel().icon=new("HydraliskHunterKillerIcon");
                 Hydralisk.display="HydraliskHunterKillerPrefab";
+                Hydralisk.portrait=new("HydraliskHunterKillerPortrait");
                 var Spines=Hydralisk.GetAttackModel();
                 Spines.weapons[0].projectile.GetDamageModel().damage+=2;
                 Spines.range+=5;
@@ -266,6 +265,12 @@
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
+                if(reference!=null&&reference.guidRef.Equals("HydraliskPortrait")){
+                    var b=Assets.LoadAsset("HydraliskPortrait");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
                 if(reference!=null&&reference.guidRef.Equals("HydraliskFrenzyIcon")){
                     var b=Assets.LoadAsset("HydraliskFrenzyIcon");
                     var text=b.Cast<Texture2D>();
@@ -326,18 +331,13 @@
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-            }
-        }
-        /*[HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
-            [HarmonyPrefix]
-            public static void Prefix(ref Weapon __instance)=>RunAnimations(__instance);
-            private static async Task RunAnimations(Weapon __instance){
-                if(__instance.weaponModel.name.Contains("HydraliskSpine")){
-                    MelonLogger.Msg(__instance.attack.tower.namedMonkeyKey);
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("Armature Object|Armature ObjectAttack");
+                if(reference!=null&&reference.guidRef.Equals("HydraliskLurkerPortrait")){
+                    var b=Assets.LoadAsset("HydraliskLurkerPortrait");
+                    var text=b.Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
-        }*/
+        }
     }
 }

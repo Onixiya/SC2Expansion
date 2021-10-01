@@ -101,12 +101,8 @@
                 GetUpgradeModel().icon=new("SpawningPoolSwarmlingIcon");
                 var SpawnZergling=SpawningPool.behaviors.First(a=>a.name.Equals("SpawnZergling")).Cast<AttackModel>();
                 float Pierce=SpawnZergling.weapons[1].projectile.pierce;
-                //MelonLogger.Msg(Pierce);
                 float Speed=SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames;
-                //MelonLogger.Msg(Rate);
                 float Damage=SpawnZergling.weapons[1].projectile.GetDamageModel().damage+2;
-                //MelonLogger.Msg(Damage);
-                //SpawnZergling.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
                 SpawningPool.RemoveBehavior<AttackModel>();
                 SpawnZergling=null;
                 SpawningPool.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Duplicate());

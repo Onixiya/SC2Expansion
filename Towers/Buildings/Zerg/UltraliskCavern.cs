@@ -28,7 +28,7 @@
             SpawnUltralisk.weapons[1].projectile.radius=7;
             SpawnUltralisk.name="SpawnUltralisk";
             SpawnUltralisk.weapons[1].projectile.pierce=15;
-            SpawnUltralisk.weapons[1].rate=45000;
+            SpawnUltralisk.weapons[1].rate=50000;
             SpawnUltralisk.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnUltralisk.weapons[1].projectile;
             UltraliskCavern.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             UltraliskCavern.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=UltraliskCavern.display;
@@ -182,6 +182,14 @@
                 }
                 if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNydusWormPrefab")){
                     var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryNydusWormPrefab");
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryOmegaWormPrefab")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryOmegaWormPrefab");
                     udn.name="SC2Expansion-Hatchery";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);

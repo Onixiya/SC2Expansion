@@ -27,7 +27,7 @@
             SpawnBaneling.weapons[1].projectile.radius=4;
             SpawnBaneling.name="SpawnBaneling";
             SpawnBaneling.weapons[1].projectile.pierce=1;
-            SpawnBaneling.weapons[1].rate=1.7f;
+            SpawnBaneling.weapons[1].rate=17000;
             SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnBaneling.weapons[1].projectile;
             BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BanelingNestPrefab";
