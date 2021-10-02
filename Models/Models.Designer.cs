@@ -183,6 +183,16 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] viking {
+            get {
+                object obj = ResourceManager.GetObject("viking", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] voidray {
             get {
                 object obj = ResourceManager.GetObject("voidray", resourceCulture);

@@ -35,7 +35,7 @@ global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.3","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
@@ -79,7 +79,7 @@ namespace SC2Expansion{
                 //Reaper.Assets=AssetBundle.LoadFromMemory(Models.Models.reaper);
                 //SeigeTank.Assets=AssetBundle.LoadFromMemory(Models.Models.seigetank);
                 //Thor.Assets=AssetBundle.LoadFromMemory(Models.Models.thor);
-                //Viking.Assets=AssetBundle.LoadFromMemory(Models.Models.viking);
+                Viking.Assets=AssetBundle.LoadFromMemory(Models.Models.viking);
             }
             if(ZergEnabled==true){
                 BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);

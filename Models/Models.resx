@@ -154,6 +154,9 @@
   <data name="ultraliskcavern" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ultraliskcavern.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="viking" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\viking.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="voidray" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\voidray.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

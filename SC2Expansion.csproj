@@ -118,6 +118,7 @@
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
+    <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
@@ -140,6 +141,7 @@
     <None Include="Resources\mutalisk.bundle" />
     <None Include="Resources\spawningpool.bundle" />
     <None Include="Resources\ultraliskcavern.bundle" />
+    <None Include="Resources\viking.bundle" />
     <None Include="Resources\voidray.bundle" />
     <None Include="temp.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 10.json" />
