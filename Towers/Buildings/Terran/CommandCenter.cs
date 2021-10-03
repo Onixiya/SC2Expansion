@@ -15,7 +15,7 @@
             CommandCenter.emoteSpriteLarge=new("Terran");
             CommandCenter.range=40;
             CommandCenter.RemoveBehavior<RectangleFootprintModel>();
-            CommandCenter.footprint=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).footprint;
+            CommandCenter.footprint=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).footprint.Duplicate();
             CommandCenter.radius=37.5f;
             var Income=CommandCenter.GetAttackModel();
             Income.weapons[0].emission=new SingleEmissionModel("SingleEmissionModel",null);
@@ -105,8 +105,8 @@
                 OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-020")).GetAttackModel().weapons[0].projectile;
                 OrbitalStrikeAttack.weapons[0].projectile.behaviors=OrbitalStrikeAttack.weapons[0].projectile.behaviors.Add(new TrackTargetModel("TrackTargetModel",
                     999,true,true,360,true,360,false,false));
-                OrbitalStrikeAttack.weapons[0].projectile.behaviors=OrbitalStrikeAttack.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.
-                    Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.GetDamageModel());
+                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.
+                    GetDamageModel().Duplicate());
                 OrbitalStrikeAttack.weapons[0].projectile.GetBehavior<TravelStraitModel>().lifespan=13;
                 OrbitalStrikeAttack.weapons[0].ejectZ=300;
                 OrbitalStrikeAttack.weapons[0].ejectX=-300;
@@ -130,9 +130,7 @@
                 CommandCenter.range=Ibiks.range;
                 Ibiks.weapons[0].emission=new InstantDamageEmissionModel("InstantEmission",null);
                 Ibiks.behaviors.First(a=>a.name.Contains("Rotate")).Cast<RotateToTargetModel>().onlyRotateDuringThrow=false;
-                Ibiks.weapons[0].projectile.behaviors=Ibiks.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().
-                    weapons[0].projectile.GetDamageModel());
-                Ibiks.weapons[0].projectile.GetDamageModel().damage=3;
+                Ibiks.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",3,0,false,false,true,0));
                 Ibiks.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProjectile")).Cast<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=6;
                 Ibiks.behaviors=Ibiks.behaviors.Add(new DisplayModel("DisplayModel_","CommandCenterPlanetaryFortressGunPrefab",0,new(0,0,0),1,false,0));
                 CommandCenter.behaviors=CommandCenter.behaviors.Add(Ibiks);

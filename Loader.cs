@@ -34,6 +34,10 @@ global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
+global using Assets.Scripts.Simulation.Towers.Weapons;
+global using System.Threading.Tasks;
+using Assets.Scripts.Simulation.Towers.Behaviors.Attack;
+
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -182,31 +186,6 @@ namespace SC2Expansion{
             }
             private static Sprite LoadSprite(Texture2D text){
                 return Sprite.Create(text,new(0,0,text.width,text.height),new());
-            }
-        }
-        internal static List<(TowerModel,TowerDetailsModel,TowerModel[],UpgradeModel[])>towers=new();
-        [HarmonyPatch(typeof(ProfileModel),"Validate")]
-        public class ProfileModel_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(ref ProfileModel __instance){
-                var unlockedTowers=__instance.unlockedTowers;
-                var unlockedUpgrades=__instance.acquiredUpgrades;
-                foreach(var tower in towers){
-                    if(!unlockedTowers.Contains(tower.Item1.baseId))unlockedTowers.Add(tower.Item1.baseId);
-                    foreach(var upgrade in tower.Item4)
-                        if(!unlockedUpgrades.Contains(upgrade.name))unlockedUpgrades.Add(upgrade.name);
-                }
-            }
-        }
-        [HarmonyPatch(typeof(GameModelLoader),nameof(GameModelLoader.Load))]
-        public static class GameStart{
-            [HarmonyPostfix]
-            public static void Postfix(ref GameModel __result){
-                foreach(var tower in towers){
-                    __result.towers=__result.towers.Add(tower.Item3);
-                    __result.towerSet=__result.towerSet.Add(tower.Item2);
-                    __result.upgrades=__result.upgrades.Add(tower.Item4);
-                }
             }
         }
     }

@@ -15,7 +15,7 @@
             Hatchery.emoteSpriteLarge=new("Zerg");
             Hatchery.range=65;
             Hatchery.RemoveBehavior<RectangleFootprintModel>();
-            Hatchery.footprint=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).footprint;
+            Hatchery.footprint=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).footprint.Duplicate();
             Hatchery.radius=37.5f;
             var Income=Hatchery.GetAttackModel();
             Income.weapons[0].emission=new SingleEmissionModel("SingleEmissionModel",null);
@@ -222,6 +222,10 @@
                 Hatchery.display="HatcheryHivePrefab";
                 Hatchery.portrait=new("HatcheryHivePortrait");
                 Hatchery.range=83;
+                //for some reason, its not cloning the dart monkeys behaviors when changing the hydralisk here, ty amman#2583 for bringing this up
+                Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].rate=0.95f;
+                Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.GetDamageModel().damage=1;
+                Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
             }
         }
         //look in the ultralisk source for the prefab loading, it constantly crashes for some fucking reason if its done in here
