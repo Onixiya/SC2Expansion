@@ -118,7 +118,7 @@
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
-    <Compile Include="Towers\Towers\Terran\Viking.cs" />
+    <None Include="Towers\Towers\Terran\Viking.nocompile" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
