@@ -36,8 +36,8 @@ global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using System.Threading.Tasks;
-using Assets.Scripts.Simulation.Towers.Behaviors.Attack;
-
+global using Assets.Scripts.Simulation.Towers.Behaviors.Attack;
+global using Assets.Scripts.Models.Towers.Filters;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{

@@ -1,7 +1,4 @@
-﻿using Assets.Scripts.Simulation.Bloons;
-using Assets.Scripts.Simulation.Towers.Behaviors.Attack.Behaviors;
-
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class Mutalisk:ModTower{
         public override string DisplayName=>"Mutalisk";
         public override string TowerSet=>PRIMARY;
