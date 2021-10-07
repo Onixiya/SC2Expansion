@@ -34,9 +34,6 @@
             Glaive.weapons[0].rate=1.65f;
             Mutalisk.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MutaliskPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class ViciousGlaive:ModUpgrade<Mutalisk>{
             public override string Name=>"ViciousGlaive";
             public override string DisplayName=>"Vicious Glaive";

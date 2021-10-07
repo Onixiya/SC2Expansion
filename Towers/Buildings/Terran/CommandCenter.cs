@@ -23,9 +23,6 @@
             Income.weapons[0].rate=4;
             CommandCenter.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=CommandCenter.display;
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class Refinery:ModUpgrade<CommandCenter>{
             public override string Name=>"Refinery";
             public override string DisplayName=>"Refinery";

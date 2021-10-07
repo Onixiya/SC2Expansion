@@ -29,9 +29,6 @@
             Gatling.weapons[1].ejectX=-Gatling.weapons[0].ejectX;
             Viking.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=Viking.display;
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class AirMode:ModUpgrade<Viking>{
             public override string Name=>"AirMode";
             public override string DisplayName=>"Fighter mode";

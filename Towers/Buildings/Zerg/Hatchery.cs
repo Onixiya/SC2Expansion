@@ -33,9 +33,6 @@
             CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=ZergBuildings;
             Hatchery.AddBehavior(CreepBuff);
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class Drones:ModUpgrade<Hatchery>{
             public override string Name=>"Drones";
             public override string DisplayName=>"Additional Drones";

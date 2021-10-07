@@ -36,8 +36,12 @@ global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using System.Threading.Tasks;
-global using Assets.Scripts.Simulation.Towers.Behaviors.Attack;
 global using Assets.Scripts.Models.Towers.Filters;
+global using Assets.Scripts.Unity.UI_New.InGame.RightMenu;
+global using Assets.Scripts.Simulation.Input;
+global using Assets.Scripts.Unity.UI_New.InGame;
+using Assets.Scripts.Unity.UI_New.Main.MapSelect;
+
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -46,11 +50,13 @@ namespace SC2Expansion{
         public static readonly ModSettingBool ProtossEnabled=true;
         public static readonly ModSettingBool TerranEnabled=true;
         public static readonly ModSettingBool ZergEnabled=true;
+        public static readonly ModSettingBool RemoveBaseTowers=false;
         //private static readonly ModSettingBool HeroesEnabled=true;
         public override void OnApplicationStart(){
+            Ext.ModVolume=1;
             if(ProtossEnabled==true){
                 //Adept.Assets=AssetBundle.LoadFromMemory(Models.Models.adept);
-                //Archon.Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
+                Archon.Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
                 //Carrier.Assets=AssetBundle.LoadFromMemory(Models.Models.carrier);
                 //Colossus.Assets=AssetBundle.LoadFromMemory(Models.Models.colossus);
                 //DarkShrine.Assets=AssetBundle.LoadFromMemory(Models.Models.darkshrine);
@@ -107,11 +113,25 @@ namespace SC2Expansion{
                 Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
             }*/
         }
+        public override void OnUpdate(){
+            base.OnUpdate();
+            if(Object.FindObjectOfType<FXVolumeControl>()!=null){
+                Ext.ModVolume=Object.FindObjectOfType<FXVolumeControl>().volume;
+            }
+        }
+        [HarmonyPatch(typeof(GameModelLoader),"Load")]
+        public static class GameStart{
+            [HarmonyPostfix]
+            public static void Postfix(ref GameModel __result){
+                if(RemoveBaseTowers==true){
+                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                }
+            }
+        }
         public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
             if(upgradeName.Contains("Primal")){
-                var Rand=new System.Random();
-                int RandNum=Rand.Next(1,3);
+                int RandNum=new System.Random().Next(1,3);
                 if(tower.namedMonkeyKey.Contains("Hydralisk")){
                     if(RandNum==1){
                         newBaseTowerModel.GetAttackModel().range+=5;
@@ -165,7 +185,7 @@ namespace SC2Expansion{
             [HarmonyPostfix]
             public static void Postfix(ref StandardTowerPurchaseButton __instance){
                 __instance.bg=__instance.gameObject.GetComponent<Image>();
-                if(__instance.baseTowerModel.emoteSpriteLarge!=null)
+                if(__instance.baseTowerModel.emoteSpriteLarge!=null){
                     switch(__instance.baseTowerModel.emoteSpriteLarge.guidRef){
                         case "Protoss":
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ProtossContainer));
@@ -177,11 +197,11 @@ namespace SC2Expansion{
                             __instance.bg.overrideSprite=LoadSprite(LoadTextureFromBytes(Properties.Resources.ZergContainer));
                             break;
                     }
-                return;
+                }
             }
             private static Texture2D LoadTextureFromBytes(byte[] FileData){
                 Texture2D Tex2D=new(2,2);
-                if(ImageConversion.LoadImage(Tex2D,FileData)) return Tex2D;
+                if(ImageConversion.LoadImage(Tex2D,FileData))return Tex2D;
                 return null;
             }
             private static Sprite LoadSprite(Texture2D text){

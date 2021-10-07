@@ -23,9 +23,6 @@
             Spines.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=2;
             Hydralisk.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HydraliskPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class GroovedSpines:ModUpgrade<Hydralisk>{
             public override string Name=>"GroovedSpines";
             public override string DisplayName=>"Grooved Spines";

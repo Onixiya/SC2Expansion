@@ -27,9 +27,6 @@
             Fire.weapons[0].projectile.GetDamageModel().damage=1;
             Battlecruiser.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BattlecruiserPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class TacJump:ModUpgrade<Battlecruiser>{
             public override string Name=>"TacJump";
             public override string DisplayName=>"Tactical Jump";

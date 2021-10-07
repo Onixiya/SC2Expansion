@@ -35,9 +35,6 @@
             Beam.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>().damageMultiplier=2;
             VoidRay.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="VoidRayPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class PrismaticAlignment:ModUpgrade<VoidRay>{
             public override string Name=>"PrismaticAlignment";
             public override string DisplayName=>"Prismatic Alignment";

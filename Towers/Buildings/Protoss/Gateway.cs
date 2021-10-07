@@ -33,9 +33,6 @@
             Gateway.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             Gateway.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="GatewayPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel> towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class Charge:ModUpgrade<Gateway> {
             public override string Name=>"Charge";
             public override string DisplayName=>"Charge";

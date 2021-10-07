@@ -23,9 +23,6 @@ namespace SC2Expansion.Towers{
             PsiBolt.weapons[0].projectile.GetDamageModel().damage=2;
             HighTemplar.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HighTemplarPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         //Ik the khala isn't used now but for some weird reason, blender didn't like the nerve cords and just deleted it
         public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
             public override string Name=>"KhaydarinAmulet";

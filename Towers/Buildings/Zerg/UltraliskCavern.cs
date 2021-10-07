@@ -124,7 +124,7 @@
             }
         }
         public override int GetTowerIndex(List<TowerDetailsModel> towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
+            return towerSet.First().towerIndex+1;
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{

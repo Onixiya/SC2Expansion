@@ -33,9 +33,6 @@
             SpawningPool.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             SpawningPool.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="SpawningPoolPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel> towerSet) {
-            return towerSet.First(model => model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class HardendCarapace:ModUpgrade<SpawningPool> {
             public override string Name=>"HardendCarapace";
             public override string DisplayName=>"Hardend Carapace";

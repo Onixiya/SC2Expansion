@@ -32,9 +32,6 @@
             BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BanelingNestPrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel> towerSet) {
-            return towerSet.First(model => model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         public class CentrifugalHooks:ModUpgrade<BanelingNest> {
             public override string Name=>"CentrifugalHooks";
             public override string DisplayName=>"Centrifugal Hooks";

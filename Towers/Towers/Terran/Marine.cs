@@ -26,9 +26,6 @@
             Bullet.weapons[0].projectile.GetDamageModel().damage=2.5f;
             Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MarinePrefab";
         }
-        public override int GetTowerIndex(List<TowerDetailsModel>towerSet){
-            return towerSet.First(model=>model.towerId==TowerType.BoomerangMonkey).towerIndex+1;
-        }
         //not being used rn bc this loads the asset bundle differently then how the icons and portraits need it, i'll enable it whenever the hell i get around to
         //getting everything fully done in mod helper but for now, disabled
         /*public class MarineDisplay:ModTowerCustomDisplay<Marine>{

@@ -85,11 +85,21 @@
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.InputModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnityEngine.UI.dll</HintPath>
@@ -117,6 +127,7 @@
     <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
+    <Compile Include="Towers\Towers\Protoss\Archon.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
