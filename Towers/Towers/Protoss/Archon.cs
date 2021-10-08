@@ -19,8 +19,7 @@
             var Lightning=Archon.GetAttackModel().Cast<AttackModel>();
             Lightning.range=Archon.range;
             Lightning.weapons[0]=Game.instance.model.towers.First(a=>a.name.Contains("Druid-200")).GetAttackModel().weapons[1].Duplicate();
-            Lightning.weapons[0].name="ArchonLightning";
-            Lightning.weapons[0].rate=0.65f;
+            Lightning.weapons[0].rate=0.9f;
             Lightning.weapons[0].ejectY=20;
             Lightning.weapons[0].ejectZ=20;
             Lightning.weapons[0].projectile.GetBehavior<CreateLightningEffectModel>().lifeSpan=1.25f;
@@ -40,7 +39,7 @@
             public override void ApplyUpgrade(TowerModel Archon){
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
                 var Lightning=Archon.GetAttackModel();
-                Lightning.range+=15;
+                Lightning.range+=10;
                 Archon.range=Lightning.range;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=-15;
@@ -76,6 +75,7 @@
                 Archon.portrait=new("ArchonDarkArchonPortrait");
                 var Confusion=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().Duplicate();
                 var ConfusionProjectile=Archon.behaviors.First(a=>a.name.Contains("PsiStorm")).Cast<AttackModel>().weapons[0].projectile.Duplicate();
+                Confusion.name="Confusion";
                 Confusion.weapons[0].projectile.RemoveBehavior<DamageModel>();
                 Confusion.weapons[0].projectile.display=null;
                 ConfusionProjectile.RemoveBehavior<DamageModel>();
@@ -84,13 +84,14 @@
                 ConfusionProjectile.display=null;
                 Confusion.weapons[0].projectile.AddBehavior(new CreateProjectileOnContactModel("CreateProjectileOnContactModel",ConfusionProjectile,new SingleEmissionModel("SingleEmissionModel",null),
                     false,false,false));
+                Archon.behaviors=Archon.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
                 Archon.AddBehavior(Confusion);
             }
         }
         public class MindControl:ModUpgrade<Archon>{
             public override string Name=>"MindControl";
             public override string DisplayName=>"Mind Control";
-            public override string Description=>"Completely controls the strongest target on screen excluding BAD's and forces it go back along the track";
+            public override string Description=>"Completely controls the strongest target on screen and forces it go back along the track. Cannot target anything higher then a BFB";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
@@ -98,17 +99,28 @@
                 GetUpgradeModel().icon=new("ArchonMindControlIcon");
                 var MindControl=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).GetAbility().Duplicate();
                 var MindControlAttack=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().Duplicate();
+                var MindControlAttackFilter=MindControlAttack.GetBehavior<AttackFilterModel>();
                 var MindControlProj=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-005")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>().
                     weapons[1].projectile.Duplicate();
                 MindControl.icon=new("ArchonMindControlIcon");
-                MindControl.cooldown=1;
-                MindControlAttack.weapons[0].projectile.RemoveBehavior<DamageModel>();
+                MindControl.cooldown=120;
+                MindControlAttack.RemoveBehavior<TargetCloseModel>();
+                MindControlAttack.RemoveBehavior<TargetFirstModel>();
+                MindControlAttack.RemoveBehavior<TargetLastModel>();
+                MindControlAttack.targetProvider=new TargetStrongModel("TargetStrongModel",false,false);
+                MindControlAttack.range=100;
+                MindControlAttack.name="MindControl";
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelBad","Bad",null));
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelZomg","Zomg",null));
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelDdt","Ddt",null));
+                MindControlAttack.weapons[0].rate=9999;
+                MindControlAttack.weapons[0].projectile.GetDamageModel().damage=99999999;
                 MindControlAttack.weapons[0].projectile.display=null;
-                MindControlAttack.weapons[0].projectile.name="MindControlCreateMoab";
-                MindControlProj.name="MindControlMoab";
+                MindControlAttack.weapons[0].projectile.AddBehavior(new TrackTargetModel("TrackTargetModel",999,true,true,360,true,180,false,false));
                 MindControlAttack.weapons[0].projectile.AddBehavior(new CreateProjectileOnContactModel("CreateProjectileOnContactModel",MindControlProj,new 
                     SingleEmissionModel("SingleEmissionModel",null),false,false,false));
                 MindControl.GetBehavior<ActivateAttackModel>().attacks[0]=MindControlAttack;
+                MindControl.GetBehavior<ActivateAttackModel>().lifespan=0.1f;
                 Archon.AddBehavior(MindControl);
             }
         }
@@ -121,6 +133,15 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Archon){
                 GetUpgradeModel().icon=new("ArchonUlrezajIcon");
+                var Lightning=Archon.GetAttackModel();
+                var MindControl=Archon.GetAbility();
+                var MindControlAttackFilter=MindControl.GetBehavior<ActivateAttackModel>().attacks[0].GetBehavior<AttackFilterModel>();
+                Lightning.range+=10;
+                Lightning.weapons[0].rate=0.5f;
+                Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
+                Lightning.weapons[0].projectile.RemoveBehavior<DamageModifierForTagModel>();
+                MindControl.cooldown=60;
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Remove(a=>a.name.Contains("Zomg")||a.name.Contains("Ddt"));
                 Archon.display="ArchonUlrezajPrefab";
                 Archon.portrait=new("ArchonUlrezajPortrait");
             }
@@ -167,18 +188,23 @@
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
         public static class SpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance)=>RunAnimations(__instance);
-            private static async Task RunAnimations(Weapon __instance){
+            public static async Task RunAnimations(Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){
-                    if(__instance.attack.target.bloon.HasTag("Moab")){
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttackMoab");
-                    }else{
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
+                    //__instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
+                    if(__instance.attack.attackModel.name.Contains("MindControl")){
+                        var MindControlProj=__instance.newProjectiles2.First().projectileModel.GetBehavior<CreateProjectileOnContactModel>().projectile;
+                        MindControlProj.display=__instance.attack.target.bloon.display.displayModel.display;
+                        MindControlProj.GetDamageModel().damage=__instance.attack.target.bloon.health/3;
+                        MindControlProj.pierce=__instance.attack.target.bloon.health/2;
+                        MindControlProj.GetBehavior<AgeModel>().lifespan=999;
+                        MindControlProj.GetBehavior<TravelAlongPathModel>().speedFrames=__instance.attack.target.bloon.bloonModel.speedFrames;
+                        __instance.attack.target.bloon.childrenCreatedOut=null;
                     }
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
                 }
             }
         }

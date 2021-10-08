@@ -38,10 +38,6 @@ global using Assets.Scripts.Simulation.Towers.Weapons;
 global using System.Threading.Tasks;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Unity.UI_New.InGame.RightMenu;
-global using Assets.Scripts.Simulation.Input;
-global using Assets.Scripts.Unity.UI_New.InGame;
-using Assets.Scripts.Unity.UI_New.Main.MapSelect;
-
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{

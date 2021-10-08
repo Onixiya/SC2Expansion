@@ -17,10 +17,6 @@
             get{return modvolume;}
             set{modvolume=value;}
         }
-        public static ShopMenu GetShopMenu(this Game game)
-        {
-            return ShopMenu.instance;
-        }
         //this is the json settings code which i was working on til i decided to look at mod helpers settings menu thing, i'll keep it here in case it might be useful for another project or something
         //but for now, its useless
         /*public static T LoadFromFile<T>(string filePath)where T:class{
