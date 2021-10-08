@@ -203,24 +203,8 @@
             public static void Postfix(ref Weapon __instance)=>RunAnimations(__instance);
             private static async Task RunAnimations(Weapon __instance){
                 var TowerName=__instance.attack.tower.towerModel.name;
-                if(__instance.weaponModel.name.Equals("WeaponModel_VikingGatling")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().StopPlayback();
+                if(__instance.attack.tower.towerModel.name.Contains("Viking")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("VikingGroundAttack");
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",true);
-                    float wait=1120;
-                    if(TowerName.Contains("3")||TowerName.Contains("4")){
-                        wait=550;
-                    }
-                    if(TowerName.Contains("5")){
-                        wait=100;
-                    }
-                    await Task.Run(()=>{
-                        while(wait>0){
-                        wait-=TimeManager.timeScaleWithoutNetwork+1;
-                        Task.Delay(1);}
-                        return;
-                    });
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().SetBool("Attack",false);
                 }
             }
         }

@@ -170,57 +170,9 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskPrefab")){
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskLurkerPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskLurkerPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskLurkerSpinesPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskLurkerSpinesPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskPrimalPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskPrimalPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskImpalerPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskImpalerPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskImpalerAttackPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskImpalerAttackPrefab");
-                    udn.name="Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HydraliskHunterKillerPrefab")) {
-                    var udn=GetHydralisk(__instance.PrototypeRoot,"HydraliskHunterKillerPrefab");
-                    udn.name="Hydralisk";
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Hydralisk")){
+                    var udn=GetHydralisk(__instance.PrototypeRoot,objectId);
+                    udn.name="SC2Expansion-Hydralisk";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -256,81 +208,8 @@
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("HydraliskIcon")){
-                    var b=Assets.LoadAsset("HydraliskIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskPortrait")){
-                    var b=Assets.LoadAsset("HydraliskPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskFrenzyIcon")){
-                    var b=Assets.LoadAsset("HydraliskFrenzyIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskGroovedSpinesIcon")){
-                    var b=Assets.LoadAsset("HydraliskGroovedSpinesIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskMuscularAugmentsIcon")){
-                    var b=Assets.LoadAsset("HydraliskMuscularAugmentsIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskLurkerIcon")){
-                    var b=Assets.LoadAsset("HydraliskLurkerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskPrimalIcon")){
-                    var b=Assets.LoadAsset("HydraliskPrimalIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskSeismicSpinesIcon")){
-                    var b=Assets.LoadAsset("HydraliskSeismicSpinesIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskImpalerIcon")){
-                    var b=Assets.LoadAsset("HydraliskImpalerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskImpalerPortrait")){
-                    var b=Assets.LoadAsset("HydraliskImpalerPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskHunterKillerIcon")){
-                    var b=Assets.LoadAsset("HydraliskHunterKillerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskHunterKillerPortrait")){
-                    var b=Assets.LoadAsset("HydraliskHunterKillerPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HydraliskLurkerPortrait")){
-                    var b=Assets.LoadAsset("HydraliskLurkerPortrait");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Hydralisk")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

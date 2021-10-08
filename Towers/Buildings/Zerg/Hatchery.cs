@@ -29,7 +29,7 @@
             CreepBuff.multiplier=0.0001f;
             CreepBuff.isGlobal=false;
             CreepBuff.buffIconName=null;
-            string[] ZergBuildings=new string[3]{"SC2Expansion-SpawningPoo","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest"};
+            string[] ZergBuildings=new string[4]{"SC2Expansion-SpawningPoo","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
             CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=ZergBuildings;
             Hatchery.AddBehavior(CreepBuff);
         }

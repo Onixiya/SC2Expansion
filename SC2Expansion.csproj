@@ -131,6 +131,7 @@
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
+    <Compile Include="Towers\Towers\Zerg\Queen.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="packages.config" />
@@ -150,6 +151,7 @@
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
     <None Include="Resources\marine.bundle" />
     <None Include="Resources\mutalisk.bundle" />
+    <None Include="Resources\queen.bundle" />
     <None Include="Resources\spawningpool.bundle" />
     <None Include="Resources\ultraliskcavern.bundle" />
     <None Include="Resources\viking.bundle" />

@@ -89,14 +89,13 @@ namespace SC2Expansion{
             }
             if(ZergEnabled==true){
                 BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
-                //CreepTumor.Assets=AssetBundle.LoadFromMemory(Models.Models.creeptumor);
                 //Defiler.Assets=AssetBundle.LoadFromMemory(Models.Models.defiler);
                 Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
                 Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
                 //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
                 Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
-                //Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
+                Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
                 //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
                 SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
