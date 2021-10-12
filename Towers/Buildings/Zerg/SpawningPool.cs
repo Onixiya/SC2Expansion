@@ -110,7 +110,7 @@
                 SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
                 SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=9999;
                 SpawnZergling.weapons[0].projectile.GetDamageModel().damage=Damage;
-                SpawnZergling.weapons[0].rate=0.65f;
+                SpawnZergling.weapons[0].rate=6500f;
                 SpawnZergling.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
             }
         }
@@ -119,40 +119,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SpawningPoolPrefab")){
-                    var udn=GetSpawningPool(__instance.PrototypeRoot,"SpawningPoolPrefab");
-                    udn.name="SC2Expansion-SpawningPool";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SpawningPoolZerglingPrefab")){
-                    var udn=GetSpawningPool(__instance.PrototypeRoot,"SpawningPoolZerglingPrefab");
-                    udn.name="SC2Expansion-SpawningPool";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SpawningPoolZerglingWingPrefab")){
-                    var udn=GetSpawningPool(__instance.PrototypeRoot,"SpawningPoolZerglingWingPrefab");
-                    udn.name="SC2Expansion-SpawningPool";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SpawningPoolPrimalPrefab")){
-                    var udn=GetSpawningPool(__instance.PrototypeRoot,"SpawningPoolPrimalPrefab");
-                    udn.name="SC2Expansion-SpawningPool";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("SpawningPoolSwarmlingPrefab")){
-                    var udn=GetSpawningPool(__instance.PrototypeRoot,"SpawningPoolSwarmlingPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("SpawningPool")){
+                    var udn=GetSpawningPool(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-SpawningPool";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -177,57 +145,12 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolPortrait")){
-                    var b=Assets.LoadAsset("SpawningPoolPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolMetabolicBoostIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolMetabolicBoostIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolAdrenalGlandsIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolAdrenalGlandsIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolPrimalIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolPrimalIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolSwarmlingIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolSwarmlingIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("SpawningPoolHardendCarapaceIcon")){
-                    var b=Assets.LoadAsset("SpawningPoolHardendCarapaceIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("SpawningPool")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

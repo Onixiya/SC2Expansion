@@ -39,7 +39,7 @@
             public override void ApplyUpgrade(TowerModel Viking){
                 GetUpgradeModel().icon=new("VikingAirIcon");
                 var AirMode=Game.instance.model.towers.First(a=>a.name.Contains("Alchemist-040")).GetAbility().Duplicate();
-                AirMode.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).GetAttackModel();
+                AirMode.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).GetAttackModel().Duplicate();
                 var Lanzer=AirMode.GetBehavior<ActivateAttackModel>().attacks[0];
                 AirMode.GetBehavior<ActivateAttackModel>().lifespan=15;
                 AirMode.GetBehavior<SwitchDisplayModel>().lifespan=15;
@@ -82,7 +82,7 @@
                 var Gatling=Viking.GetAttackModel();
                 var AirMode=Viking.GetAbility();
                 AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.Add(Game.instance.model.towers.First(a=>a.name.
-                    Contains("BombShooter-020")).GetAttackModel());
+                    Contains("BombShooter-020")).GetAttackModel().Duplicate());
                 var WILD=AirMode.GetBehavior<ActivateAttackModel>().attacks[1];
                 Gatling.weapons[0].projectile.pierce=3;
                 Gatling.weapons[0].projectile.GetDamageModel().damage=3;
@@ -186,7 +186,7 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
@@ -200,9 +200,7 @@
         [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
         public static class WI{
             [HarmonyPostfix]
-            public static void Postfix(ref Weapon __instance)=>RunAnimations(__instance);
-            private static async Task RunAnimations(Weapon __instance){
-                var TowerName=__instance.attack.tower.towerModel.name;
+            public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Viking")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("VikingGroundAttack");
                 }

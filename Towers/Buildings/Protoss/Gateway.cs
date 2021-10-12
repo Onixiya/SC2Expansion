@@ -120,56 +120,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewayPrefab")){
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewayPrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewayPurifierPrefab")){
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewayPurifierPrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewayZealotPrefab")){
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewayZealotPrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewaySentinelPrefab")) {
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewaySentinelPrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewaySolaritePrefab")) {
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewaySolaritePrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewayLegionnairePrefab")) {
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewayLegionnairePrefab");
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GatewayKaldalisPrefab")) {
-                    var udn=GetGateway(__instance.PrototypeRoot,"GatewayKaldalisPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Gateway")){
+                    var udn=GetGateway(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-Gateway";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -194,57 +146,12 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("GatewayIcon")){
-                    var b=Assets.LoadAsset("GatewayIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewayChargeIcon")){
-                    var b=Assets.LoadAsset("GatewayChargeIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewaySolariteIcon")){
-                    var b=Assets.LoadAsset("GatewaySolariteIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewaySentinelIcon")){
-                    var b=Assets.LoadAsset("GatewaySentinelIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewayLegionnaireIcon")){
-                    var b=Assets.LoadAsset("GatewayLegionnaireIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewayKaldalisIcon")){
-                    var b=Assets.LoadAsset("GatewayKaldalisIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("GatewayPortrait")){
-                    var b=Assets.LoadAsset("GatewayPortrait");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Gateway")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

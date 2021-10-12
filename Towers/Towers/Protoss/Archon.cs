@@ -177,7 +177,7 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
@@ -191,11 +191,10 @@
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
         public static class SpawnDart_Patch{
             [HarmonyPostfix]
-            public static void Postfix(ref Weapon __instance)=>RunAnimations(__instance);
-            public static async Task RunAnimations(Weapon __instance){
+            public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
-                    //__instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
                     if(__instance.attack.attackModel.name.Contains("MindControl")){
                         var MindControlProj=__instance.newProjectiles2.First().projectileModel.GetBehavior<CreateProjectileOnContactModel>().projectile;
                         MindControlProj.display=__instance.attack.target.bloon.display.displayModel.display;

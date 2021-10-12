@@ -24,7 +24,7 @@
             var Glaive=Mutalisk.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
             Glaive.name="MutaliskGlaive";
             Glaive.weapons[0].projectile.behaviors=Glaive.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("SniperMonkey-030")).GetAttackModel().
-                weapons[0].projectile.behaviors.First(a=>a.name.Contains("Retarget")));
+                weapons[0].projectile.behaviors.First(a=>a.name.Contains("Retarget")).Duplicate());
             Glaive.weapons[0].projectile.pierce=3;
             Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Strait")).Cast<TravelStraitModel>().Lifespan=0.75f;
             Glaive.weapons[0].projectile.display="MutaliskGlaivePrefab";
@@ -102,7 +102,7 @@
                 Glaive.weapons[0].projectile.behaviors=Glaive.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("Retarget"));
                 Glaive.weapons[0].projectile.pierce=1;
                 Glaive.weapons[0].projectile.behaviors=Glaive.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).
-                behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Contact")));
+                behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Contact")).Duplicate());
                 Glaive.weapons[0].projectile.GetDamageModel().damage+=5;
             }
         }
@@ -132,7 +132,7 @@
                 Mutalisk.display="MutaliskDevourerPrefab";
                 var Glaive=Mutalisk.behaviors.First(a=>a.name.Contains("Glaive")).Cast<AttackModel>();
                 Glaive.weapons[0].projectile.behaviors=Glaive.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("SniperMonkey-400")).
-                    behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifierForTagModel")).Clone());
+                    behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifierForTagModel")).Duplicate());
                 var GlaiveExtraDamage=Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>();
                 GlaiveExtraDamage.tags[0]=null;
                 GlaiveExtraDamage.tags.AddItem("Moab");
@@ -157,7 +157,7 @@
                 Mutalisk.display="MutaliskBroodLordPrefab";
                 var Glaive=Mutalisk.behaviors.First(a=>a.name.Contains("Glaive")).Cast<AttackModel>();
                 Glaive.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.
-                    Contains("AttackModel_Attack Necromancer_")).Clone().Cast<AttackModel>().weapons[0].projectile;
+                    Contains("AttackModel_Attack Necromancer_")).Clone().Cast<AttackModel>().weapons[0].projectile.Duplicate();
                 Glaive.weapons[0].projectile.pierce=5;
                 Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>().disableRotateWithPathDirection=false;
                 Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Path")).Cast<TravelAlongPathModel>().speedFrames=0.6f;
@@ -196,72 +196,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskWebbyPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskWebbyPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskPrimalPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskPrimalPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskBroodLordPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskBroodLordPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskBroodlingPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskBroodlingPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskDevourerPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskDevourerPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskLeviathanPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskLeviathanPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskBroodlingPrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskBroodlingPrefab");
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MutaliskGlaivePrefab")){
-                    var udn=GetMutalisk(__instance.PrototypeRoot,"MutaliskGlaivePrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Mutalisk")){
+                    var udn=GetMutalisk(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-Mutalisk";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -286,101 +222,23 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("MutaliskIcon")){
-                    var b=Assets.LoadAsset("MutaliskIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Mutalisk")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskPortrait")){
-                    var b=Assets.LoadAsset("MutaliskPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskBroodLordPortrait")){
-                    var b=Assets.LoadAsset("MutaliskBroodLordPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskBroodLordIcon")){
-                    var b=Assets.LoadAsset("MutaliskBroodLordIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskRapidRegenerationIcon")){
-                    var b=Assets.LoadAsset("MutaliskRapidRegenerationIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskSunderingGlaiveIcon")){
-                    var b=Assets.LoadAsset("MutaliskSunderingGlaiveIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskSlicingGlaiveIcon")){
-                    var b=Assets.LoadAsset("MutaliskSlicingGlaiveIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskViciousGlaiveIcon")){
-                    var b=Assets.LoadAsset("MutaliskViciousGlaiveIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskLeviathanIcon")){
-                    var b=Assets.LoadAsset("MutaliskLeviathanIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskLeviathanPortrait")){
-                    var b=Assets.LoadAsset("MutaliskLeviathanPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskDevourerIcon")){
-                    var b=Assets.LoadAsset("MutaliskDevourerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskDevourerPortrait")){
-                    var b=Assets.LoadAsset("MutaliskDevourerPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskPrimalIcon")){
-                    var b=Assets.LoadAsset("MutaliskPrimalIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MutaliskPrimalPortrait")){
-                    var b=Assets.LoadAsset("MutaliskPrimalPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class WI{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("Mutalisk")){
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MutaliskAttack");
                 }
             }
         }

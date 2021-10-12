@@ -20,12 +20,13 @@
             Battlecruiser.areaTypes[1]=AreaType.track;
             Battlecruiser.areaTypes[2]=AreaType.ice;
             Battlecruiser.areaTypes[3]=AreaType.water;
+            Battlecruiser.GetBehavior<DisplayModel>().positionOffset=new(0,0,100);
+            Battlecruiser.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BattlecruiserPrefab";
             var Fire=Battlecruiser.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
             Fire.name="BattlecruiserFire";
             Fire.weapons[0].name="BattlecruiserFire";
             Fire.range=70;
             Fire.weapons[0].projectile.GetDamageModel().damage=1;
-            Battlecruiser.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BattlecruiserPrefab";
         }
         public class TacJump:ModUpgrade<Battlecruiser>{
             public override string Name=>"TacJump";
@@ -69,7 +70,7 @@
                 Yamato.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
                 Yamato.icon=new("BattlecruiserYamatoIcon");
                 Yamato.cooldown=70f;
-                Yamato.RemoveBehavior(Yamato.behaviors.First(a=>a.name.Contains("Pause")));
+                //Yamato.RemoveBehavior(Yamato.behaviors.First(a=>a.name.Contains("Pause")));
                 Yamato.maxActivationsPerRound=1;
                 Battlecruiser.AddBehavior(Yamato);
             }
@@ -143,32 +144,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("BattlecruiserPrefab")){
-                    var udn=GetBattlecruiser(__instance.PrototypeRoot,"BattlecruiserPrefab");
-                    udn.name="SC2Expansion-Battlecruiser";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("BattlecruiserSovereignPrefab")){
-                    var udn=GetBattlecruiser(__instance.PrototypeRoot,"BattlecruiserSovereignPrefab");
-                    udn.name="SC2Expansion-Battlecruiser";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("BattlecruiserHyperionPrefab")){
-                    var udn=GetBattlecruiser(__instance.PrototypeRoot,"BattlecruiserHyperionPrefab");
-                    udn.name="SC2Expansion-Battlecruiser";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("BattlecruiserPOAPrefab")){
-                    var udn=GetBattlecruiser(__instance.PrototypeRoot,"BattlecruiserPOAPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Battlecruiser")){
+                    var udn=GetBattlecruiser(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-Battlecruiser";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -190,77 +167,15 @@
         public static UnityDisplayNode GetBattlecruiser(Transform transform,string model){
             var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
             udn.Active=false;
+            udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserPortrait")){
-                    var b=Assets.LoadAsset("BattlecruiserPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserSovereignIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserSovereignIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserYamatoIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserYamatoIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserPOAIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserPOAIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserHyperionIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserHyperionIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserHyperionPortrait")){
-                    var b=Assets.LoadAsset("BattlecruiserHyperionPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserPOAPortrait")){
-                    var b=Assets.LoadAsset("BattlecruiserHyperionPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserSovereignPortrait")){
-                    var b=Assets.LoadAsset("BattlecruiserSovereignPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("BattlecruiserTacJumpIcon")){
-                    var b=Assets.LoadAsset("BattlecruiserTacJumpIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Battlecruiser")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

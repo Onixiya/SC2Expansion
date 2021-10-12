@@ -196,15 +196,7 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
@@ -212,6 +204,15 @@
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class WI{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("Hydralisk")){
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("HydraliskAttack");
                 }
             }
         }

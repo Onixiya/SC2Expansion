@@ -135,25 +135,9 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("VoidRayPrefab")){
-                    var udn=GetVoidRay(__instance.PrototypeRoot,"VoidRayPrefab");
-                    udn.name="VoidRay";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("VoidRayDestroyerPrefab")){
-                    var udn=GetVoidRay(__instance.PrototypeRoot,"VoidRayDestroyerPrefab");
-                    udn.name="VoidRay";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("VoidRayMohandarPrefab")){
-                    var udn=GetVoidRay(__instance.PrototypeRoot,"VoidRayMohandarPrefab");
-                    udn.name="VoidRay";
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("VoidRay")){
+                    var udn=GetVoidRay(__instance.PrototypeRoot,objectId);
+                    udn.name="SC2Expansion-VoidRay";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -177,65 +161,23 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("VoidRayIcon")){
-                    var b=Assets.LoadAsset("VoidRayIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("VoidRay")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayPortrait")){
-                    var b=Assets.LoadAsset("VoidRayPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayPrismaticAlignmentIcon")){
-                    var b=Assets.LoadAsset("VoidRayPrismaticAlignmentIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayFluxVanesIcon")){
-                    var b=Assets.LoadAsset("VoidRayFluxVanesIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayPrismaticRangeIcon")){
-                    var b=Assets.LoadAsset("VoidRayPrismaticRangeIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayDestroyerIcon")){
-                    var b=Assets.LoadAsset("VoidRayDestroyerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayMohandarPortrait")) {
-                    var b=Assets.LoadAsset("VoidRayMohandarPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("VoidRayDestroyerPortrait")){
-                    var b=Assets.LoadAsset("VoidRayDestroyerPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class WI{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("VoidRay")){
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("VoidRayAttack");
                 }
             }
         }

@@ -118,6 +118,9 @@
                 Bullet.weapons[0].projectile.GetDamageModel().damage+=3;
                 var FragGrenade=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("Attack")).
                     Clone().Cast<AttackModel>();
+                FragGrenade.name="MarineFragGrenade";
+                FragGrenade.AddBehavior(new PauseAllOtherAttacksModel("PauseAllOtherAttacksModel",1,true,true));
+                FragGrenade.range=Marine.range-10;
                 Marine.AddBehavior(FragGrenade);
             }
         }
@@ -126,24 +129,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarinePrefab")){
-                    var udn=GetMarine(__instance.PrototypeRoot,"MarinePrefab");
-                    udn.name="SC2Expansion-Marine";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineWarpigPrefab")){
-                    var udn=GetMarine(__instance.PrototypeRoot,"MarineWarpigPrefab");
-                    udn.name="SC2Expansion-Marine";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("MarineRaynorPrefab")){
-                    var udn=GetMarine(__instance.PrototypeRoot,"MarineRaynorPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Marine")){
+                    var udn=GetMarine(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-Marine";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -168,59 +155,27 @@
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("MarineIcon")){
-                    var b=Assets.LoadAsset("MarineIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Marine")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("MarineWarpigPortrait")){
-                    var b=Assets.LoadAsset("MarineWarpigPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MarineWarpigIcon")){
-                    var b=Assets.LoadAsset("MarineWarpigIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MarineU238ShellsIcon")){
-                    var b=Assets.LoadAsset("Marineu238ShellsIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MarineLaserTargetingSystemIcon")){
-                    var b=Assets.LoadAsset("MarineLaserTargetingSystemIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MarineStimpacksIcon")){
-                    var b=Assets.LoadAsset("MarineStimpacksIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("MarineRaynorIcon")){
-                    var b=Assets.LoadAsset("MarineRaynorIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class WI{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("Marine")){
+                    if(__instance.attack.attackModel.name.Contains("Grenade")){
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineGrenade");
+                    }else{
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineAttack");
+                    }
                 }
             }
         }

@@ -1,9 +1,7 @@
 ﻿//saves so much space with global using, no need to put separate usings in each file, just put them all in the main one
 global using System;
 global using Assets.Scripts.Models;
-global using Assets.Scripts.Models.Profile;
 global using Assets.Scripts.Models.Towers;
-global using Assets.Scripts.Models.Towers.Upgrades;
 global using Assets.Scripts.Models.TowerSets;
 global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
 global using SC2Expansion.Towers;
@@ -35,9 +33,8 @@ global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
 global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
-global using System.Threading.Tasks;
 global using Assets.Scripts.Models.Towers.Filters;
-global using Assets.Scripts.Unity.UI_New.InGame.RightMenu;
+global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{

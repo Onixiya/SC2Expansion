@@ -120,108 +120,16 @@
                 ClusterRockets.projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("DartlingGunner-050")).GetAbility().GetBehavior<ActivateAttackModel>().attacks[0].
                     weapons[0].projectile.GetBehavior<TravelCurvyModel>().Duplicate());
                 ClusterRockets.projectile.GetBehavior<TravelCurvyModel>().speed=150;
-                ClusterRockets.projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().weapons[0].projectile.GetBehavior<TrackTargetModel>());
+                ClusterRockets.projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().weapons[0].projectile.GetBehavior<TrackTargetModel>().Duplicate());
             }
-        }
-        public override int GetTowerIndex(List<TowerDetailsModel> towerSet){
-            return towerSet.First().towerIndex+1;
         }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("UltraliskCavernPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"UltraliskCavernPrefab");
-                    udn.name="SC2Expansion-UltraliskCavern";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("GasPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"GasPrefab");
-                    udn.name="SC2Expansion-UltraliskCavern";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                //i fucking hate that i have to do this but it crashes if its done in the hatchery stuff
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNoCreepPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryNoCreepPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryLairPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryLairPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryHivePrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryHivePrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryNydusWormPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryNydusWormPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HatcheryOmegaWormPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"HatcheryOmegaWormPrefab");
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("UltraliskCavernUltraliskPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"UltraliskCavernUltraliskPrefab");
-                    udn.name="SC2Expansion-UltraliskCavern";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("UltraliskCavernNoxiousPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"UltraliskCavernNoxiousPrefab");
-                    udn.name="SC2Expansion-UltraliskCavern";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("UltraliskCavernPrimalPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"UltraliskCavernPrimalPrefab");
-                    udn.name="SC2Expansion-UltraliskCavern";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("UltraliskCavernApocaliskPrefab")){
-                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,"UltraliskCavernApocaliskPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("UltraliskCavern")){
+                    var udn=GetUltraliskCavern(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-UltraliskCavern";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -240,6 +148,17 @@
             get=>__asset;
             set=>__asset=value;
         }
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
+        public record ResourceLoader_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(SpriteReference reference,ref Image image){
+                if(reference!=null&&reference.guidRef.Contains("UltraliskCavern")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                }
+            }
+        }
         public static UnityDisplayNode GetUltraliskCavern(Transform transform,string model){
             var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
             udn.Active=false;
@@ -252,54 +171,6 @@
             public static void Postfix(){
                 foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
                 PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
-        public record ResourceLoader_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernPortrait")){
-                    var b=Assets.LoadAsset("UltraliskCavernPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernChitinousPlatingIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernChitinousPlatingIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernAnabolicSynthesisIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernAnabolicSynthesisIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernNoxiousIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernNoxiousIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernPrimalIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernPrimalIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("UltraliskCavernApocaliskIcon")){
-                    var b=Assets.LoadAsset("UltraliskCavernApocaliskIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
             }
         }
     }

@@ -29,7 +29,7 @@
             CreepBuff.multiplier=0.0001f;
             CreepBuff.isGlobal=false;
             CreepBuff.buffIconName=null;
-            string[] ZergBuildings=new string[4]{"SC2Expansion-SpawningPoo","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
+            string[] ZergBuildings=new string[4]{"SC2Expansion-SpawningPool","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
             CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=ZergBuildings;
             Hatchery.AddBehavior(CreepBuff);
         }
@@ -225,79 +225,43 @@
                 Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
             }
         }
-        //look in the ultralisk source for the prefab loading, it constantly crashes for some fucking reason if its done in here
+        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
+        public class PrototypeUDN_Patch{
+            public static Dictionary<string,UnityDisplayNode>protos=new();
+            [HarmonyPrefix]
+            public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("Hatchery")){
+                    var udn=GetHatchery(__instance.PrototypeRoot,objectId);
+                    udn.name="SC2Expansion-Hatchery";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    protos.Add(objectId,udn);
+                    return false;
+                }
+                if(protos.ContainsKey(objectId)){
+                    onComplete.Invoke(protos[objectId]);
+                    return false;
+                }
+                return true;
+            }
+        }
         private static AssetBundle __asset;
         public static AssetBundle Assets{
             get=>__asset;
             set=>__asset=value;
         }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        public static UnityDisplayNode GetHatchery(Transform transform,string model){
+            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
+            udn.Active=false;
+            udn.transform.position=new(-3000,0);
+            return udn;
+        }
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("HatcheryIcon")){
-                    var b=Assets.LoadAsset("HatcheryIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryPortrait")){
-                    var b=Assets.LoadAsset("HatcheryPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryDronesIcon")){
-                    var b=Assets.LoadAsset("HatcheryDronesIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryExtractorIcon")){
-                    var b=Assets.LoadAsset("HatcheryExtractorIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryLairIcon")){
-                    var b=Assets.LoadAsset("HatcheryLairIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryHiveIcon")){
-                    var b=Assets.LoadAsset("HatcheryHiveIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryLairPortrait")){
-                    var b=Assets.LoadAsset("HatcheryLairPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryHivePortrait")){
-                    var b=Assets.LoadAsset("HatcheryHivePortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryNydusNetworkIcon")){
-                    var b=Assets.LoadAsset("HatcheryNydusNetworkIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryNydusWormIcon")){
-                    var b=Assets.LoadAsset("HatcheryNydusWormIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HatcheryOmegaWormIcon")){
-                    var b=Assets.LoadAsset("HatcheryOmegaWormIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Hatchery")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

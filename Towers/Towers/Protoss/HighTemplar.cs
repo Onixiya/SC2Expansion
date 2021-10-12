@@ -152,25 +152,9 @@ namespace SC2Expansion.Towers{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarPrefab")){
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarPrefab");
-                    udn.name="HighTemplar";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarAscendantPrefab")){
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarAscendantPrefab");
-                    udn.name="HighTemplar";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("HighTemplarJinaraPrefab")){
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,"HighTemplarJinaraPrefab");
-                    udn.name="HighTemplar";
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("HighTemplar")){
+                    var udn=GetHighTemplar(__instance.PrototypeRoot,objectId);
+                    udn.name="SC2Expansion-HighTemplar";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     protos.Add(objectId,udn);
@@ -194,71 +178,23 @@ namespace SC2Expansion.Towers{
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarIcon")){
-                    var b=Assets.LoadAsset("HighTemplarIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("HighTemplar")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarPsiStormIcon")){
-                    var b=Assets.LoadAsset("HighTemplarPsiStormIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarPlasmaSurgeIcon")){
-                    var b=Assets.LoadAsset("HighTemplarPlasmaSurgeIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarKhaydarinAmuletIcon")){
-                    var b=Assets.LoadAsset("HighTemplarKhaydarinAmuletIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarAscendantIcon")){
-                    var b=Assets.LoadAsset("HighTemplarAscendantIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarAscendantPortrait")) {
-                    var b=Assets.LoadAsset("HighTemplarAscendantPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarMindBlastIcon")){
-                    var b=Assets.LoadAsset("HighTemplarMindBlastIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarSacrificeIcon")){
-                    var b=Assets.LoadAsset("HighTemplarSacrificeIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("HighTemplarJinaraPortrait")){
-                    var b=Assets.LoadAsset("HighTemplarJinaraPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class WI{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("HighTemplar")){
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("HighTemplarAttack");
                 }
             }
         }

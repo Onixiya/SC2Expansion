@@ -90,8 +90,7 @@
                 GetUpgradeModel().icon=new("CommandCenterOrbitalCommandIcon");
                 CommandCenter.display="CommandCenterOrbitalCommandPrefab";
                 CommandCenter.portrait=new("CommandCenterOrbitalCommandPortrait");
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-020")).behaviors.First(a=>a.name.
-                    Contains("Visibility")).Clone());
+                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-020")).GetBehavior<VisibilitySupportModel>().Duplicate());
                 CommandCenter.behaviors.First(a=>a.name.Contains("Visibility")).Cast<VisibilitySupportModel>().buffIconName=null;
                 CommandCenter.range=80;
                 var OrbitalStrike=Game.instance.model.towers.First(a=>a.name.Contains("TackShooter-040")).GetBehavior<AbilityModel>().Duplicate();
@@ -99,7 +98,7 @@
                 OrbitalStrike.name="OrbitalStrike";
                 OrbitalStrike.displayName="Orbital Strike";
                 OrbitalStrike.icon=new("CommandCenterMissileIcon");
-                OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-020")).GetAttackModel().weapons[0].projectile;
+                OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-020")).GetAttackModel().weapons[0].projectile.Duplicate();
                 OrbitalStrikeAttack.weapons[0].projectile.behaviors=OrbitalStrikeAttack.weapons[0].projectile.behaviors.Add(new TrackTargetModel("TrackTargetModel",
                     999,true,true,360,true,360,false,false));
                 OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.
@@ -187,7 +186,7 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterDominionIcon");
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-004")).behaviors.First(a=>a.name.Contains("MonkeyCityModel")));
+                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-004")).GetBehavior<MonkeyCityModel>().Duplicate());
                 CommandCenter.behaviors.First(a=>a.name.Contains("City")).Cast<MonkeyCityModel>().towerId="SC2Expansion-Marine-400";
             }
         }
@@ -196,32 +195,8 @@
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("CommandCenterPrefab")){
-                    var udn=GetCommandCenter(__instance.PrototypeRoot,"CommandCenterPrefab");
-                    udn.name="SC2Expansion-CommandCenter";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("CommandCenterOrbitalCommandPrefab")){
-                    var udn=GetCommandCenter(__instance.PrototypeRoot,"CommandCenterOrbitalCommandPrefab");
-                    udn.name="SC2Expansion-CommandCenter";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("CommandCenterPlanetaryFortressBodyPrefab")){
-                    var udn=GetCommandCenter(__instance.PrototypeRoot,"CommandCenterPlanetaryFortressBodyPrefab");
-                    udn.name="SC2Expansion-CommandCenter";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
-                    return false;
-                }
-                if(!protos.ContainsKey(objectId)&&objectId.Equals("CommandCenterPlanetaryFortressGunPrefab")){
-                    var udn=GetCommandCenter(__instance.PrototypeRoot,"CommandCenterPlanetaryFortressGunPrefab");
+                if(!protos.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
+                    var udn=GetCommandCenter(__instance.PrototypeRoot,objectId);
                     udn.name="SC2Expansion-CommandCenter";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -242,105 +217,26 @@
         }
         public static UnityDisplayNode GetCommandCenter(Transform transform,string model){
             var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
             udn.transform.position=new(-3000,0);
             return udn;
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
-        }
-        [HarmonyPatch(typeof(ResourceLoader),nameof(ResourceLoader.LoadSpriteFromSpriteReferenceAsync))]
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterIcon")){
-                    var b=Assets.LoadAsset("CommandCenterIcon");
-                    var text=b.Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("CommandCenter")){
+                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterPortrait")){
-                    var b=Assets.LoadAsset("CommandCenterPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterOrbitalCommandIcon")){
-                    var b=Assets.LoadAsset("CommandCenterOrbitalCommandIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterOrbitalCommandPortrait")){
-                    var b=Assets.LoadAsset("CommandCenterOrbitalCommandPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterPlanetaryFortressIcon")){
-                    var b=Assets.LoadAsset("CommandCenterPlanetaryFortressIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterPlanetaryFortressPortrait")){
-                    var b=Assets.LoadAsset("CommandCenterPlanetaryFortressPortrait");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterBetterSCVIcon")){
-                    var b=Assets.LoadAsset("CommandCenterBetterSCVIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterRefineryIcon")){
-                    var b=Assets.LoadAsset("CommandCenterRefineryIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterBarrageIcon")){
-                    var b=Assets.LoadAsset("CommandCenterBarrageIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterNeosteelFrameIcon")){
-                    var b=Assets.LoadAsset("CommandCenterNeosteelFrameIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterMissileIcon")){
-                    var b=Assets.LoadAsset("CommandCenterMissileIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterMuleIcon")){
-                    var b=Assets.LoadAsset("CommandCenterMuleIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterSensorTowerIcon")){
-                    var b=Assets.LoadAsset("CommandCenterSensorTowerIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-                if(reference!=null&&reference.guidRef.Equals("CommandCenterDominionIcon")){
-                    var b=Assets.LoadAsset("CommandCenterDominionIcon");
-                    var text=b.Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+            }
+        }
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        public static class SpawnDart_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.attackModel.name.Contains("Ibiks")){
+                    __instance.attack.entity.GetDisplayNode().graphic.GetComponent<Animator>().Play("CommandCenterAttack");
                 }
             }
         }
