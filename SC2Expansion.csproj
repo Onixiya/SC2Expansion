@@ -131,7 +131,7 @@
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
-    <Compile Include="Towers\Towers\Zerg\Queen.cs" />
+    <None Include="Towers\Towers\Zerg\Queen.donotcompile" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="packages.config" />

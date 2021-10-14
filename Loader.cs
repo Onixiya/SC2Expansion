@@ -34,7 +34,6 @@ global using UnhollowerBaseLib;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
-global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -92,7 +91,7 @@ namespace SC2Expansion{
                 //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
                 Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
-                Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
+                //Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
                 //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
                 SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);

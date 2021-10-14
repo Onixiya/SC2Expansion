@@ -121,6 +121,7 @@
                 NydusAttack.attacks[0].GetBehavior<RandomPositionModel>().maxDistance=150;
                 NydusAttack.attacks[0].RemoveBehavior<RotateToTargetModel>();
                 NydusAttack.attacks[0].weapons[0].projectile.display=null;
+                NydusWorm.name="NydusWorm";
                 NydusWorm.display="HatcheryNydusWormPrefab";
                 NydusWorm.GetAttackModel().GetBehavior<DisplayModel>().display=null;
                 NydusWorm.RemoveBehavior<AttackModel>();
