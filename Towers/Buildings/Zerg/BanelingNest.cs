@@ -74,9 +74,10 @@
                     First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")).Duplicate());
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBaneling3Prefab";
                 var AcidPool=SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProj")).Cast<CreateProjectileOnExhaustFractionModel>();
-                AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>().cleanseFortified=true;
-                AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>().cleanseLead=false;
-                AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>().bloonTagExcludeList.Add("Moabs");
+                var AcidPoolModifiers=AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>();
+                AcidPoolModifiers.cleanseFortified=true;
+                AcidPoolModifiers.cleanseLead=false;
+                AcidPoolModifiers.bloonTagExcludeList.Add("Moabs");
             }
         }
         public class Splitter:ModUpgrade<BanelingNest> {
