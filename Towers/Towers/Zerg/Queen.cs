@@ -3,7 +3,7 @@
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
-        public override int TopPathUpgrades=>3;
+        public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override string Description=>"Ranged Zerg support, requires creep";
@@ -86,7 +86,7 @@
                 Queen.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Attack")).weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
-        /*public class BroodMother:ModUpgrade<Queen>{
+        public class BroodMother:ModUpgrade<Queen>{
             public override string Name=>"BroodMother";
             public override string DisplayName=>"Evolve into a Brood Mother";
             public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing Hydralisks and Zerglings";
@@ -115,8 +115,9 @@
                 DropPodEndTower.display="QueenDropPodEndPrefab";
                 DropPodEndTower.GetAttackModel().GetBehavior<DisplayModel>().display=null;
                 DropPodEndTower.RemoveBehavior<AttackModel>();
+                SpawningPool.name="whatdoicallthis";
                 DropPodEndTower.behaviors=DropPodEndTower.behaviors.Add(SpawnHydralisk,SpawningPool.GetAttackModel(),SpawningPool.GetBehavior<NecromancerZoneModel>());
-                SpawningPool.GetAttackModel().weapons[1].rate=2;
+                SpawningPool.GetAttackModel().weapons[1].rate=15000;
                 SpawnHydralisk.name="SpawnHydralisk";
                 SpawnHydralisk.weapons[0].rate=50000;
                 SpawnHydralisk.range=40;
@@ -149,9 +150,10 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenZagaraIcon");
+                var DropPod=Queen.GetAbilites().First(a=>a.name.Contains("DropPod"));
                 Queen.display="QueenZagaraPrefab";
             }
-        }*/
+        }
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
@@ -208,7 +210,7 @@
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Queen")){
                     if(__instance.attack.attackModel.name.Contains("CreepTumor")){
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenSpawnCreepTumorClip").Cast<AudioClip>(),Ext.ModVolume);
+                       // __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenSpawnCreepTumorClip").Cast<AudioClip>(),Ext.ModVolume);
                         __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenSpawnCreepTumorStart");
                     }
                     if(__instance.attack.attackModel.name.Contains("AttackModel_Attack_")){
@@ -223,7 +225,7 @@
             public static void Postfix(ref Ability __instance){
                 if(__instance.tower.namedMonkeyKey.Contains("Queen")){
                     __instance.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenAbility");
-                    __instance.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenAbilityClip").Cast<AudioClip>(),Ext.ModVolume);
+                    //__instance.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenAbilityClip").Cast<AudioClip>(),Ext.ModVolume);
                 }
             }
         }

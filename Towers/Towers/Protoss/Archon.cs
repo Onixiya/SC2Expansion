@@ -146,7 +146,7 @@
                 Archon.portrait=new("ArchonUlrezajPortrait");
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]

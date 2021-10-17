@@ -167,7 +167,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
+        public static class SpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Marine")){

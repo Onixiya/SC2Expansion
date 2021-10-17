@@ -35,11 +35,14 @@ global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
+using Assets.Scripts.Simulation.Input;
+
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
+        public override string LatestURL=>"https://github.com/Onixiya/SC2Expansion/releases/latest";
         public static readonly ModSettingBool ProtossEnabled=true;
         public static readonly ModSettingBool TerranEnabled=true;
         public static readonly ModSettingBool ZergEnabled=true;
@@ -93,7 +96,7 @@ namespace SC2Expansion{
                 Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
                 Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
-                //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
+                Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
                 SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
                 //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
@@ -111,8 +114,17 @@ namespace SC2Expansion{
                 Ext.ModVolume=Object.FindObjectOfType<FXVolumeControl>().volume;
             }
         }
+        [HarmonyPatch(typeof(TowerInventory),"IsPathTierLocked")]
+        public static class TowerInventory_IsPathTierLocked{
+        [HarmonyPostfix]
+            public static void Postfix(ref bool __result){
+                MelonLogger.Msg(__result);
+                __result=false;
+                MelonLogger.Msg(__result);
+            }
+        }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
-        public static class GameStart{
+        public static class Load_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
                 if(RemoveBaseTowers==true){
@@ -120,7 +132,7 @@ namespace SC2Expansion{
                 }
             }
         }
-        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel) {
+        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
             if(upgradeName.Contains("Primal")){
                 int RandNum=new System.Random().Next(1,3);

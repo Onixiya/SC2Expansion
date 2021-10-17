@@ -40,9 +40,8 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="BloonsTD6_Mod_Helper, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6_Mod_Helper.dll</HintPath>
+    <Reference Include="BloonsTD6 Mod Helper">
+      <HintPath>F:\Steam\steamapps\common\BloonsTD6\Mods\BloonsTD6 Mod Helper.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Steamworks, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -132,6 +131,7 @@
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Queen.cs" />
+    <Compile Include="Towers\Towers\Zerg\Roach.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="packages.config" />
@@ -152,6 +152,7 @@
     <None Include="Resources\marine.bundle" />
     <None Include="Resources\mutalisk.bundle" />
     <None Include="Resources\queen.bundle" />
+    <None Include="Resources\roach.bundle" />
     <None Include="Resources\spawningpool.bundle" />
     <None Include="Resources\ultraliskcavern.bundle" />
     <None Include="Resources\viking.bundle" />
