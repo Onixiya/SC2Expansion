@@ -114,15 +114,6 @@ namespace SC2Expansion{
                 Ext.ModVolume=Object.FindObjectOfType<FXVolumeControl>().volume;
             }
         }
-        [HarmonyPatch(typeof(TowerInventory),"IsPathTierLocked")]
-        public static class TowerInventory_IsPathTierLocked{
-        [HarmonyPostfix]
-            public static void Postfix(ref bool __result){
-                MelonLogger.Msg(__result);
-                __result=false;
-                MelonLogger.Msg(__result);
-            }
-        }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
         public static class Load_Patch{
             [HarmonyPostfix]

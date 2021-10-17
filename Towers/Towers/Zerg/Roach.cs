@@ -19,7 +19,7 @@
             var Acid=Roach.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
             Acid.range=Roach.range;
             Acid.weapons[0].rate=1;
-            Acid.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",2,0,false,false,true,0));
+            Acid.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",2,0,true,false,true,0));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Lead",2,0,true,false));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Ceremic",2,0,true,false));
             Acid.weapons[0].projectile.RemoveBehavior<SlowModel>();
