@@ -97,7 +97,7 @@
                     Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.Duplicate(),Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().
                     weapons[0].emission.Duplicate(),60,true,30,null));
                 SpawnUltralisk.weapons[1].projectile.GetBehavior<CreateProjectileOnIntervalModel>().emission.Cast<ArcEmissionModel>().Count=12;
-                SpawnUltralisk.weapons[1].rate=5.5f;
+                SpawnUltralisk.weapons[1].rate=55000f;
             }
         }
         public class Apocalisk:ModUpgrade<UltraliskCavern>{
@@ -113,7 +113,7 @@
                 SpawnUltralisk.weapons[1].projectile.display="UltraliskCavernApocaliskPrefab";
                 SpawnUltralisk.weapons[1].projectile.pierce+=25;
                 SpawnUltralisk.weapons[1].projectile.GetDamageModel().damage+=6;
-                SpawnUltralisk.weapons[1].rate=7;
+                SpawnUltralisk.weapons[1].rate=70000;
                 var ClusterRockets=SpawnUltralisk.weapons[1].projectile.GetBehavior<CreateProjectileOnIntervalModel>();
                 ClusterRockets.projectile=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-020")).GetAttackModel().weapons[0].projectile.Duplicate();
                 ClusterRockets.projectile.RemoveBehavior<TravelStraitModel>();

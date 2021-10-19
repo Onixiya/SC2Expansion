@@ -35,7 +35,7 @@ global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
-using Assets.Scripts.Simulation.Input;
+using Assets.Scripts.Simulation.Objects;
 
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]

@@ -18,22 +18,30 @@
             Roach.range=40;
             var Acid=Roach.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
             Acid.range=Roach.range;
-            Acid.weapons[0].rate=1;
+            Acid.weapons[0].rate=1.1f;
+            Acid.weapons[0].ejectX=0;
+            Acid.weapons[0].ejectY=0;
             Acid.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",2,0,true,false,true,0));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Lead",2,0,true,false));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Ceremic",2,0,true,false));
             Acid.weapons[0].projectile.RemoveBehavior<SlowModel>();
+            Acid.GetBehavior<AttackFilterModel>().filters=Acid.GetBehavior<AttackFilterModel>().filters.Remove(a=>a.name.Contains("Glue"));
+            Acid.GetBehavior<AttackFilterModel>().filters=Acid.GetBehavior<AttackFilterModel>().filters.Remove(a=>a.name.Contains("TagModel"));
+            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("Glue"));
+            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("TagModel"));
+            Acid.weapons[0].projectile.display="97f2427a81f436547b0a59f37fb689da";
             Roach.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=Roach.display;
         }
         public class HydriodicBile:ModUpgrade<Roach>{
             public override string Name=>"HydriodicBile";
             public override string DisplayName=>"Hydriodic Bile";
-            public override string Description=>"Increases damage done to non Moabs";
+            public override string Description=>"Increases damage";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachHydriodicBileIcon");
+                Roach.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
         public class Vile:ModUpgrade<Roach>{
@@ -45,25 +53,38 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachVileIcon");
+                var Acid=Roach.GetAttackModel();
+                var Slow=Game.instance.model.GetTowerFromId("GlueGunner-300").GetAttackModel().weapons[0].projectile.GetBehavior<SlowModel>().Duplicate();
+                Roach.display="RoachVilePrefab";
+                Slow.glueLevel=1;
+                Acid.weapons[0].projectile.AddBehavior(Slow);
                 Roach.display="RoachVilePrefab";
             }
         }
         public class Ravager:ModUpgrade<Roach>{
             public override string Name=>"Ravager";
             public override string DisplayName=>"Morph into Ravager";
-            public override string Description=>"Ravagers are Zerg ground seige units with a slow but high range attack";
+            public override string Description=>"Morphes into a Ravager, buffing range and damage";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachRavagerIcon");
+                var Bile=Roach.GetAttackModel();
+                Roach.range=80;
+                Bile.range=Roach.range;
+                Bile.weapons[0].rate=2.5f;
+                Bile.weapons[0].projectile.display=Game.instance.model.GetTowerFromId("GlueGunner").GetAttackModel().weapons[0].projectile.display;
+                Bile.weapons[0].projectile.GetDamageModel().damage+=6;
+                Bile.weapons[0].projectile.GetBehavior<TravelStraitModel>().speed=600;
+                Bile.weapons[0].projectile.RemoveBehavior<SlowModel>();
                 Roach.display="RoachRavagerPrefab";
             }
         }
         public class CorrosiveBile:ModUpgrade<Roach>{
             public override string Name=>"CorrosiveBile";
             public override string DisplayName=>"Corrosive Bile";
-            public override string Description=>"";
+            public override string Description=>"Gains a slow but powerful attack that can target anywhere on the map";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;

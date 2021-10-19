@@ -19,6 +19,7 @@
             var Gatling=Viking.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
             Gatling.range=Viking.range;
             Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.Add(new FilterOutTagModel("FilterOutTagModel","Moabs",null));
+            Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Bad",false));
             Gatling.weapons[0].name="VikingGatling";
             Gatling.weapons[0].projectile.GetDamageModel().damage=2;
             Gatling.weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
@@ -45,7 +46,7 @@
                 AirMode.GetBehavior<SwitchDisplayModel>().lifespan=15;
                 AirMode.GetBehavior<SwitchDisplayModel>().display="VikingAirPrefab";
                 AirMode.GetBehavior<IncreaseRangeModel>().addative=30;
-                AirMode.cooldown=0.1f;
+                AirMode.cooldown=40f;
                 AirMode.icon=new("VikingAirIcon");
                 Lanzer.GetBehavior<AttackFilterModel>().filters=Lanzer.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Lanzer.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
