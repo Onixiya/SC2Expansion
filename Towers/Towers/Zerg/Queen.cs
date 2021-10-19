@@ -3,7 +3,7 @@
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
-        public override int TopPathUpgrades=>5;
+        public override int TopPathUpgrades=>3;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override string Description=>"Ranged Zerg support, requires creep";
@@ -86,7 +86,7 @@
                 Queen.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Attack")).weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
-        public class BroodMother:ModUpgrade<Queen>{
+        /*public class BroodMother:ModUpgrade<Queen>{
             public override string Name=>"BroodMother";
             public override string DisplayName=>"Evolve into a Brood Mother";
             public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing Hydralisks and Zerglings";
@@ -153,7 +153,7 @@
                 var DropPod=Queen.GetAbilites().First(a=>a.name.Contains("DropPod"));
                 Queen.display="QueenZagaraPrefab";
             }
-        }
+        }*/
         [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
         public class PrototypeUDN_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
