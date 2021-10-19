@@ -96,7 +96,7 @@ namespace SC2Expansion{
                 Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
                 //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
                 Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
-                Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
+                //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
                 SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
                 //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
                 //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
