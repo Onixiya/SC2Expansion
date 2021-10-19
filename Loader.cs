@@ -38,7 +38,7 @@ global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 using Assets.Scripts.Simulation.Objects;
 
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4.1","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
