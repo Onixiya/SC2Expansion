@@ -131,7 +131,7 @@
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Queen.cs" />
-    <Compile Include="Towers\Towers\Zerg\Roach.cs" />
+    <None Include="Towers\Towers\Zerg\Roach.nocompile" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="packages.config" />
