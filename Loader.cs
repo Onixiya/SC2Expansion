@@ -4,27 +4,22 @@ global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Towers;
 global using Assets.Scripts.Models.TowerSets;
 global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
-global using SC2Expansion.Towers;
 global using SC2Expansion.Utils;
 global using HarmonyLib;
 global using MelonLoader;
 global using System.Collections.Generic;
 global using UnityEngine;
 global using Image=UnityEngine.UI.Image;
-global using BTD_Mod_Helper;
-global using BTD_Mod_Helper.Api.ModOptions;
 global using Assets.Scripts.Models.GenericBehaviors;
 global using Assets.Scripts.Models.Map;
 global using Assets.Scripts.Unity.Display;
 global using Assets.Scripts.Utils;
 global using System.Linq;
-global using Object=UnityEngine.Object;
+global using uObject=UnityEngine.Object;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack;
 global using Assets.Scripts.Models.Towers.Behaviors;
 global using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 global using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
-global using BTD_Mod_Helper.Api.Towers;
-global using BTD_Mod_Helper.Extensions;
 global using Assets.Scripts.Unity;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
@@ -35,22 +30,38 @@ global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
-using Assets.Scripts.Simulation.Objects;
-
+global using Assets.Scripts.Simulation.Objects;
+global using UnityEngine.UI;
+global using UnityEngine.Events;
+global using System.IO;
+global using System.IO.Pipes;
+global using System.Threading.Tasks;
+global using System.Reflection;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4.1","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
-    public class SC2Expansion:BloonsTD6Mod{
-        public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
+    public class SC2Expansion:MelonMod{
+        /*public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
         public override string LatestURL=>"https://github.com/Onixiya/SC2Expansion/releases/latest";
         public static readonly ModSettingBool ProtossEnabled=true;
         public static readonly ModSettingBool TerranEnabled=true;
         public static readonly ModSettingBool ZergEnabled=true;
-        public static readonly ModSettingBool RemoveBaseTowers=false;
+        public static readonly ModSettingBool RemoveBaseTowers=false;*/
         //private static readonly ModSettingBool HeroesEnabled=true;
         public override void OnApplicationStart(){
             Ext.ModVolume=1;
-            if(ProtossEnabled==true){
+            Ext.ModHelperLoaded=false;
+            if(MelonHandler.IsModAlreadyLoaded("BloonsTD6 Mod Helper")){
+                if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModHelper")).Info.Version=="1.0.0"){
+                    Task.Run(()=>SC2ExpansionModOptions.SC2ExpansionModOptions.StartServer());
+                    Ext.ModHelperLoaded=true;
+                }else{
+                    MelonLogger.Msg("Mod Options library not extracted or out of date, installing");
+                    File.WriteAllBytes(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll",Models.Models.SC2ExpansionModOptions);
+                    MelonLogger.Msg("Mod Options library installed, please restart your game to take advantage of this");
+                }
+            }
+            /*if(ProtossEnabled==true){
                 //Adept.Assets=AssetBundle.LoadFromMemory(Models.Models.adept);
                 Archon.Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
                 //Carrier.Assets=AssetBundle.LoadFromMemory(Models.Models.carrier);
@@ -108,22 +119,35 @@ namespace SC2Expansion{
                 Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
             }*/
         }
+        public static async Task TestPipe(){
+            var client=new NamedPipeClientStream("SC2ExpansionModOptions");
+            client.Connect();
+            StreamWriter writer=new StreamWriter(client);
+            StreamReader reader=new StreamReader(client);
+            MelonLogger.Msg("Client");
+            while(true){
+                MelonLogger.Msg(reader.ReadLine());
+            }
+        }
         public override void OnUpdate(){
             base.OnUpdate();
-            if(Object.FindObjectOfType<FXVolumeControl>()!=null){
-                Ext.ModVolume=Object.FindObjectOfType<FXVolumeControl>().volume;
+            if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
+                Ext.ModVolume=uObject.FindObjectOfType<FXVolumeControl>().volume;
             }
         }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
         public static class Load_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                if(RemoveBaseTowers==true){
-                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                if(Ext.ModHelperLoaded){
+                    Task.Run(()=>TestPipe());
                 }
+                /*if(RemoveBaseTowers==true){
+                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                }*/
             }
         }
-        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
+        /*public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
             if(upgradeName.Contains("Primal")){
                 int RandNum=new System.Random().Next(1,3);
@@ -202,6 +226,6 @@ namespace SC2Expansion{
             private static Sprite LoadSprite(Texture2D text){
                 return Sprite.Create(text,new(0,0,text.width,text.height),new());
             }
-        }
+        }*/
     }
 }
