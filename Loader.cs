@@ -4,27 +4,22 @@ global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Towers;
 global using Assets.Scripts.Models.TowerSets;
 global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
-global using SC2Expansion.Towers;
 global using SC2Expansion.Utils;
 global using HarmonyLib;
 global using MelonLoader;
 global using System.Collections.Generic;
 global using UnityEngine;
 global using Image=UnityEngine.UI.Image;
-global using BTD_Mod_Helper;
-global using BTD_Mod_Helper.Api.ModOptions;
 global using Assets.Scripts.Models.GenericBehaviors;
 global using Assets.Scripts.Models.Map;
 global using Assets.Scripts.Unity.Display;
 global using Assets.Scripts.Utils;
 global using System.Linq;
-global using Object=UnityEngine.Object;
+global using uObject=UnityEngine.Object;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack;
 global using Assets.Scripts.Models.Towers.Behaviors;
 global using Assets.Scripts.Models.Towers.Behaviors.Emissions;
 global using Assets.Scripts.Models.Towers.Projectiles.Behaviors;
-global using BTD_Mod_Helper.Api.Towers;
-global using BTD_Mod_Helper.Extensions;
 global using Assets.Scripts.Unity;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
@@ -35,95 +30,83 @@ global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
-using Assets.Scripts.Simulation.Objects;
-
+global using Assets.Scripts.Simulation.Objects;
+global using UnityEngine.UI;
+global using UnityEngine.Events;
+global using System.IO;
+global using System.IO.Pipes;
+global using System.Threading.Tasks;
+global using System.Reflection;
+global using Assets.Scripts.Models.Towers.Upgrades;
+global using NinjaKiwi.Common;
+global using Assets.Scripts.Unity.Player;
+global using Newtonsoft.Json;
+[assembly:MelonOptionalDependencies("SC2ExpansionModOptions")]
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.4.1","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
-    public class SC2Expansion:BloonsTD6Mod{
-        public override string GithubReleaseURL=>"https://api.github.com/repos/Onixiya/SC2Expansion/releases";
-        public override string LatestURL=>"https://github.com/Onixiya/SC2Expansion/releases/latest";
-        public static readonly ModSettingBool ProtossEnabled=true;
-        public static readonly ModSettingBool TerranEnabled=true;
-        public static readonly ModSettingBool ZergEnabled=true;
-        public static readonly ModSettingBool RemoveBaseTowers=false;
-        //private static readonly ModSettingBool HeroesEnabled=true;
+    public class SC2Expansion:MelonMod{
         public override void OnApplicationStart(){
             Ext.ModVolume=1;
-            if(ProtossEnabled==true){
-                //Adept.Assets=AssetBundle.LoadFromMemory(Models.Models.adept);
-                Archon.Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
-                //Carrier.Assets=AssetBundle.LoadFromMemory(Models.Models.carrier);
-                //Colossus.Assets=AssetBundle.LoadFromMemory(Models.Models.colossus);
-                //DarkShrine.Assets=AssetBundle.LoadFromMemory(Models.Models.darkshrine);
-                //FleetBeacon.Assets=AssetBundle.LoadFromMemory(Models.Models.fleetbeacon);
-                Gateway.Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
-                //Immortal.Assets=AssetBundle.LoadFromMemory(Models.Models.immortal);
-                HighTemplar.Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
-                //Nexus.Assets=AssetBundle.LoadFromMemory(Models.Models.nexus);
-                //Observer.Assets=AssetBundle.LoadFromMemory(Models.Models.observer);
-                //PhotonCannon.Assets=AssetBundle.LoadFromMemory(Models.Models.photoncannon);
-                //Pylon.Assets=AssetBundle.LoadFromMemory(Models.Models.pylon);
-                //Sentry.Assets=AssetBundle.LoadFromMemory(Models.Models.sentry);
-                //Stalker.Assets=AssetBundle.LoadFromMemory(Models.Models.stalker);
-                //Tempest.Assets=AssetBundle.LoadFromMemory(Models.Models.tempest);
-                VoidRay.Assets=AssetBundle.LoadFromMemory(Models.Models.voidray);
+            Ext.ModHelperLoaded=false;
+            if(MelonHandler.IsModAlreadyLoaded("BloonsTD6 Mod Helper")){
+                if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModOptions")).Info.Version=="1.0.0"){
+                        Ext.ModHelperLoaded=true;
+                        Ext.LoadSettings();
+                }else{
+                    MelonLogger.Msg("Mod Options library not extracted or out of date, installing");
+                    File.WriteAllBytes(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll",Models.Models.SC2ExpansionModOptions);
+                    MelonLogger.Msg("Mod Options library installed, please restart your game to take advantage of this");
+                }
             }
-            if(TerranEnabled==true){
-                //Banshee.Assets=AssetBundle.LoadFromMemory(Models.Models.banshee);
-                Battlecruiser.Assets=AssetBundle.LoadFromMemory(Models.Models.battlecruiser);
-                CommandCenter.Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
-                //Cyclone.Assets=AssetBundle.LoadFromMemory(Models.Models.cyclone);
-                //Firebat.Assets=AssetBundle.LoadFromMemory(Models.Models.firebat);
-                //GhostAcademy.Assets=AssetBundle.LoadFromMemory(Models.Models.ghostacademy);
-                //Ghost.Assets=AssetBundle.LoadFromMemory(Models.Models.ghost);
-                //Liberator.Assets=AssetBundle.LoadFromMemory(Models.Models.liberator);
-                Marine.Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
-                //Maurader.Assets=AssetBundle.LoadFromMemory(Models.Models.maurader);
-                //MissileTurret.Assets=AssetBundle.LoadFromMemory(Models.Models.missileturret);
-                //Raven.Assets=AssetBundle.LoadFromMemory(Models.Models.raven);
-                //Reaper.Assets=AssetBundle.LoadFromMemory(Models.Models.reaper);
-                //SeigeTank.Assets=AssetBundle.LoadFromMemory(Models.Models.seigetank);
-                //Thor.Assets=AssetBundle.LoadFromMemory(Models.Models.thor);
-                Viking.Assets=AssetBundle.LoadFromMemory(Models.Models.viking);
+        }
+        [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
+        public class Btd6PlayerIsBad{
+            [HarmonyPrefix]
+            public static bool Prefix(string checkSpecificTowerId,string checkSpecificTowerSet,ref bool __result)=>__result=false;
+        }
+        public static void SettingsClientStart(){
+            var client=new NamedPipeClientStream("SC2ExpansionModOptions");
+            client.Connect();
+            StreamWriter writer=new StreamWriter(client);
+            StreamReader reader=new StreamReader(client);
+            while(true){
+                writer.WriteLine("ProtossEnabled");
+                writer.Flush();
+                Ext.ProtossEnabled=reader.ReadLine();
+                writer.WriteLine("TerranEnabled");
+                writer.Flush();
+                Ext.TerranEnabled=reader.ReadLine();
+                writer.WriteLine("ZergEnabled");
+                writer.Flush();
+                Ext.ZergEnabled=reader.ReadLine();
+                writer.WriteLine("RemoveBaseTowers");
+                writer.Flush();
+                Ext.RemoveBaseTowers=reader.ReadLine();
+                writer.WriteLine("HeroesEnabled");
+                writer.Flush();
+                Ext.HeroesEnabled=reader.ReadLine();
             }
-            if(ZergEnabled==true){
-                BanelingNest.Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
-                //Defiler.Assets=AssetBundle.LoadFromMemory(Models.Models.defiler);
-                Hatchery.Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
-                Hydralisk.Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
-                //Infestor.Assets=AssetBundle.LoadFromMemory(Models.Models.infestor);
-                Mutalisk.Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
-                //Overlord.Assets=AssetBundle.LoadFromMemory(Models.Models.overlord);
-                Queen.Assets=AssetBundle.LoadFromMemory(Models.Models.queen);
-                //Roach.Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
-                SpawningPool.Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
-                //SpineCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.spinecrawler);
-                //SporeCrawler.Assets=AssetBundle.LoadFromMemory(Models.Models.sporecrawler);
-                //SwarmHost.Assets=AssetBundle.LoadFromMemory(Models.Models.swarmhost);
-                UltraliskCavern.Assets=AssetBundle.LoadFromMemory(Models.Models.ultraliskcavern);
-            }
-            /*if(HeroesEnabled==true){
-                Artanis.Assets=AssetBundle.LoadFromMemory(Models.Models.artanis);
-                Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
-            }*/
         }
         public override void OnUpdate(){
-            base.OnUpdate();
-            if(Object.FindObjectOfType<FXVolumeControl>()!=null){
-                Ext.ModVolume=Object.FindObjectOfType<FXVolumeControl>().volume;
+            if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
+                Ext.ModVolume=uObject.FindObjectOfType<FXVolumeControl>().volume;
             }
         }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
         public static class Load_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                if(RemoveBaseTowers==true){
-                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                if(Ext.ModHelperLoaded){
+                    Task.Run(()=>SettingsClientStart());
+                    MelonLogger.Msg("Client started");
                 }
+                /*if(RemoveBaseTowers==true){
+                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                }*/
             }
         }
-        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
+        /*public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
             if(upgradeName.Contains("Primal")){
                 int RandNum=new System.Random().Next(1,3);
@@ -202,6 +185,6 @@ namespace SC2Expansion{
             private static Sprite LoadSprite(Texture2D text){
                 return Sprite.Create(text,new(0,0,text.width,text.height),new());
             }
-        }
+        }*/
     }
 }

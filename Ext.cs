@@ -11,48 +11,42 @@
             foreach(var tmp in newPart)bases.Add(tmp);
             return new(bases.ToArray());
         }
-        private static float modvolume;
-        public static float ModVolume
-        {
-            get{return modvolume;}
-            set{modvolume=value;}
+        public static float ModVolume{
+            get;
+            set;
         }
-        //this is the json settings code which i was working on til i decided to look at mod helpers settings menu thing, i'll keep it here in case it might be useful for another project or something
-        //but for now, its useless
-        /*public static T LoadFromFile<T>(string filePath)where T:class{
-            string json=File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<T>(json);
+        public static bool ModHelperLoaded{
+            get;
+            set;
         }
-        public static void SaveToFile<T>(T jsonObject,string savePath,bool overwriteExisting=true)where T:class{
-            CreateDirIfNotFound(savePath);
-            string json=JsonConvert.SerializeObject(jsonObject,Formatting.Indented);
-            bool keepOriginal=!overwriteExisting;
-            StreamWriter serialize=new(savePath,keepOriginal);
-            serialize.Write(json);
-            serialize.Close();
-        }
-        private static void CreateDirIfNotFound(string dir) {
-            FileInfo f=new(dir);
-            Directory.CreateDirectory(f.Directory.FullName);
-        }
-        internal class Settings{
-            public static string settingsFilePath="Mods/SC2Expansion/Settings.json";
-            private static Settings settings;
-            public bool ProtossEnabled{get;set;}=true;
-            public bool TerranEnabled{get;set;}=true;
-            public bool ZergEnabled{get;set;}=true;
-            public bool HeroesEnabled{get;set;}=true;
-            public static Settings LoadedSettings{
-                get{
-                    if(settings is null)settings=Load();
-                    return settings;
-                }set{
-                    settings=value;
-                }
+        public class Settings{
+            public static bool ProtossEnabled{
+                get;
+                set;
             }
-            private static Settings Load(){
-                return File.Exists(settingsFilePath)?LoadFromFile<Settings>(settingsFilePath):new Settings();
+            public static bool TerranEnabled{
+                get;
+                set;
             }
-        }*/
+            public static bool ZergEnabled{
+                get;
+                set;
+            }
+            public static bool RemoveBaseTowers{
+                get;
+                set;
+            }
+            public static bool HeroesEnabled{
+                get;
+                set;
+            }
+        }
+        public static void LoadSettings(){
+            if(File.Exists(MelonHandler.ModsDirectory+"\\SC2Expansion.json")){
+                JsonConvert.DeserializeObject<Settings>(File.ReadAllText(MelonHandler.ModsDirectory+"\\SC2ExpansionSettings.json"));
+            }else{
+                MelonLogger.Msg("Settings does not exist, creating");
+            }
+        }
     }
 }
