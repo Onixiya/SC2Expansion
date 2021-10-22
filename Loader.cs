@@ -55,11 +55,12 @@ namespace SC2Expansion{
             if(MelonHandler.IsModAlreadyLoaded("BloonsTD6 Mod Helper")){
                 if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModOptions")).Info.Version=="1.0.0"){
                         Ext.ModHelperLoaded=true;
-                }else{
+                        Ext.Settings="NULL";
+                }/*else{
                     MelonLogger.Msg("Mod Options library not extracted or out of date, installing");
                     File.WriteAllBytes(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll",Models.Models.SC2ExpansionModOptions);
                     MelonLogger.Msg("Mod Options library installed, please restart your game to take advantage of this");
-                }
+                }*/
             }
             /*if(ProtossEnabled==true){
                 //Adept.Assets=AssetBundle.LoadFromMemory(Models.Models.adept);
@@ -119,28 +120,21 @@ namespace SC2Expansion{
                 Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
             }*/
         }
-        public static async Task SettingsClientStart(){
+        public static void SettingsClientStart(){
             var client=new NamedPipeClientStream("SC2ExpansionModOptions");
             client.Connect();
             StreamWriter writer=new StreamWriter(client);
             StreamReader reader=new StreamReader(client);
-            MelonLogger.Msg("Client");
             while(true){
-                if(Ext.ReadSettings==true){
-                    writer.WriteLine("ProtossEnabled");
+                if(Ext.GetSettings!="NULL"){
+                    writer.WriteLine(Ext.Settings);
                     writer.Flush();
-                    MelonLogger.Msg(reader.ReadLine());
-                    Ext.ReadSettings=false;
                 }
             }
         }
         public override void OnUpdate(){
             if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
                 Ext.ModVolume=uObject.FindObjectOfType<FXVolumeControl>().volume;
-            }
-            if(Input.GetKeyDown(KeyCode.F2)){
-                MelonLogger.Msg("Attempting to read settings");
-                Ext.ReadSettings=true;
             }
         }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
@@ -149,6 +143,7 @@ namespace SC2Expansion{
             public static void Postfix(ref GameModel __result){
                 if(Ext.ModHelperLoaded){
                     Task.Run(()=>SettingsClientStart());
+                    MelonLogger.Msg("Client started");
                 }
                 /*if(RemoveBaseTowers==true){
                     __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));

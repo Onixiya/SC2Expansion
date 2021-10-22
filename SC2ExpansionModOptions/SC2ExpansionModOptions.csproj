@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BloonsTD6 Mod Helper">
       <HintPath>F:\Steam\steamapps\common\Mods\BloonsTD6 Mod Helper.dll</HintPath>
@@ -54,7 +57,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)$(TargetFileName)" "F:\Steam\steamapps\common\Mods\$(TargetFileName)" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

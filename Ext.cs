@@ -12,22 +12,24 @@
             return new(bases.ToArray());
         }
         private static float modvolume;
-        public static float ModVolume
-        {
+        public static float ModVolume{
             get{return modvolume;}
             set{modvolume=value;}
         }
         private static bool modhelperloaded;
-        public static bool ModHelperLoaded
-        {
+        public static bool ModHelperLoaded{
             get{return modhelperloaded;}
             set{modhelperloaded=value;}
         }
-        private static bool readsettings;
-        public static bool ReadSettings
-        {
-            get{return readsettings;}
-            set{readsettings=value;}
+        private static string getsettings;
+        public static string GetSettings{
+            get{return getsettings;}
+            set{getsettings=value;}
+        }
+        private static string protossenabled;
+        public static string ProtossEnabled{
+            get{return protossenabled;}
+            set{protossenabled=value;}
         }
         //this is the json settings code which i was working on til i decided to look at mod helpers settings menu thing, i'll keep it here in case it might be useful for another project or something
         //but for now, its useless
