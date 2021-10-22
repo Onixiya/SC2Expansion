@@ -37,6 +37,7 @@ global using System.IO;
 global using System.IO.Pipes;
 global using System.Threading.Tasks;
 global using System.Reflection;
+[assembly:MelonOptionalDependencies("SC2ExpansionModOptions")]
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -52,9 +53,8 @@ namespace SC2Expansion{
             Ext.ModVolume=1;
             Ext.ModHelperLoaded=false;
             if(MelonHandler.IsModAlreadyLoaded("BloonsTD6 Mod Helper")){
-                if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModHelper")).Info.Version=="1.0.0"){
-                    Task.Run(()=>SC2ExpansionModOptions.SC2ExpansionModOptions.StartServer());
-                    Ext.ModHelperLoaded=true;
+                if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModOptions")).Info.Version=="1.0.0"){
+                        Ext.ModHelperLoaded=true;
                 }else{
                     MelonLogger.Msg("Mod Options library not extracted or out of date, installing");
                     File.WriteAllBytes(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll",Models.Models.SC2ExpansionModOptions);
@@ -119,20 +119,28 @@ namespace SC2Expansion{
                 Dehaka.Assets=AssetBundle.LoadFromMemory(Models.Models.dehaka);
             }*/
         }
-        public static async Task TestPipe(){
+        public static async Task SettingsClientStart(){
             var client=new NamedPipeClientStream("SC2ExpansionModOptions");
             client.Connect();
             StreamWriter writer=new StreamWriter(client);
             StreamReader reader=new StreamReader(client);
             MelonLogger.Msg("Client");
             while(true){
-                MelonLogger.Msg(reader.ReadLine());
+                if(Ext.ReadSettings==true){
+                    writer.WriteLine("ProtossEnabled");
+                    writer.Flush();
+                    MelonLogger.Msg(reader.ReadLine());
+                    Ext.ReadSettings=false;
+                }
             }
         }
         public override void OnUpdate(){
-            base.OnUpdate();
             if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
                 Ext.ModVolume=uObject.FindObjectOfType<FXVolumeControl>().volume;
+            }
+            if(Input.GetKeyDown(KeyCode.F2)){
+                MelonLogger.Msg("Attempting to read settings");
+                Ext.ReadSettings=true;
             }
         }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
@@ -140,7 +148,7 @@ namespace SC2Expansion{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
                 if(Ext.ModHelperLoaded){
-                    Task.Run(()=>TestPipe());
+                    Task.Run(()=>SettingsClientStart());
                 }
                 /*if(RemoveBaseTowers==true){
                     __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));

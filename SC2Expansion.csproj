@@ -1870,6 +1870,9 @@
   <ItemGroup>
     <None Include="SC2ExpansionModOptions\bin\Release\SC2ExpansionModOptions.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SC2ExpansionModOptions.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetFileName)" "F:\Steam\steamapps\common\Mods\$(TargetFileName)" /y
