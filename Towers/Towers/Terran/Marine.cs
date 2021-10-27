@@ -1,5 +1,6 @@
-﻿/*namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class Marine:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
         public override string DisplayName=>"Marine";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"SniperMonkey";
@@ -7,6 +8,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.TerranEnabled);
         public override string Description=>"Basic Terran soldier with automatic gauss rifle";
         public override void ModifyBaseTowerModel(TowerModel Marine){
             Marine.display="MarinePrefab";
@@ -16,25 +18,13 @@
             Marine.radius=5;
             Marine.cost=400;
             Marine.range=35;
-            var Bullet=Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
-            Bullet.name="MarineBullet";
-            Bullet.weapons[0].name="MarineBullet";
+            var Bullet=Marine.GetAttackModel();
             Bullet.weapons[0].rate=0.25f;
             Bullet.weapons[0].rateFrames=1;
-            Bullet.range=35;
+            Bullet.range=Marine.range;
             Bullet.weapons[0].projectile.display=null;
             Bullet.weapons[0].projectile.GetDamageModel().damage=2.5f;
-            Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MarinePrefab";
-        }
-        //not being used rn bc this loads the asset bundle differently then how the icons and portraits need it,i'll enable it whenever the hell i get around to
-        //getting everything fully done in mod helper but for now,disabled
-        /*public class MarineDisplay:ModTowerCustomDisplay<Marine>{
-            public override string AssetBundleName=>"marine";
-            public override string PrefabName=>"MarinePrefab";
-            public override string MaterialName=>"MarineMaterial";
-            public override bool UseForTower(int[] tiers){
-                return tiers.Sum()==0;
-            }
+            Marine.GetBehavior<DisplayModel>().display=Marine.display;
         }
         public class U238Shells:ModUpgrade<Marine>{
             public override string Name=>"U238Shells";
@@ -45,10 +35,8 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineU238ShellsIcon");
-                var Bullet=Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>();
-                Bullet.range=45;
-                Marine.range=Bullet.range;
-                Bullet.weapons[0].projectile.GetDamageModel().damage+=1;
+                Marine.range+=10;
+                Marine.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=1;
             }
         }
         public class LTS:ModUpgrade<Marine>{
@@ -60,10 +48,8 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineLaserTargetingSystemIcon");
-                var Bullet=Marine.behaviors.First(a=>a.name.Equals("MarineBullet")).Cast<AttackModel>();
-                Bullet.range=50;
-                Marine.range=Bullet.range;
-                Marine.behaviors=Marine.behaviors.Add(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+                Marine.range+=5;
+                Marine.AddBehavior(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             }
         }
         public class Stimpacks:ModUpgrade<Marine>{
@@ -75,15 +61,15 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineStimpacksIcon");
-                var Stimpacks=Game.instance.model.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Clone().Cast<AbilityModel>();
+                var Stimpacks=Game.instance.model.GetTowerFromId("BoomerangMonkey-040").GetBehavior<AbilityModel>().Duplicate();
                 Stimpacks.name="Stimpacks";
                 Stimpacks.displayName="Stimpacks";
                 Stimpacks.icon=new("MarineStimpacksIcon");
                 Stimpacks.cooldown=40;
                 Stimpacks.maxActivationsPerRound=1;
-                Stimpacks.behaviors.First(a=>a.name.Contains("Turbo")).Cast<TurboModel>().extraDamage=0;
-                Stimpacks.behaviors.First(a=>a.name.Contains("Turbo")).Cast<TurboModel>().projectileDisplay=null;
-                Marine.behaviors=Marine.behaviors.Add(Stimpacks);
+                Stimpacks.GetBehavior<TurboModel>().extraDamage=0;
+                Stimpacks.GetBehavior<TurboModel>().projectileDisplay=null;
+                Marine.AddBehavior(Stimpacks);
             }
         }
         public class Warpig:ModUpgrade<Marine>{
@@ -97,9 +83,9 @@
                 GetUpgradeModel().icon=new("MarineWarpigIcon");
                 Marine.display="MarineWarpigPrefab";
                 Marine.portrait=new("MarineWarpigPortrait");
-                var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
+                var Bullet=Marine.GetAttackModel();
                 Bullet.weapons[0].rate=0.17f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage+=1.5f;
+                Bullet.weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
         public class Raynor:ModUpgrade<Marine>{
@@ -113,95 +99,41 @@
                 GetUpgradeModel().icon=new("MarineRaynorIcon");
                 Marine.display="MarineRaynorPrefab";
                 Marine.portrait=new("MarineRaynorIcon");
-                var Bullet=Marine.behaviors.First(a=>a.name.Contains("MarineBullet")).Cast<AttackModel>();
+                var Bullet=Marine.GetAttackModel();
                 Bullet.weapons[0].rate=0.13f;
                 Bullet.weapons[0].projectile.GetDamageModel().damage+=3;
-                var FragGrenade=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).Cast<TowerModel>().behaviors.First(a=>a.name.Contains("Attack")).
-                    Clone().Cast<AttackModel>();
+                var FragGrenade=Game.instance.model.GetTowerFromId("BombShooter-002").GetAttackModel();
                 FragGrenade.name="MarineFragGrenade";
                 FragGrenade.AddBehavior(new PauseAllOtherAttacksModel("PauseAllOtherAttacksModel",1,true,true));
                 FragGrenade.range=Marine.range-10;
                 Marine.AddBehavior(FragGrenade);
             }
-        }*/
-namespace SC2Expansion.Towers{
-        public class Marine{
-            public static string name="Marine ";
-            public static AssetBundle Assets=>AssetBundle.LoadFromMemory(Models.Models.marine);
-            public static UpgradeModel[]GetUpgrades(){
-                return new UpgradeModel[]{
-                        new("U238Shells",250,0,new("MarineU238ShellsIcon"),0,0,0,"","U-238 Shells")
-                };
-            }
-            public static(TowerModel,ShopTowerDetailsModel,TowerModel[],UpgradeModel[]) GetTower(GameModel gameModel){
-                var MarineDetails=gameModel.towerSet[0].Clone().Cast<ShopTowerDetailsModel>();
-                MarineDetails.towerId=name;
-                if(!LocalizationManager.Instance.textTable.ContainsKey("U238Shells Description"))
-                    LocalizationManager.Instance.textTable.Add("U238Shells Description","Making the ammunition casing out of depleted Uranium 238 increases range and damage");
-                return(GetT0(gameModel),MarineDetails,new[]{GetT0(gameModel),GetT1(gameModel)},GetUpgrades());
-            }
-            public static TowerModel GetT0(GameModel gameModel){
-                var Marine=gameModel.towers.First(a=>a.name.Contains("SniperMonkey")).Clone().Cast<TowerModel>();
-                Marine.name=name;
-                Marine.baseId=name;
-                Marine.display="MarinePrefab";
-                Marine.portrait=new("MarineIcon");
-                Marine.icon=new("MarineIcon");
-                Marine.emoteSpriteLarge=new("Terran");
-                Marine.radius=5;
-                Marine.cost=400;
-                Marine.range=35;
-                var Bullet=Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
-                Bullet.weapons[0].rate=0.25f;
-                Bullet.range=Marine.range;
-                Bullet.weapons[0].projectile.display=null;
-                Bullet.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=1;
-                Marine.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="MarinePrefab";
-                Marine.upgrades=new UpgradePathModel[]{new("U238Shells",name+"-100")};
-                return Marine;
-            }
-            public static TowerModel GetT1(GameModel gameModel){
-                var Marine=GetT0(gameModel).Clone().Cast<TowerModel>();
-                Marine.name=name+"-100";
-                Marine.cost=650;
-                Marine.range+=10;
-                Marine.tier+=1;
-                Marine.tiers[0]+=1;
-                Marine.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage+=1;
-                Marine.upgrades=new UpgradePathModel[0];
-                return Marine;
-            }
-            [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-            public class PrototypeUDN_Patch{
-                public static Dictionary<string,UnityDisplayNode>protos=new();
+            [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+            public class FactoryFindAndSetupPrototypeAsync_Patch{
+                public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
                 [HarmonyPrefix]
                 public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                    if(!protos.ContainsKey(objectId)&&objectId.Contains("Marine")){
-                        var udn=GetMarine(__instance.PrototypeRoot,objectId);
+                    if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Marine")){
+                        var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                        udn.transform.position=new(-3000,0);
                         udn.name="SC2Expansion-Marine";
                         udn.isSprite=false;
                         onComplete.Invoke(udn);
-                        protos.Add(objectId,udn);
+                        DisplayDict.Add(objectId,udn);
                         return false;
                     }
-                    if(protos.ContainsKey(objectId)){
-                        onComplete.Invoke(protos[objectId]);
+                    if(DisplayDict.ContainsKey(objectId)){
+                        onComplete.Invoke(DisplayDict[objectId]);
                         return false;
                     }
                     return true;
                 }
             }
-            public static UnityDisplayNode GetMarine(Transform transform,string model){
-                var udn=uObject.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-                udn.Active=false;
-                udn.transform.position=new(-3000,0);
-                return udn;
-            }
             [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
             public record ResourceLoader_Patch{
                 [HarmonyPostfix]
                 public static void Postfix(SpriteReference reference,ref Image image){
-                    if(reference!=null&&reference.guidRef.Contains("Marine")){
+                    if(reference.guidRef.Contains("Marine")){
                         var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                         image.canvasRenderer.SetTexture(text);
                         image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
@@ -209,7 +141,7 @@ namespace SC2Expansion.Towers{
                 }
             }
             [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-            public static class SpawnDart_Patch{
+            public static class WeaponSpawnDart_Patch{
                 [HarmonyPostfix]
                 public static void Postfix(ref Weapon __instance){
                     if(__instance.attack.tower.towerModel.name.Contains("Marine")){
@@ -221,5 +153,6 @@ namespace SC2Expansion.Towers{
                     }
                 }
             }
+        }
     }
 }

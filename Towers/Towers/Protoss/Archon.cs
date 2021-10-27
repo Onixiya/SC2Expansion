@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class Archon:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
         public override string DisplayName=>"Archon";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
@@ -18,7 +19,7 @@
             Archon.range=30;
             var Lightning=Archon.GetAttackModel().Cast<AttackModel>();
             Lightning.range=Archon.range;
-            Lightning.weapons[0]=Game.instance.model.towers.First(a=>a.name.Contains("Druid-200")).GetAttackModel().weapons[1].Duplicate();
+            Lightning.weapons[0]=Game.instance.model.GetTowerFromId("Druid-200").GetAttackModel().weapons[1].Duplicate();
             Lightning.weapons[0].rate=0.9f;
             Lightning.weapons[0].ejectY=20;
             Lightning.weapons[0].ejectZ=20;
@@ -39,8 +40,7 @@
             public override void ApplyUpgrade(TowerModel Archon){
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
                 var Lightning=Archon.GetAttackModel();
-                Lightning.range+=10;
-                Archon.range=Lightning.range;
+                Archon.range+=10;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=-15;
             }
@@ -54,7 +54,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Archon){
                 GetUpgradeModel().icon=new("ArchonHighArchonIcon");
-                var PsiStorm=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-020")).behaviors.First(a=>a.name.Contains("Wall")).Clone().Cast<AttackModel>();
+                var PsiStorm=Game.instance.model.GetTowerFromId("WizardMonkey-020").behaviors.First(a=>a.name.Contains("Wall")).Clone().Cast<AttackModel>();
                 PsiStorm.name="PsiStorm";
                 PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
                 PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
@@ -73,7 +73,7 @@
                 GetUpgradeModel().icon=new("ArchonDarkArchonIcon");
                 Archon.display="ArchonDarkArchonPrefab";
                 Archon.portrait=new("ArchonDarkArchonPortrait");
-                var Confusion=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().Duplicate();
+                var Confusion=Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().Duplicate();
                 var ConfusionProjectile=Archon.behaviors.First(a=>a.name.Contains("PsiStorm")).Cast<AttackModel>().weapons[0].projectile.Duplicate();
                 Confusion.name="Confusion";
                 Confusion.weapons[0].projectile.RemoveBehavior<DamageModel>();
@@ -91,16 +91,16 @@
         public class MindControl:ModUpgrade<Archon>{
             public override string Name=>"MindControl";
             public override string DisplayName=>"Mind Control";
-            public override string Description=>"Completely controls the strongest target on screen and forces it go back along the track. Cannot target anything higher then a BFB";
+            public override string Description=>"Completely controls the strongest target on screen and forces it go back along the track. Cannot target anything higher then a ZOMG";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Archon){
                 GetUpgradeModel().icon=new("ArchonMindControlIcon");
-                var MindControl=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).GetAbility().Duplicate();
-                var MindControlAttack=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().Duplicate();
+                var MindControl=Game.instance.model.GetTowerFromId("MonkeyBuccaneer-040").GetAbility().Duplicate();
+                var MindControlAttack=Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().Duplicate();
                 var MindControlAttackFilter=MindControlAttack.GetBehavior<AttackFilterModel>();
-                var MindControlProj=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-005")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>().
+                var MindControlProj=Game.instance.model.GetTowerFromId("WizardMonkey-005").behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>().
                     weapons[1].projectile.Duplicate();
                 MindControl.icon=new("ArchonMindControlIcon");
                 MindControl.cooldown=120;
@@ -111,7 +111,6 @@
                 MindControlAttack.range=100;
                 MindControlAttack.name="MindControl";
                 MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelBad","Bad",null));
-                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelZomg","Zomg",null));
                 MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelDdt","Ddt",null));
                 MindControlAttack.weapons[0].rate=9999;
                 MindControlAttack.weapons[0].projectile.GetDamageModel().damage=99999999;
@@ -141,18 +140,19 @@
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.RemoveBehavior<DamageModifierForTagModel>();
                 MindControl.cooldown=60;
-                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Remove(a=>a.name.Contains("Zomg")||a.name.Contains("Ddt"));
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Remove(a=>a.name.Contains("Bad")||a.name.Contains("Ddt"));
                 Archon.display="ArchonUlrezajPrefab";
                 Archon.portrait=new("ArchonUlrezajPortrait");
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
-        public class PrototypeUDN_Patch{
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
             public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!protos.ContainsKey(objectId)&&objectId.Contains("Archon")){
-                    var udn=GetArchon(__instance.PrototypeRoot,objectId);
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Archon";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -166,22 +166,11 @@
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetArchon(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("Archon")){
+                if(reference.guidRef.Contains("Archon")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
@@ -189,7 +178,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class SpawnDart_Patch{
+        public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){

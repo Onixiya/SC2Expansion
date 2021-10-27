@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class BanelingNest:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
@@ -17,20 +18,19 @@
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Shimmer"));
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
             BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Buff"));
-            var SpawnBaneling=BanelingNest.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            var SpawnBaneling=BanelingNest.GetAttackModel();
             SpawnBaneling.weapons[1].projectile.display="BanelingNestBanelingPrefab";
             SpawnBaneling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
             SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=1;
-            SpawnBaneling.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
-            SpawnBaneling.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+            SpawnBaneling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+            SpawnBaneling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
             SpawnBaneling.weapons[1].projectile.GetDamageModel().damage=3;
             SpawnBaneling.weapons[1].projectile.radius=4;
-            SpawnBaneling.name="SpawnBaneling";
             SpawnBaneling.weapons[1].projectile.pierce=1;
             SpawnBaneling.weapons[1].rate=17000;
             SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnBaneling.weapons[1].projectile;
-            BanelingNest.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
-            BanelingNest.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="BanelingNestPrefab";
+            BanelingNest.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
+            BanelingNest.GetBehavior<DisplayModel>().display=BanelingNest.display;
         }
         public class CentrifugalHooks:ModUpgrade<BanelingNest> {
             public override string Name=>"CentrifugalHooks";
@@ -41,8 +41,8 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestCentrifugalHooksIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.7f;
+                var SpawnBanelings=BanelingNest.GetAttackModel();
+                SpawnBanelings.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.7f;
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBanelingRollPrefab";
             }
         }
@@ -55,7 +55,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestRuptureIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
+                var SpawnBanelings=BanelingNest.GetAttackModel();
                 SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=6;
                 SpawnBanelings.weapons[0].projectile.radius=7;
             }
@@ -70,18 +70,18 @@
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestCorrosiveAcidIcon");
                 var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-030")).Cast<TowerModel>().behaviors.
-                    First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")).Duplicate());
+                SpawnBanelings.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("EngineerMonkey-030").Cast<TowerModel>().behaviors.First(a=>a.name.Contains("CleansingFoam")).
+                    Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")).Duplicate());
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBaneling3Prefab";
-                var AcidPool=SpawnBanelings.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProj")).Cast<CreateProjectileOnExhaustFractionModel>();
-                var AcidPoolModifiers=AcidPool.projectile.behaviors.First(a=>a.name.Contains("Modifier")).Cast<RemoveBloonModifiersModel>();
+                var AcidPool=SpawnBanelings.weapons[0].projectile.GetBehavior<CreateProjectileOnExhaustFractionModel>();
+                var AcidPoolModifiers=AcidPool.projectile.GetBehavior<RemoveBloonModifiersModel>();
                 AcidPoolModifiers.cleanseFortified=true;
                 AcidPoolModifiers.cleanseLead=false;
                 AcidPoolModifiers.bloonTagExcludeList.Add("Moabs");
             }
         }
-        public class Splitter:ModUpgrade<BanelingNest> {
-            public override string Name=>"BanelingRateIncrease";
+        public class GrowthEnzymes:ModUpgrade<BanelingNest> {
+            public override string Name=>"GrowthEnzymes";
             public override string DisplayName=>"Growth Enzymes";
             public override string Description=>"Adding more nutrients when Banelings are evolving lets them grow faster and bigger";
             public override int Cost=>750;
@@ -89,7 +89,7 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestRateIncreaseIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
+                var SpawnBanelings=BanelingNest.GetAttackModel();
                 SpawnBanelings.weapons[0].rate=11500f;
                 SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=9;
             }
@@ -103,49 +103,38 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestKaboomerIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
-                SpawnBanelings.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.5f;
+                var SpawnBanelings=BanelingNest.GetAttackModel();
+                SpawnBanelings.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.5f;
                 SpawnBanelings.weapons[1].rate=32500f;
                 SpawnBanelings.weapons[1].projectile.GetDamageModel().damage=100;
                 SpawnBanelings.weapons[1].projectile.display="BanelingNestKaboomerPrefab";
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("BanelingNest")){
-                    var udn=GetBanelingNest(__instance.PrototypeRoot,objectId);
-                    udn.name="SC2Expansion-Baneling";
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("BanelingNest")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetBanelingNest(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("BanelingNest")){
+                if(reference.guidRef.Contains("BanelingNest")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

@@ -5,6 +5,7 @@ global using Assets.Scripts.Models.Towers;
 global using Assets.Scripts.Models.TowerSets;
 global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
 global using SC2Expansion.Utils;
+global using SC2Expansion.Towers;
 global using HarmonyLib;
 global using MelonLoader;
 global using System.Collections.Generic;
@@ -30,63 +31,22 @@ global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
-global using Assets.Scripts.Simulation.Objects;
-global using UnityEngine.UI;
-global using UnityEngine.Events;
-global using System.IO;
-global using System.IO.Pipes;
-global using System.Threading.Tasks;
-global using System.Reflection;
-global using Assets.Scripts.Models.Towers.Upgrades;
-global using NinjaKiwi.Common;
-global using Assets.Scripts.Unity.Player;
-global using Newtonsoft.Json;
+global using BTD_Mod_Helper;
+global using BTD_Mod_Helper.Extensions;
+global using BTD_Mod_Helper.Api.Towers;
+global using BTD_Mod_Helper.Api.ModOptions;
 [assembly:MelonOptionalDependencies("SC2ExpansionModOptions")]
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
-    public class SC2Expansion:MelonMod{
+    public class SC2Expansion:BloonsTD6Mod{
+        public static ModSettingBool ProtossEnabled=new ModSettingBool(true);
+        public static ModSettingBool TerranEnabled=new ModSettingBool(Ext.TerranEnabled);
+        public static ModSettingBool ZergEnabled=new ModSettingBool(true);
+        public static ModSettingBool RemoveBaseTowers=new ModSettingBool(false);
+        public static ModSettingBool HeroesEnabled=new ModSettingBool(true);
         public override void OnApplicationStart(){
             Ext.ModVolume=1;
-            Ext.ModHelperLoaded=false;
-            if(MelonHandler.IsModAlreadyLoaded("BloonsTD6 Mod Helper")){
-                if(File.Exists(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll")&&MelonHandler.Mods.First(a=>a.Info.Name.Contains("SC2ExpansionModOptions")).Info.Version=="1.0.0"){
-                        Ext.ModHelperLoaded=true;
-                        Ext.LoadSettings();
-                }else{
-                    MelonLogger.Msg("Mod Options library not extracted or out of date, installing");
-                    File.WriteAllBytes(MelonHandler.ModsDirectory+"\\SC2ExpansionModOptions.dll",Models.Models.SC2ExpansionModOptions);
-                    MelonLogger.Msg("Mod Options library installed, please restart your game to take advantage of this");
-                }
-            }
-        }
-        [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
-        public class Btd6PlayerIsBad{
-            [HarmonyPrefix]
-            public static bool Prefix(string checkSpecificTowerId,string checkSpecificTowerSet,ref bool __result)=>__result=false;
-        }
-        public static void SettingsClientStart(){
-            var client=new NamedPipeClientStream("SC2ExpansionModOptions");
-            client.Connect();
-            StreamWriter writer=new StreamWriter(client);
-            StreamReader reader=new StreamReader(client);
-            while(true){
-                writer.WriteLine("ProtossEnabled");
-                writer.Flush();
-                Ext.ProtossEnabled=reader.ReadLine();
-                writer.WriteLine("TerranEnabled");
-                writer.Flush();
-                Ext.TerranEnabled=reader.ReadLine();
-                writer.WriteLine("ZergEnabled");
-                writer.Flush();
-                Ext.ZergEnabled=reader.ReadLine();
-                writer.WriteLine("RemoveBaseTowers");
-                writer.Flush();
-                Ext.RemoveBaseTowers=reader.ReadLine();
-                writer.WriteLine("HeroesEnabled");
-                writer.Flush();
-                Ext.HeroesEnabled=reader.ReadLine();
-            }
         }
         public override void OnUpdate(){
             if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
@@ -97,16 +57,12 @@ namespace SC2Expansion{
         public static class Load_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
-                if(Ext.ModHelperLoaded){
-                    Task.Run(()=>SettingsClientStart());
-                    MelonLogger.Msg("Client started");
-                }
-                /*if(RemoveBaseTowers==true){
+                if(RemoveBaseTowers==true){
                     __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
-                }*/
+                }
             }
         }
-        /*public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
+        public override void OnTowerUpgraded(Tower tower,string upgradeName,TowerModel newBaseTowerModel){
             base.OnTowerUpgraded(tower,upgradeName,newBaseTowerModel);
             if(upgradeName.Contains("Primal")){
                 int RandNum=new System.Random().Next(1,3);
@@ -185,6 +141,6 @@ namespace SC2Expansion{
             private static Sprite LoadSprite(Texture2D text){
                 return Sprite.Create(text,new(0,0,text.width,text.height),new());
             }
-        }*/
+        }
     }
 }

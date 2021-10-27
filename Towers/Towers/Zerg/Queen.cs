@@ -180,18 +180,10 @@
             set=>__asset=value;
         }
         public static UnityDisplayNode GetQueen(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
+            var udn=uObject.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
             udn.Active=false;
             udn.transform.position=new(-3000,0);
             return udn;
-        }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.ProtoFlush))]
-        public class PrototypeFlushUDN_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(){
-                foreach(var proto in PrototypeUDN_Patch.protos.Values)Object.Destroy(proto.gameObject);
-                PrototypeUDN_Patch.protos.Clear();
-            }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoader_Patch{

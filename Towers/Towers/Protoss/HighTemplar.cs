@@ -1,7 +1,6 @@
-﻿using BTD_Mod_Helper.Api.Display;
-
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class HighTemplar:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
         public override string DisplayName=>"High Templar";
         public override string TowerSet=>MAGIC;
         public override string BaseTower=>"WizardMonkey";
@@ -17,13 +16,12 @@ namespace SC2Expansion.Towers{
             HighTemplar.emoteSpriteLarge=new("Protoss");
             HighTemplar.radius=7;
             HighTemplar.range=40;
-            var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
-            PsiBolt.name="HighTemplarPsiBolt";
-            PsiBolt.range=40;
+            var PsiBolt=HighTemplar.GetAttackModel();
+            PsiBolt.range=HighTemplar.range;
             PsiBolt.weapons[0].projectile.GetDamageModel().damage=2;
-            HighTemplar.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="HighTemplarPrefab";
+            HighTemplar.GetBehavior<DisplayModel>().display="HighTemplarPrefab";
         }
-        //Ik the khala isn't used now but for some weird reason, blender didn't like the nerve cords and just deleted it
+        //Ik the khala isn't used now but i cba adding nerve cords to the model, sc2 itself handles these in a special way
         public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
             public override string Name=>"KhaydarinAmulet";
             public override string DisplayName=>"Khaydarin Amulet";
@@ -33,9 +31,7 @@ namespace SC2Expansion.Towers{
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel HighTemplar){
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
-                var Psibolt=HighTemplar.GetAttackModel();
-                Psibolt.range+=10;
-                HighTemplar.range=Psibolt.range;
+                HighTemplar.range+=10;
             }
         }
         public class MiniPsiStorms:ModUpgrade<HighTemplar>{
@@ -47,7 +43,7 @@ namespace SC2Expansion.Towers{
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel HighTemplar){
                 GetUpgradeModel().icon=new("HighTemplarPsiStormIcon");
-                var PsiStorm=Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-020")).behaviors.First(a=>a.name.Contains("Wall")).Clone().Cast<AttackModel>();
+                var PsiStorm=Game.instance.model.GetTowerFromId("WizardMonkey-020").behaviors.First(a=>a.name.Contains("Wall")).Cast<AttackModel>().Duplicate();
                 PsiStorm.name="PsiStorms";
                 PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
                 PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
@@ -63,7 +59,7 @@ namespace SC2Expansion.Towers{
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel HighTemplar){
                 GetUpgradeModel().icon=new("HighTemplarPlasmaSurgeIcon");
-                var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Contains("PsiStorms")).Cast<AttackModel>();
+                var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Equals("PsiStorms")).Cast<AttackModel>();
                 PsiStorm.weapons[0].projectile.radius=50;
                 PsiStorm.weapons[0].projectile.GetDamageModel().damage+=1;
             }
@@ -77,42 +73,34 @@ namespace SC2Expansion.Towers{
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel HighTemplar){
                 GetUpgradeModel().icon=new("HighTemplarAscendantIcon");
-                var PsiOrb=Game.instance.model.towers.First(a=>a.name.Equals("Druid-400")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-                //i would love to use adoras sacrifice thing but afaik, it would require assembly editing to get it to not crash
-                var Sacrifice=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Clone().Cast<AbilityModel>();
-                //originally was directly copying pats squeeze ability but idfk how to make the bloons not go to the tower and stay on the track
-                var MindBlast=Game.instance.model.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
-                var MindBlastAttack=MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
-                var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("PsiBolt")).Cast<AttackModel>();
-                //compiler didn't like me using a enumerator on it, next best thing ig
+                var PsiOrb=Game.instance.model.GetTowerFromId("Druid-400").GetAttackModel().Duplicate();
+                var Sacrifice=Game.instance.model.GetTowerFromId("MonkeyBuccaneer-040").GetBehavior<AbilityModel>().Duplicate();
+                var SacrificeBonus=Game.instance.model.GetTowerFromId("BoomerangMonkey-040").GetBehavior<AbilityModel>().GetBehavior<TurboModel>();
+                var MindBlast=Game.instance.model.GetTowerFromId("PatFusty 10").behaviors.First(a=>a.name.Contains("Big")).Cast<AbilityModel>().Duplicate();
+                var PsiBolt=HighTemplar.GetAttackModel();
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Weapon"));
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Tornado"));
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Lightning"));
-                var temp=PsiOrb.weapons[0].projectile.behaviors.GetEnumerator();
                 PsiOrb.name="HighTemplarPsiOrb";
                 Sacrifice.name="Sacrifice";
                 Sacrifice.displayName="Sacrifice";
                 Sacrifice.cooldown=60f;
-                var AtkSpd=Game.instance.model.towers.First(a=>a.name.Equals("BoomerangMonkey-040")).behaviors.First(a=>a.name.Contains("Ability")).Cast<AbilityModel>().behaviors.
-                    First(a=>a.name.Contains("Turbo")).Clone().Cast<TurboModel>();
-                AtkSpd.extraDamage=6;
-                AtkSpd.projectileDisplay.assetPath=null;
+                SacrificeBonus.extraDamage=6;
+                SacrificeBonus.projectileDisplay.assetPath=null;
                 Sacrifice.icon=new("HighTemplarSacrificeIcon");
-                Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                    First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().assetId=null;
-                Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0].weapons[0].projectile.behaviors.
-                    First(a=>a.name.Contains("RopeEffect")).Cast<CreateRopeEffectModel>().endAssetId=null;
+                Sacrifice.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetBehavior<CreateRopeEffectModel>().assetId=null;
+                Sacrifice.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetBehavior<CreateRopeEffectModel>().endAssetId=null;
                 Sacrifice.maxActivationsPerRound=1;
-                Sacrifice.AddBehavior(AtkSpd);
+                Sacrifice.AddBehavior(SacrificeBonus);
                 MindBlast.name="MindBlast";
                 MindBlast.displayName="Mind Blast";
-                MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0]=
-                    Game.instance.model.towers.First(a=>a.name.Equals("SniperMonkey-500")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-                MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=120;
+                MindBlast.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("SniperMonkey-500").GetAttackModel().Duplicate();
+                MindBlast.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetDamageModel().damage=120;
                 MindBlast.cooldown=80f;
                 MindBlast.icon=new("HighTemplarMindBlastIcon");
                 MindBlast.maxActivationsPerRound=1;
                 PsiBolt.weapons[0].projectile.GetDamageModel().damage=5;
+                PsiBolt.name="PsiBolt";
                 HighTemplar.display="HighTemplarAscendantPrefab";
                 HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
                 HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
@@ -129,68 +117,58 @@ namespace SC2Expansion.Towers{
                 GetUpgradeModel().icon=new("HighTemplarJinaraPortrait");
                 HighTemplar.portrait=new("HighTemplarJinaraPortrait");
                 HighTemplar.display="HighTemplarJinaraPrefab";
-                var PsiOrb=HighTemplar.behaviors.First(a=>a.name.Contains("PsiOrb")).Cast<AttackModel>();
-                var Sacrifice=HighTemplar.behaviors.First(a=>a.name.Contains("Sacrifice")).Cast<AbilityModel>();
-                var SacrificeAttack=Sacrifice.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
-                var MindBlast=HighTemplar.behaviors.First(a=>a.name.Contains("MindBlast")).Cast<AbilityModel>();
-                var MindBlastAttack=MindBlast.behaviors.First(a=>a.name.Contains("Activate")).Cast<ActivateAttackModel>().attacks[0];
-                var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Contains("PsiBolt")).Cast<AttackModel>();
+                var PsiOrb=HighTemplar.behaviors.First(a=>a.name.Equals("PsiOrb")).Cast<AttackModel>();
+                var Sacrifice=HighTemplar.behaviors.First(a=>a.name.Equals("Sacrifice")).Cast<AbilityModel>();
+                var SacrificeAttack=Sacrifice.GetBehavior<ActivateAttackModel>().attacks[0];
+                var MindBlast=HighTemplar.behaviors.First(a=>a.name.Equals("MindBlast")).Cast<AbilityModel>();
+                var MindBlastAttack=MindBlast.GetBehavior<ActivateAttackModel>().attacks[0];
+                var PsiBolt=HighTemplar.behaviors.First(a=>a.name.Equals("PsiBolt")).Cast<AttackModel>();
                 PsiOrb.weapons[0].rate=0.8f;
                 MindBlast.cooldown=50;
                 Sacrifice.cooldown=50;
                 MindBlast.maxActivationsPerRound=-1;
                 Sacrifice.maxActivationsPerRound=-1;
-                SacrificeAttack.behaviors.First(a=>a.name.Contains("Grapp")).Cast<TargetGrapplableModel>().canHitZomg=true;
-                SacrificeAttack.behaviors=SacrificeAttack.behaviors.Remove(a=>a.name.Contains("AttackFilterModel"));
+                SacrificeAttack.GetBehavior<TargetGrapplableModel>().canHitZomg=true;
+                SacrificeAttack.RemoveBehavior<AttackFilterModel>();
                 MindBlast.cooldown=40;
                 MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=400;
                 PsiBolt.weapons[0].projectile.GetDamageModel().damage=40;
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("HighTemplar")){
-                    var udn=GetHighTemplar(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("HighTemplar")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-HighTemplar";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetHighTemplar(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("HighTemplar")){
+                if(reference.guidRef.Contains("HighTemplar")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
+        public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("HighTemplar")){

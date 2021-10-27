@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class Gateway:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
@@ -17,21 +18,21 @@
             Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Shimmer"));
             Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
             Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Buff"));
-            var ZealotWarp=Gateway.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            var ZealotWarp=Gateway.GetAttackModel();
             ZealotWarp.weapons[1].projectile.display="GatewayZealotPrefab";
             ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=3;
             //tried removing the first weapon entirely, it didn't like it at all and kept crashing, setting maxrbespawned prevents the normal necrobloons from spawning at all
             ZealotWarp.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
-            ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
-            ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.525f;
+            ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+            ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.525f;
             ZealotWarp.weapons[1].projectile.GetDamageModel().damage=2;
             ZealotWarp.weapons[1].projectile.radius=5;
             ZealotWarp.name="ZealotWarp";
             ZealotWarp.weapons[1].projectile.pierce=3;
             ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=ZealotWarp.weapons[1].projectile;
             ZealotWarp.weapons[1].rate=4.7f;
-            Gateway.behaviors.First(a=>a.name.Contains("Zone")).Cast<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
-            Gateway.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="GatewayPrefab";
+            Gateway.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
+            Gateway.GetBehavior<DisplayModel>().display=Gateway.display;
         }
         public class Charge:ModUpgrade<Gateway> {
             public override string Name=>"Charge";
@@ -42,8 +43,7 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewayChargeIcon");
-                var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=0.9f;
+                Gateway.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.9f;
             }
         }
         public class Solarite:ModUpgrade<Gateway> {
@@ -55,7 +55,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Gateway) {
                 GetUpgradeModel().icon=new("GatewaySolariteIcon");
-                var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
+                var ZealotWarp=Gateway.GetAttackModel();
                 ZealotWarp.weapons[1].projectile.GetDamageModel().damage=5;
                 ZealotWarp.weapons[1].projectile.radius=8;
                 ZealotWarp.weapons[1].projectile.display="GatewaySolaritePrefab";
@@ -71,8 +71,8 @@
             public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewaySentinelIcon");
                 Gateway.display="GatewayPurifierPrefab";
-                var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=350;
+                var ZealotWarp=Gateway.GetAttackModel();
+                ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=350;
                 ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=13;
                 ZealotWarp.weapons[1].projectile.pierce=13;
                 ZealotWarp.weapons[1].projectile.display="GatewaySentinelPrefab";
@@ -87,8 +87,8 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewayLegionnaireIcon");
-                var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=550;
+                var ZealotWarp=Gateway.GetAttackModel();
+                ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=550;
                 ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=25;
                 ZealotWarp.weapons[1].projectile.GetDamageModel().damage=10;
                 ZealotWarp.weapons[1].projectile.pierce=25;
@@ -103,11 +103,10 @@
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Gateway){
-                //i really need to figure out what that ring thing is on the back of hero purifier units and how it works, would be fucking amazing for this
                 GetUpgradeModel().icon=new("GatewayKaldalisIcon");
-                var ZealotWarp=Gateway.behaviors.First(a=>a.name.Equals("ZealotWarp")).Cast<AttackModel>();
-                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().lifespanFrames=99999;
-                ZealotWarp.weapons[1].projectile.behaviors.First(a=>a.name.Contains("Travel")).Cast<TravelAlongPathModel>().speedFrames=1.1f;
+                var ZealotWarp=Gateway.GetAttackModel();
+                ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+                ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.1f;
                 ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=50;
                 ZealotWarp.weapons[1].rate=6;
                 ZealotWarp.weapons[1].projectile.pierce=50;
@@ -115,42 +114,32 @@
                 ZealotWarp.weapons[1].projectile.display="GatewayKaldalisPrefab";
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("Gateway")){
-                    var udn=GetGateway(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Gateway")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Gateway";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetGateway(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("Gateway")){
+                if(reference.guidRef.Contains("Gateway")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

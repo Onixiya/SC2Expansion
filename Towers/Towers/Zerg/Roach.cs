@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class Roach:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
         public override string DisplayName=>"Roach";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"GlueGunner";
@@ -16,7 +17,7 @@
             Roach.radius=8;
             Roach.cost=700;
             Roach.range=40;
-            var Acid=Roach.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
+            var Acid=Roach.GetAttackModel();
             Acid.range=Roach.range;
             Acid.weapons[0].rate=1.1f;
             Acid.weapons[0].ejectX=0;
@@ -25,12 +26,10 @@
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Lead",2,0,true,false));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Ceremic",2,0,true,false));
             Acid.weapons[0].projectile.RemoveBehavior<SlowModel>();
-            Acid.GetBehavior<AttackFilterModel>().filters=Acid.GetBehavior<AttackFilterModel>().filters.Remove(a=>a.name.Contains("Glue"));
-            Acid.GetBehavior<AttackFilterModel>().filters=Acid.GetBehavior<AttackFilterModel>().filters.Remove(a=>a.name.Contains("TagModel"));
             Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("Glue"));
             Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("TagModel"));
             Acid.weapons[0].projectile.display="97f2427a81f436547b0a59f37fb689da";
-            Roach.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=Roach.display;
+            Roach.GetBehavior<DisplayModel>().display=Roach.display;
         }
         public class HydriodicBile:ModUpgrade<Roach>{
             public override string Name=>"HydriodicBile";
@@ -104,49 +103,39 @@
                 Roach.display="RoachBrutaliskPrefab";
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("Roach")){
-                    var udn=GetRoach(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Roach")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Roach";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetRoach(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("Roach")){
+                if(reference.guidRef.Contains("Roach")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
         public static class SpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){

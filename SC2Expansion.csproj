@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -70,7 +70,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="NinjaKiwi.Common">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\NinjaKiwi.Common.dll</HintPath>
@@ -142,21 +141,21 @@
     </Compile>
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="Towers\Buildings\Protoss\Gateway.cs" />
-    <None Include="Towers\Buildings\Terran\CommandCenter.cs" />
-    <None Include="Towers\Buildings\Zerg\BanelingNest.cs" />
-    <None Include="Towers\Buildings\Zerg\Hatchery.cs" />
-    <None Include="Towers\Buildings\Zerg\SpawningPool.cs" />
-    <None Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
-    <None Include="Towers\Towers\Protoss\Archon.cs" />
-    <None Include="Towers\Towers\Protoss\HighTemplar.cs" />
-    <None Include="Towers\Towers\Protoss\VoidRay.cs" />
-    <None Include="Towers\Towers\Terran\Battlecruiser.cs" />
+    <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
+    <Compile Include="Towers\Buildings\Terran\CommandCenter.cs" />
+    <Compile Include="Towers\Buildings\Zerg\BanelingNest.cs" />
+    <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
+    <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
+    <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
+    <Compile Include="Towers\Towers\Protoss\Archon.cs" />
+    <Compile Include="Towers\Towers\Protoss\HighTemplar.cs" />
+    <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
+    <Compile Include="Towers\Towers\Terran\Battlecruiser.cs" />
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
-    <None Include="Towers\Towers\Terran\Viking.cs" />
-    <None Include="Towers\Towers\Zerg\Hydralisk.cs" />
-    <None Include="Towers\Towers\Zerg\Mutalisk.cs" />
-    <None Include="Towers\Towers\Zerg\Queen.cs" />
+    <Compile Include="Towers\Towers\Terran\Viking.cs" />
+    <Compile Include="Towers\Towers\Zerg\Hydralisk.cs" />
+    <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
+    <Compile Include="Towers\Towers\Zerg\Queen.cs" />
     <None Include="assets.unitypackage" />
     <None Include="LICENSE" />
     <None Include="Readme.md" />
@@ -1865,7 +1864,7 @@
     <None Include="TowerJSON\WizardMonkey\WizardMonkey-510.json" />
     <None Include="TowerJSON\WizardMonkey\WizardMonkey-520.json" />
     <None Include="TowerJSON\WizardMonkey\WizardMonkey.json" />
-    <None Include="Towers\Towers\Zerg\Roach.nocompile" />
+    <Compile Include="Towers\Towers\Zerg\Roach.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -1885,9 +1884,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SC2ExpansionModOptions\bin\Release\SC2ExpansionModOptions.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

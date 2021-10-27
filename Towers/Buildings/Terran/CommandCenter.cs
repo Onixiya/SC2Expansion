@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class CommandCenter:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
         public override string DisplayName=>"Command Center";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"BananaFarm-003";
@@ -14,14 +15,14 @@
             CommandCenter.icon=new("CommandCenterIcon");
             CommandCenter.emoteSpriteLarge=new("Terran");
             CommandCenter.range=40;
-            CommandCenter.RemoveBehavior<RectangleFootprintModel>();
-            CommandCenter.footprint=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).footprint.Duplicate();
+            CommandCenter.footprint=Game.instance.model.GetTowerFromId("DartMonkey").footprint.Duplicate();
             CommandCenter.radius=37.5f;
             var Income=CommandCenter.GetAttackModel();
+            Income.name="Income";
             Income.weapons[0].emission=new SingleEmissionModel("SingleEmissionModel",null);
             Income.weapons[0].behaviors=null;
             Income.weapons[0].rate=4;
-            CommandCenter.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=CommandCenter.display;
+            CommandCenter.GetBehavior<DisplayModel>().display=CommandCenter.display;
         }
         public class Refinery:ModUpgrade<CommandCenter>{
             public override string Name=>"Refinery";
@@ -31,13 +32,11 @@
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel CommandCenter){
-                if(!MelonUtils.BaseDirectory.Contains("steamapps\\common\\BloonsTD6")){
-                    Application.Quit();
-                }
+                if(!MelonUtils.BaseDirectory.Contains("steamapps\\common\\BloonsTD6"))Application.Quit();
                 GetUpgradeModel().icon=new("CommandCenterRefineryIcon");
                 var Income=CommandCenter.GetAttackModel();
-                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().maximum+=10;
-                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().minimum+=10;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=10;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=10;
             }
         }
         public class SCVCore:ModUpgrade<CommandCenter>{
@@ -62,8 +61,8 @@
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterRefineryIcon");
                 var Income=CommandCenter.GetAttackModel();
-                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().maximum+=15;
-                Income.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CashModel")).Cast<CashModel>().minimum+=15;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=15;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=15;
             }
         }
         public class Mules:ModUpgrade<CommandCenter>{
@@ -90,23 +89,22 @@
                 GetUpgradeModel().icon=new("CommandCenterOrbitalCommandIcon");
                 CommandCenter.display="CommandCenterOrbitalCommandPrefab";
                 CommandCenter.portrait=new("CommandCenterOrbitalCommandPortrait");
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-020")).GetBehavior<VisibilitySupportModel>().Duplicate());
-                CommandCenter.behaviors.First(a=>a.name.Contains("Visibility")).Cast<VisibilitySupportModel>().buffIconName=null;
+                CommandCenter.AddBehavior(Game.instance.model.GetTowerFromId("MonkeyVillage-020").GetBehavior<VisibilitySupportModel>().Duplicate());
+                CommandCenter.GetBehavior<VisibilitySupportModel>().buffIconName=null;
                 CommandCenter.range=80;
-                var OrbitalStrike=Game.instance.model.towers.First(a=>a.name.Contains("TackShooter-040")).GetBehavior<AbilityModel>().Duplicate();
+                var OrbitalStrike=Game.instance.model.GetTowerFromId("TackShooter-040").GetBehavior<AbilityModel>().Duplicate();
                 var OrbitalStrikeAttack=OrbitalStrike.GetBehavior<ActivateAttackModel>().attacks[0];
                 OrbitalStrike.name="OrbitalStrike";
                 OrbitalStrike.displayName="Orbital Strike";
                 OrbitalStrike.icon=new("CommandCenterMissileIcon");
-                OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-020")).GetAttackModel().weapons[0].projectile.Duplicate();
-                OrbitalStrikeAttack.weapons[0].projectile.behaviors=OrbitalStrikeAttack.weapons[0].projectile.behaviors.Add(new TrackTargetModel("TrackTargetModel",
-                    999,true,true,360,true,360,false,false));
-                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().weapons[0].projectile.
+                OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.GetTowerFromId("BombShooter-020").GetAttackModel().weapons[0].projectile.Duplicate();
+                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(new TrackTargetModel("TrackTargetModel",999,true,true,360,true,360,false,false));
+                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.
                     GetDamageModel().Duplicate());
                 OrbitalStrikeAttack.weapons[0].projectile.GetBehavior<TravelStraitModel>().lifespan=13;
                 OrbitalStrikeAttack.weapons[0].ejectZ=300;
                 OrbitalStrikeAttack.weapons[0].ejectX=-300;
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(OrbitalStrike);
+                CommandCenter.AddBehavior(OrbitalStrike);
             }
         }
         public class PlanetaryFortress:ModUpgrade<CommandCenter>{
@@ -120,17 +118,17 @@
                 GetUpgradeModel().icon=new("CommandCenterPlanetaryFortressIcon");
                 CommandCenter.display="CommandCenterPlanetaryFortressBodyPrefab";
                 CommandCenter.portrait=new("CommandCenterPlanetaryFortressPortrait");
-                var Ibiks=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-300")).GetAttackModel().Duplicate();
+                var Ibiks=Game.instance.model.GetTowerFromId("BombShooter-300").GetAttackModel().Duplicate();
                 Ibiks.name="Ibiks";
                 Ibiks.range=85;
                 CommandCenter.range=Ibiks.range;
                 Ibiks.weapons[0].emission=new InstantDamageEmissionModel("InstantEmission",null);
-                Ibiks.behaviors.First(a=>a.name.Contains("Rotate")).Cast<RotateToTargetModel>().onlyRotateDuringThrow=false;
+                Ibiks.GetBehavior<RotateToTargetModel>().onlyRotateDuringThrow=false;
                 Ibiks.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",3,0,false,false,true,0));
-                Ibiks.weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProjectile")).Cast<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=6;
-                Ibiks.behaviors=Ibiks.behaviors.Add(new DisplayModel("DisplayModel_","CommandCenterPlanetaryFortressGunPrefab",0,new(0,0,0),1,false,0));
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(Ibiks);
-                CommandCenter.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().ignoreRotation=true;
+                Ibiks.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=6;
+                Ibiks.AddBehavior(new DisplayModel("DisplayModel_","CommandCenterPlanetaryFortressGunPrefab",0,new(0,0,0),1,false,0));
+                CommandCenter.AddBehavior(Ibiks);
+                CommandCenter.GetBehavior<DisplayModel>().ignoreRotation=true;
             }
         }
         public class SensorTower:ModUpgrade<CommandCenter>{
@@ -169,9 +167,10 @@
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterBarrageIcon");
                 CommandCenter.RemoveBehavior<AbilityModel>();
-                var OrbitalBarrage=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel().Duplicate();
+                var OrbitalBarrage=Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().Duplicate();
+                OrbitalBarrage.name="OrbitalBarrage";
                 OrbitalBarrage.weapons[0].ejectZ=300;
-                OrbitalBarrage.weapons[0].projectile=Game.instance.model.towers.First(a=>a.name.Contains("MortarMonkey-500")).GetAttackModel().weapons[0].projectile.Duplicate();
+                OrbitalBarrage.weapons[0].projectile=Game.instance.model.GetTowerFromId("MortarMonkey-500").GetAttackModel().weapons[0].projectile.Duplicate();
                 OrbitalBarrage.range=200;
                 OrbitalBarrage.RemoveBehavior<RotateToTargetModel>();
                 CommandCenter.AddBehavior(OrbitalBarrage);
@@ -186,53 +185,44 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterDominionIcon");
-                CommandCenter.behaviors=CommandCenter.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("MonkeyVillage-004")).GetBehavior<MonkeyCityModel>().Duplicate());
-                CommandCenter.behaviors.First(a=>a.name.Contains("City")).Cast<MonkeyCityModel>().towerId="SC2Expansion-Marine-400";
+                CommandCenter.AddBehavior(Game.instance.model.GetTowerFromId("MonkeyVillage-004").GetBehavior<MonkeyCityModel>().Duplicate());
+                CommandCenter.GetBehavior<MonkeyCityModel>().towerId="SC2Expansion-Marine-400";
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
-                    var udn=GetCommandCenter(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-CommandCenter";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetCommandCenter(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("CommandCenter")){
+                if(reference.guidRef.Contains("CommandCenter")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class SpawnDart_Patch{
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
+        public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.attackModel.name.Contains("Ibiks")){

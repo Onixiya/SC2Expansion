@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class VoidRay:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.voidray);
         public override string DisplayName=>"Void Ray";
         public override string TowerSet=>MAGIC;
         public override string BaseTower=>"DartMonkey";
@@ -7,7 +8,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override string Description=>"Flying Protoss ranged craft. Deals double damage against Moab's";
+        public override string Description=>"Flying Protoss precision ranged craft. Deals double damage against Moab's";
         public override void ModifyBaseTowerModel(TowerModel VoidRay){
             VoidRay.display="VoidRayPrefab";
             VoidRay.portrait=new("VoidRayPortrait");
@@ -21,19 +22,17 @@
             VoidRay.areaTypes[2]=AreaType.ice;
             VoidRay.areaTypes[3]=AreaType.water;
             var Beam=VoidRay.GetAttackModel();
-            Beam.weapons[0]=Game.instance.model.towers.First(a=>a.name.Contains("Adora 10")).behaviors.First(a=>a.name.Contains("Ball")).Cast<AbilityModel>().behaviors.
-                First(a=>a.name.Contains("CreateTower")).Cast<AbilityCreateTowerModel>().towerModel.GetAttackModel().weapons[0].Duplicate();
-            Beam.name="VoidRayBeam";
+            Beam.weapons[0]=Game.instance.model.GetTowerFromId("Adora 10").behaviors.First(a=>a.name.Contains("Ball")).Cast<AbilityModel>().GetBehavior<AbilityCreateTowerModel>().
+                towerModel.GetAttackModel().weapons[0].Duplicate();
             Beam.range=VoidRay.range;
-            Beam.weapons[0].projectile.GetDamageModel().damage=1.5f;
+            Beam.weapons[0].projectile.GetDamageModel().damage=1;
             Beam.weapons[0].projectile.pierce=1;
             Beam.weapons[0].rate=0.1f;
-            Beam.weapons[0].projectile.behaviors=Beam.weapons[0].projectile.behaviors.Add(Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).GetAttackModel().
-                    weapons[0].projectile.behaviors.First(a=>a.name.Contains("CreateProjectile")).Cast<CreateProjectileOnContactModel>().projectile.behaviors.First(a=>a.name.
-                    Contains("DamageModifierForTag")).Duplicate());
-            Beam.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>().damageAddative=0;
-            Beam.weapons[0].projectile.behaviors.First(a=>a.name.Contains("DamageModifier")).Cast<DamageModifierForTagModel>().damageMultiplier=2;
-            VoidRay.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="VoidRayPrefab";
+            Beam.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("BombShooter-030").GetAttackModel().weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().
+                projectile.GetBehavior<DamageModifierForTagModel>().Duplicate());
+            Beam.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=0;
+            Beam.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageMultiplier=2;
+            VoidRay.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=VoidRay.display;
         }
         public class PrismaticAlignment:ModUpgrade<VoidRay>{
             public override string Name=>"PrismaticAlignment";
@@ -44,8 +43,7 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayPrismaticAlignmentIcon");
-                var Beam=VoidRay.GetAttackModel();
-                Beam.weapons[0].projectile.GetDamageModel().damage=2.25f;
+                VoidRay.GetAttackModel().weapons[0].projectile.GetDamageModel().damage=2;
             }
         }
         public class FluxVanes:ModUpgrade<VoidRay>{
@@ -57,8 +55,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayFluxVanesIcon");
-                var Beam=VoidRay.GetAttackModel();
-                Beam.weapons[0].rate=0.06f;
+                VoidRay.GetAttackModel().weapons[0].rate=0.075f;
             }
         }
         public class PrismaticRange:ModUpgrade<VoidRay>{
@@ -70,9 +67,7 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayPrismaticRangeIcon");
-                var Beam=VoidRay.GetAttackModel();
-                Beam.range=65;
-                VoidRay.range=Beam.range;
+                VoidRay.range=65;
             }
         }
         //i tried for 2 and a half days to get the beam to bounce, it didn't wanna fucking bounce at all
@@ -89,20 +84,9 @@
                 VoidRay.portrait=new("VoidRayDestroyerPortrait");
                 VoidRay.display="VoidRayDestroyerPrefab";
                 var Shards=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-002")).GetAttackModel().Duplicate();
-                VoidRay.behaviors=VoidRay.behaviors.Add();
-                Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile=
-                    Game.instance.model.towers.First(a=>a.name.Contains("MonkeyAce-003")).GetAttackModel().weapons[0].projectile.Duplicate();
-                Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile.behaviors.First(a=>a.name.
-                    Contains("Damage")).Cast<DamageModel>().immuneBloonProperties=0;
-                var ShardsProj=Shards.weapons[0].projectile.behaviors.First(a=>a.name.Contains("frag")).Cast<CreateProjectileOnContactModel>().projectile;
-                var ShardsTrack=ShardsProj.behaviors.First(a=>a.name.Contains("Track")).Cast<TrackTargetModel>();
-                Shards.weapons[0].projectile.behaviors.First(a=>a.name.Equals("CreateProjectileOnContactModel_")).Cast<CreateProjectileOnContactModel>().projectile.behaviors.
-                    First(a=>a.name.Contains("Damage")).Cast<DamageModel>().immuneBloonProperties=0;
-                ShardsTrack.maxSeekAngle=360;
-                ShardsTrack.ignoreSeekAngle=true;
-                ShardsTrack.TurnRate=999;
-                ShardsTrack.trackNewTargets=true;
-                ShardsTrack.constantlyAquireNewTarget=true;
+                var ShardsProj=Shards.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile;
+                ShardsProj.GetBehavior<DamageModel>().immuneBloonProperties=0;
+                Shards.weapons[0].projectile.AddBehavior(new TrackTargetModel("TargetTrackModel",999,true,true,360,true,999,false,true));
                 Shards.range=VoidRay.range;
                 Shards.weapons[0].projectile.display=null;
                 ShardsProj.pierce=2;
@@ -124,60 +108,39 @@
                 VoidRay.display="VoidRayMohandarPrefab";
                 VoidRay.behaviors=VoidRay.behaviors.Remove(a=>a.name.Equals("Shards"));
                 var Beam=VoidRay.GetAttackModel();
-                Beam.weapons[0].projectile.GetDamageModel().damage=3.5f;
-                Beam.range=80;
+                Beam.weapons[0].projectile.GetDamageModel().damage=4;
                 VoidRay.range=Beam.range;
-                Beam.weapons[0].projectile.pierce=1;
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("VoidRay")){
-                    var udn=GetVoidRay(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("VoidRay")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-VoidRay";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetVoidRay(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("VoidRay")){
+                if(reference.guidRef.Contains("VoidRay")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                }
-            }
-        }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
-            [HarmonyPostfix]
-            public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.tower.towerModel.name.Contains("VoidRay")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("VoidRayAttack");
                 }
             }
         }

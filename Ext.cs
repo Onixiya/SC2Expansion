@@ -11,42 +11,7 @@
             foreach(var tmp in newPart)bases.Add(tmp);
             return new(bases.ToArray());
         }
-        public static float ModVolume{
-            get;
-            set;
-        }
-        public static bool ModHelperLoaded{
-            get;
-            set;
-        }
-        public class Settings{
-            public static bool ProtossEnabled{
-                get;
-                set;
-            }
-            public static bool TerranEnabled{
-                get;
-                set;
-            }
-            public static bool ZergEnabled{
-                get;
-                set;
-            }
-            public static bool RemoveBaseTowers{
-                get;
-                set;
-            }
-            public static bool HeroesEnabled{
-                get;
-                set;
-            }
-        }
-        public static void LoadSettings(){
-            if(File.Exists(MelonHandler.ModsDirectory+"\\SC2Expansion.json")){
-                JsonConvert.DeserializeObject<Settings>(File.ReadAllText(MelonHandler.ModsDirectory+"\\SC2ExpansionSettings.json"));
-            }else{
-                MelonLogger.Msg("Settings does not exist, creating");
-            }
-        }
+        public static float ModVolume{get;set;}
+        public static bool TerranEnabled{get;set;}
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace SC2Expansion.Towers{
     public class Viking:ModTower{
+        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.viking);
         public override string DisplayName=>"Viking";
         public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"SniperMonkey";
@@ -16,7 +17,7 @@
             Viking.radius=5;
             Viking.cost=400;
             Viking.range=45;
-            var Gatling=Viking.behaviors.First(a=>a.name.Contains("AttackModel")).Cast<AttackModel>();
+            var Gatling=Viking.GetAttackModel();
             Gatling.range=Viking.range;
             Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.Add(new FilterOutTagModel("FilterOutTagModel","Moabs",null));
             Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Bad",false));
@@ -39,8 +40,8 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Viking){
                 GetUpgradeModel().icon=new("VikingAirIcon");
-                var AirMode=Game.instance.model.towers.First(a=>a.name.Contains("Alchemist-040")).GetAbility().Duplicate();
-                AirMode.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-030")).GetAttackModel().Duplicate();
+                var AirMode=Game.instance.model.GetTowerFromId("Alchemist-040").GetAbility().Duplicate();
+                AirMode.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("BombShooter-030").GetAttackModel().Duplicate();
                 var Lanzer=AirMode.GetBehavior<ActivateAttackModel>().attacks[0];
                 AirMode.GetBehavior<ActivateAttackModel>().lifespan=15;
                 AirMode.GetBehavior<SwitchDisplayModel>().lifespan=15;
@@ -48,6 +49,7 @@
                 AirMode.GetBehavior<IncreaseRangeModel>().addative=30;
                 AirMode.cooldown=40f;
                 AirMode.icon=new("VikingAirIcon");
+                AirMode.name="AirMode";
                 Lanzer.GetBehavior<AttackFilterModel>().filters=Lanzer.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Lanzer.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
                 Lanzer.weapons[0].projectile.display="VikingMissilePrefab";
@@ -65,8 +67,10 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Viking){
                 GetUpgradeModel().icon=new("VikingPhobosWeaponsIcon");
-                Viking.range=55;
-                Viking.GetAttackModel().range=Viking.range;
+                var Gatling=Viking.GetAttackModel();
+                Viking.range+=10;
+                Gatling.weapons[0].projectile.GetDamageModel().damage+=2;
+                Gatling.weapons[1].projectile.GetDamageModel().damage+=2;
                 Viking.GetAbility().GetBehavior<IncreaseRangeModel>().addative=40;
                 Viking.GetAbility().GetBehavior<ActivateAttackModel>().attacks[0].range=Viking.range+Viking.GetAbility().GetBehavior<IncreaseRangeModel>().addative;
             }
@@ -74,7 +78,8 @@
         public class Deimos:ModUpgrade<Viking>{
             public override string Name=>"Deimos";
             public override string DisplayName=>"Deimos Viking";
-            public override string Description=>"Dominion Vikings modified with uh, \'legal\' mercenary equipment, more pierce, damage, better fire rate and can pop Lead Bloons on the ground and more rockets in the air";
+            public override string Description=>"Dominion Vikings modified with uh, \'legal\' mercenary equipment, more pierce, damage, better fire rate and can pop Lead Bloons on the ground and"+
+                " more rockets in the air";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>3;
@@ -82,11 +87,11 @@
                 GetUpgradeModel().icon=new("VikingDeimosGroundIcon");
                 var Gatling=Viking.GetAttackModel();
                 var AirMode=Viking.GetAbility();
-                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.Add(Game.instance.model.towers.First(a=>a.name.
-                    Contains("BombShooter-020")).GetAttackModel().Duplicate());
+                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.Add(Game.instance.model.GetTowerFromId("BombShooter-020").
+                    GetAttackModel().Duplicate());
                 var WILD=AirMode.GetBehavior<ActivateAttackModel>().attacks[1];
                 Gatling.weapons[0].projectile.pierce=3;
-                Gatling.weapons[0].projectile.GetDamageModel().damage=3;
+                Gatling.weapons[0].projectile.GetDamageModel().damage+=1;
                 Gatling.weapons[0].projectile.GetDamageModel().immuneBloonProperties=0;
                 Gatling.weapons[0].rate=0.55f;
                 Gatling.weapons[1]=Gatling.weapons[0].Duplicate();
@@ -95,8 +100,8 @@
                 AirMode.icon=new("VikingDeimosAirIcon");
                 WILD.weapons[0].emission=new RandomArcEmissionModel("RandomArcEmissionModel",8,30,90,10,10,null);
                 WILD.weapons[0].projectile.RemoveBehavior<TravelStraitModel>();
-                WILD.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("DartlingGunner-050")).GetAbility().GetBehavior<ActivateAttackModel>().
-                    attacks[0].weapons[0].projectile.GetBehavior<TravelCurvyModel>().Duplicate());
+                WILD.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("DartlingGunner-050").GetAbility().GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].
+                    projectile.GetBehavior<TravelCurvyModel>().Duplicate());
                 WILD.weapons[0].projectile.GetBehavior<TravelCurvyModel>().speed=200;
                 WILD.weapons[0].projectile.RemoveBehaviors<TrackTargetModel>();
                 WILD.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
@@ -139,10 +144,9 @@
                 var Gatling=Viking.GetAttackModel();
                 WILD.range=85;
                 WILD.weapons[0].projectile.RemoveBehavior<CreateProjectileOnContactModel>();
-                WILD.weapons[0].projectile.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("BombShooter-022")).GetAttackModel().weapons[0].projectile.
-                    GetBehavior<CreateProjectileOnContactModel>().Duplicate());
+                WILD.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("BombShooter-022").GetAttackModel().weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().
+                    Duplicate());
                 Gatling.weapons[0].rate=0.1f;
-                Gatling.range=110;
                 Gatling.weapons[0].ejectX=13;
                 Gatling.weapons[0].ejectY=20;
                 Gatling.weapons[0].ejectZ=15;
@@ -152,54 +156,44 @@
                 Viking.RemoveBehavior<AbilityModel>();
                 Viking.portrait=new("VikingArchangelPortrait");
                 Viking.display="VikingArchangelPrefab";
-                Viking.range=Gatling.range;
+                Viking.range=110;
                 Viking.AddBehavior(WILD);
             }
         }
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("Viking")){
-                    var udn=GetViking(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Viking")){
+                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Viking";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetViking(Transform transform,string model){
-            var udn=Object.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference!=null&&reference.guidRef.Contains("Viking")){
+                if(reference.guidRef.Contains("Viking")){
                     var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class WI{
+        [HarmonyPatch(typeof(Weapon),"Weapon.SpawnDart")]
+        public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Viking")){
