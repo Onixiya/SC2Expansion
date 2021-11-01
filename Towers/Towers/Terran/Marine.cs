@@ -1,8 +1,7 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Marine:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.marine);
+    public class Marine:ModTower<TerranSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.marine);
         public override string DisplayName=>"Marine";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"SniperMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
@@ -18,12 +17,12 @@
             Marine.radius=5;
             Marine.cost=400;
             Marine.range=35;
-            var Bullet=Marine.GetAttackModel();
-            Bullet.weapons[0].rate=0.25f;
-            Bullet.weapons[0].rateFrames=1;
-            Bullet.range=Marine.range;
-            Bullet.weapons[0].projectile.display=null;
-            Bullet.weapons[0].projectile.GetDamageModel().damage=2.5f;
+            var C14=Marine.GetAttackModel();
+            C14.weapons[0].rate=0.25f;
+            C14.weapons[0].rateFrames=1;
+            C14.range=Marine.range;
+            C14.weapons[0].projectile.display=null;
+            C14.weapons[0].projectile.GetDamageModel().damage=2.5f;
             Marine.GetBehavior<DisplayModel>().display=Marine.display;
         }
         public class U238Shells:ModUpgrade<Marine>{
@@ -36,7 +35,9 @@
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineU238ShellsIcon");
                 Marine.range+=10;
-                Marine.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=1;
+                var C14=Marine.GetAttackModel();
+                C14.range=Marine.range;
+                C14.weapons[0].projectile.GetDamageModel().damage+=1;
             }
         }
         public class LTS:ModUpgrade<Marine>{
@@ -49,6 +50,7 @@
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineLaserTargetingSystemIcon");
                 Marine.range+=5;
+                Marine.GetAttackModel().range=Marine.range;
                 Marine.AddBehavior(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             }
         }
@@ -83,9 +85,9 @@
                 GetUpgradeModel().icon=new("MarineWarpigIcon");
                 Marine.display="MarineWarpigPrefab";
                 Marine.portrait=new("MarineWarpigPortrait");
-                var Bullet=Marine.GetAttackModel();
-                Bullet.weapons[0].rate=0.17f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage+=2;
+                var C14=Marine.GetAttackModel();
+                C14.weapons[0].rate=0.17f;
+                C14.weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
         public class Raynor:ModUpgrade<Marine>{
@@ -99,57 +101,57 @@
                 GetUpgradeModel().icon=new("MarineRaynorIcon");
                 Marine.display="MarineRaynorPrefab";
                 Marine.portrait=new("MarineRaynorIcon");
-                var Bullet=Marine.GetAttackModel();
-                Bullet.weapons[0].rate=0.13f;
-                Bullet.weapons[0].projectile.GetDamageModel().damage+=3;
+                var C14=Marine.GetAttackModel();
+                C14.weapons[0].rate=0.13f;
+                C14.weapons[0].projectile.GetDamageModel().damage+=3;
                 var FragGrenade=Game.instance.model.GetTowerFromId("BombShooter-002").GetAttackModel();
                 FragGrenade.name="MarineFragGrenade";
                 FragGrenade.AddBehavior(new PauseAllOtherAttacksModel("PauseAllOtherAttacksModel",1,true,true));
                 FragGrenade.range=Marine.range-10;
                 Marine.AddBehavior(FragGrenade);
             }
-            [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
-            public class FactoryFindAndSetupPrototypeAsync_Patch{
-                public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
-                [HarmonyPrefix]
-                public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                    if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Marine")){
-                        var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                        udn.transform.position=new(-3000,0);
-                        udn.name="SC2Expansion-Marine";
-                        udn.isSprite=false;
-                        onComplete.Invoke(udn);
-                        DisplayDict.Add(objectId,udn);
-                        return false;
-                    }
-                    if(DisplayDict.ContainsKey(objectId)){
-                        onComplete.Invoke(DisplayDict[objectId]);
-                        return false;
-                    }
-                    return true;
+        }
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
+            [HarmonyPrefix]
+            public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Marine")){
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
+                    udn.name="SC2Expansion-Marine";
+                    udn.isSprite=false;
+                    onComplete.Invoke(udn);
+                    DisplayDict.Add(objectId,udn);
+                    return false;
+                }
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
+                    return false;
+                }
+                return true;
+            }
+        }
+        [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(SpriteReference reference,ref Image image){
+                if(reference!=null&&reference.guidRef.Contains("Marine")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                    image.canvasRenderer.SetTexture(text);
+                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
-            [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-            public record ResourceLoader_Patch{
-                [HarmonyPostfix]
-                public static void Postfix(SpriteReference reference,ref Image image){
-                    if(reference.guidRef.Contains("Marine")){
-                        var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                        image.canvasRenderer.SetTexture(text);
-                        image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
-                    }
-                }
-            }
-            [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-            public static class WeaponSpawnDart_Patch{
-                [HarmonyPostfix]
-                public static void Postfix(ref Weapon __instance){
-                    if(__instance.attack.tower.towerModel.name.Contains("Marine")){
-                        if(__instance.attack.attackModel.name.Contains("Grenade")){
-                            __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineGrenade");
-                        }else{
-                            __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineAttack");
-                        }
+        }
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
+        public static class WeaponSpawnDart_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(ref Weapon __instance){
+                if(__instance.attack.tower.towerModel.name.Contains("Marine")){
+                    if(__instance.attack.attackModel.name.Contains("Grenade")){
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineGrenade");
+                    }else{
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineAttack");
                     }
                 }
             }

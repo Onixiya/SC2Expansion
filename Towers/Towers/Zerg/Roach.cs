@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Roach:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.roach);
+    public class Roach:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.roach);
         public override string DisplayName=>"Roach";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"GlueGunner";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Medium range Zerg armoured destroyer, spews out acid that does double damage to Lead and Ceremic bloons";
         public override void ModifyBaseTowerModel(TowerModel Roach){
             Roach.display="RoachPrefab";
@@ -70,7 +70,7 @@
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachRavagerIcon");
                 var Bile=Roach.GetAttackModel();
-                Roach.range=80;
+                Roach.range+=20;
                 Bile.range=Roach.range;
                 Bile.weapons[0].rate=2.5f;
                 Bile.weapons[0].projectile.display=Game.instance.model.GetTowerFromId("GlueGunner").GetAttackModel().weapons[0].projectile.display;
@@ -83,12 +83,18 @@
         public class CorrosiveBile:ModUpgrade<Roach>{
             public override string Name=>"CorrosiveBile";
             public override string DisplayName=>"Corrosive Bile";
-            public override string Description=>"Gains a slow but powerful attack that can target anywhere on the map";
+            public override string Description=>"Changes attack into a slow but powerful one that can target anywhere on the map";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachCorrosiveBileIcon");
+                Roach.range=9999;
+                var Bile=Roach.GetAttackModel();
+                Bile.range=Roach.range;
+                Bile.weapons[0].projectile=Game.instance.model.GetTowerFromId("MortarMonkey-300").GetAttackModel().weapons[0].projectile;
+                Bile.weapons[0].projectile.RemoveBehavior<CreateProjectileOnExhaustFractionModel>();
+                Bile.GetBehavior<AttackFilterModel>().filters=Bile.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
             }
         }
         public class Brutalisk:ModUpgrade<Roach>{
@@ -109,7 +115,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Roach")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Roach";
                     udn.isSprite=false;
@@ -128,8 +134,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Roach")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Roach")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

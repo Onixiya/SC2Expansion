@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Mutalisk:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.mutalisk);
+    public class Mutalisk:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.mutalisk);
         public override string DisplayName=>"Mutalisk";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Primary Zerg flyer, able to bounce its shot to hit multiple targets";
         public override void ModifyBaseTowerModel(TowerModel Mutalisk){
             Mutalisk.display="MutaliskPrefab";
@@ -84,6 +84,7 @@
             public override void ApplyUpgrade(TowerModel Mutalisk){
                 GetUpgradeModel().icon=new("HydraliskFrenzyIcon");
                 Mutalisk.range+=10;
+                Mutalisk.GetAttackModel().range=Mutalisk.range;
             }
         }
         public class SunderingGlaive:ModUpgrade<Mutalisk>{
@@ -132,6 +133,7 @@
                 try{Glaive.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Moabs")).Cast<DamageModifierForTagModel>().damageAddative=10;}
                     catch{Glaive.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Moabs",2,0,false,false));}
                 Mutalisk.range+=10;
+                Glaive.range=Mutalisk.range;
                 Glaive.weapons[0].rate=1.4f;
             }
         }
@@ -146,7 +148,10 @@
                 GetUpgradeModel().icon=new("MutaliskBroodLordIcon");
                 Mutalisk.portrait=new("MutaliskBroodLordPortrait");
                 Mutalisk.display="MutaliskBroodLordPrefab";
+                Mutalisk.range+=25;
+                Mutalisk.radius=20;
                 var Broodling=Mutalisk.GetAttackModel();
+                Broodling.range=Mutalisk.range;
                 Broodling.weapons[0].projectile=Game.instance.model.GetTowerFromId("WizardMonkey-004").behaviors.First(a=>a.name.Contains("AttackModel_Attack Necromancer_")).
                     Cast<AttackModel>().weapons[0].projectile.Duplicate();
                 Broodling.weapons[0].projectile.pierce=5;
@@ -154,8 +159,6 @@
                 Broodling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.6f;
                 Broodling.weapons[0].projectile.display="MutaliskBroodlingPrefab";
                 Broodling.weapons[0].projectile.GetDamageModel().damage+=10;
-                Mutalisk.range+=25;
-                Mutalisk.radius=20;
             }
         }
         /*public class Leviathan:ModUpgrade<Mutalisk>{
@@ -181,13 +184,28 @@
                 Mutalisk.behaviors=Mutalisk.behaviors.Add(Tentacle,new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             }
         }*/
+        [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
+        public static class TowerManagerUpgradeTower_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(Tower tower,TowerModel def,string __state){
+                if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("Mutalisk")){
+                    int RandNum=new System.Random().Next(1,3);
+                    if(RandNum==1){
+                        def.GetAttackModel().range+=8;
+                        def.range=def.GetAttackModel().range;
+                    }
+                    if(RandNum==2)def.GetAttackModel().weapons[0].rate-=0.25f;
+                    if(RandNum==3)def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
+                }
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Mutalisk")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.name="SC2Expansion-Mutalisk";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -205,8 +223,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Mutalisk")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Mutalisk")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

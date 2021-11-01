@@ -128,18 +128,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Assets.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Assets.resx</DependentUpon>
+    </Compile>
     <Compile Include="Ext.cs" />
-    <Compile Include="Models\Models.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Models.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Loader.cs" />
+    <Compile Include="ModMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
     <Compile Include="Towers\Buildings\Terran\CommandCenter.cs" />
@@ -147,6 +142,7 @@
     <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
+    <Compile Include="Towers\Heroes\Artanis.cs" />
     <Compile Include="Towers\Towers\Protoss\Archon.cs" />
     <Compile Include="Towers\Towers\Protoss\HighTemplar.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
@@ -157,24 +153,25 @@
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Queen.cs" />
     <None Include="assets.unitypackage" />
+    <None Include="Assets\archon.bundle" />
+    <None Include="Assets\artanis.bundle" />
+    <None Include="Assets\banelingnest.bundle" />
+    <None Include="Assets\battlecruiser.bundle" />
+    <None Include="Assets\commandcenter.bundle" />
+    <None Include="Assets\gateway.bundle" />
+    <None Include="Assets\hatchery.bundle" />
+    <None Include="Assets\hightemplar.bundle" />
+    <None Include="Assets\hydralisk.bundle" />
+    <None Include="Assets\marine.bundle" />
+    <None Include="Assets\mutalisk.bundle" />
+    <None Include="Assets\queen.bundle" />
+    <None Include="Assets\roach.bundle" />
+    <None Include="Assets\spawningpool.bundle" />
+    <None Include="Assets\ultraliskcavern.bundle" />
+    <None Include="Assets\viking.bundle" />
+    <None Include="Assets\voidray.bundle" />
     <None Include="LICENSE" />
     <None Include="Readme.md" />
-    <None Include="Resources\archon.bundle" />
-    <None Include="Resources\banelingnest.bundle" />
-    <None Include="Resources\battlecruiser.bundle" />
-    <None Include="Resources\commandcenter.bundle" />
-    <None Include="Resources\gateway.bundle" />
-    <None Include="Resources\hatchery.bundle" />
-    <None Include="Resources\hightemplar.bundle" />
-    <None Include="Resources\hydralisk.bundle" />
-    <None Include="Resources\marine.bundle" />
-    <None Include="Resources\mutalisk.bundle" />
-    <None Include="Resources\queen.bundle" />
-    <None Include="Resources\roach.bundle" />
-    <None Include="Resources\spawningpool.bundle" />
-    <None Include="Resources\ultraliskcavern.bundle" />
-    <None Include="Resources\viking.bundle" />
-    <None Include="Resources\voidray.bundle" />
     <None Include="temp.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 10.json" />
     <None Include="TowerJSON\AdmiralBrickell\AdmiralBrickell 11.json" />
@@ -1869,21 +1866,27 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include=".gitignore" />
-    <None Include="Resources\ProtossContainer.png" />
-    <None Include="Resources\TerranContainer.png" />
-    <None Include="Resources\ZergContainer.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Models\Models.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Models.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="Assets\Assets.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Assets.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ProtossButton.png" />
+    <EmbeddedResource Include="Assets\ProtossContainer.png" />
+    <EmbeddedResource Include="Assets\ProtossHex.png" />
+    <EmbeddedResource Include="Assets\TerranButton.png" />
+    <EmbeddedResource Include="Assets\TerranContainer.png" />
+    <EmbeddedResource Include="Assets\ZergButton.png" />
+    <EmbeddedResource Include="Assets\ZergContainer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\TerranPortrait.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ZergCreep.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

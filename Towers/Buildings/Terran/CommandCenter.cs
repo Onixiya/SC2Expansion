@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class CommandCenter:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.commandcenter);
+    public class CommandCenter:ModTower<TerranSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.commandcenter);
         public override string DisplayName=>"Command Center";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"BananaFarm-003";
         public override int Cost=>750;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>5;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.TerranEnabled);
         public override string Description=>"Terran command hub, all good bases start with one. Provides income";
         public override void ModifyBaseTowerModel(TowerModel CommandCenter){
             CommandCenter.display="CommandCenterPrefab";
@@ -120,8 +120,8 @@
                 CommandCenter.portrait=new("CommandCenterPlanetaryFortressPortrait");
                 var Ibiks=Game.instance.model.GetTowerFromId("BombShooter-300").GetAttackModel().Duplicate();
                 Ibiks.name="Ibiks";
-                Ibiks.range=85;
-                CommandCenter.range=Ibiks.range;
+                CommandCenter.range=85;
+                Ibiks.range=CommandCenter.range;
                 Ibiks.weapons[0].emission=new InstantDamageEmissionModel("InstantEmission",null);
                 Ibiks.GetBehavior<RotateToTargetModel>().onlyRotateDuringThrow=false;
                 Ibiks.weapons[0].projectile.AddBehavior(new DamageModel("DamageModel",3,0,false,false,true,0));
@@ -195,7 +195,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-CommandCenter";
                     udn.isSprite=false;
@@ -214,8 +214,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("CommandCenter")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("CommandCenter")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

@@ -1,12 +1,12 @@
 ﻿namespace SC2Expansion.Towers{
-    public class BanelingNest:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.banelingnest);
-        public override string TowerSet=>PRIMARY;
+    public class BanelingNest:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.banelingnest);
         public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Spawns Banelings. Small zerg, very explosive and suicidal. Do not poke";
         public override void ModifyBaseTowerModel(TowerModel BanelingNest){
             BanelingNest.display="BanelingNestPrefab";
@@ -29,6 +29,7 @@
             SpawnBaneling.weapons[1].projectile.pierce=1;
             SpawnBaneling.weapons[1].rate=17000;
             SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnBaneling.weapons[1].projectile;
+            SpawnBaneling.range=BanelingNest.range;
             BanelingNest.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.GetBehavior<DisplayModel>().display=BanelingNest.display;
         }
@@ -69,8 +70,8 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel BanelingNest) {
                 GetUpgradeModel().icon=new("BanelingNestCorrosiveAcidIcon");
-                var SpawnBanelings=BanelingNest.behaviors.First(a=>a.name.Equals("SpawnBaneling")).Cast<AttackModel>();
-                SpawnBanelings.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("EngineerMonkey-030").Cast<TowerModel>().behaviors.First(a=>a.name.Contains("CleansingFoam")).
+                var SpawnBanelings=BanelingNest.GetAttackModel();
+                SpawnBanelings.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("EngineerMonkey-030").behaviors.First(a=>a.name.Contains("CleansingFoam")).
                     Cast<AttackModel>().weapons[0].projectile.behaviors.First(a=>a.name.Contains("Exhaust")).Duplicate());
                 SpawnBanelings.weapons[0].projectile.display="BanelingNestBaneling3Prefab";
                 var AcidPool=SpawnBanelings.weapons[0].projectile.GetBehavior<CreateProjectileOnExhaustFractionModel>();
@@ -116,7 +117,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("BanelingNest")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -134,8 +135,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("BanelingNest")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("BanelingNest")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

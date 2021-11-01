@@ -1,19 +1,17 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Hydralisk:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.hydralisk);
-        public override string TowerSet=>PRIMARY;
+    public class Hydralisk:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hydralisk);
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Ranged Zerg shock trooper. Shoots spines";
         public override void ModifyBaseTowerModel(TowerModel Hydralisk){
             Hydralisk.display="HydraliskPrefab";
             Hydralisk.portrait=new("HydraliskPortrait");
             Hydralisk.icon=new("HydraliskIcon");
-            Hydralisk.towerSet="Primary";
-            Hydralisk.emoteSpriteLarge=new("Zerg");
             Hydralisk.radius=7;
             Hydralisk.range=30;
             var Spines=Hydralisk.GetAttackModel();
@@ -32,6 +30,7 @@
             public override void ApplyUpgrade(TowerModel Hydralisk){
                 GetUpgradeModel().icon=new("HydraliskGroovedSpinesIcon");
                 Hydralisk.range+=10;
+                Hydralisk.GetAttackModel().range=Hydralisk.range;
             }
         }
         public class MuscularAugments:ModUpgrade<Hydralisk>{
@@ -94,11 +93,11 @@
                 Hydralisk.display="HydraliskLurkerPrefab";
                 Hydralisk.portrait=new("HydraliskLurkerPortrait");
                 Hydralisk.radius=10;
+                Hydralisk.range+=20;
                 Hydralisk.RemoveBehavior<AttackModel>();
                 Hydralisk.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-030").behaviors.First(a=>a.name.Contains("Dragon")).Cast<AttackModel>().Duplicate());
                 var Spines=Hydralisk.GetAttackModel();
-                Spines.range=60;
-                Hydralisk.range=Spines.range;
+                Spines.range=Hydralisk.range;
                 Spines.weapons[0].projectile.display="HydraliskLurkerSpinesPrefab";
                 Spines.weapons[0].projectile.pierce=9999999;
                 Spines.weapons[0].projectile.GetDamageModel().damage=1;
@@ -130,7 +129,7 @@
                 Hydralisk.RemoveBehaviors<AttackModel>();
                 var AttToAdd=Game.instance.model.towers.First(a=>a.name.Contains("SniperMonkey-500")).Cast<TowerModel>().behaviors.
                     First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-                Hydralisk.range=85;
+                Hydralisk.range+=25;
                 AttToAdd.range=Hydralisk.range;
                 AttToAdd.weapons[0].projectile.display="HydraliskImpalerAttackPrefab";
                 AttToAdd.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-030").behaviors.First(a=>a.name.Contains("Fireball")).Cast<AttackModel>().
@@ -149,10 +148,26 @@
                 GetUpgradeModel().icon=new("HydraliskHunterKillerIcon");
                 Hydralisk.display="HydraliskHunterKillerPrefab";
                 Hydralisk.portrait=new("HydraliskHunterKillerPortrait");
+                Hydralisk.range+=5;
                 var Spines=Hydralisk.GetAttackModel();
                 Spines.weapons[0].projectile.GetDamageModel().damage+=2;
-                Spines.range+=5;
+                Spines.range=Hydralisk.range;
                 Spines.weapons[0].rate-=0.3f;
+            }
+        }
+        [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
+        public static class TowerManagerUpgradeTower_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(Tower tower,TowerModel def,string __state){
+                if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("Hydralisk")){
+                    int RandNum=new System.Random().Next(1,3);
+                    if(RandNum==1){
+                        def.GetAttackModel().range+=5;
+                        def.range=def.GetAttackModel().range;
+                    }
+                    if(RandNum==2)def.GetAttackModel().weapons[0].rate-=0.2f;
+                    if(RandNum==3)def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -161,7 +176,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hydralisk")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.name="SC2Expansion-Hydralisk";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
@@ -179,8 +194,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Hydralisk")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Hydralisk")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

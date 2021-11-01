@@ -1,25 +1,24 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Queen:ModTower{
-        public override string TowerSet=>PRIMARY;
+    public class Queen:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.queen);
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>3;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Ranged Zerg support, requires creep";
         public override void ModifyBaseTowerModel(TowerModel Queen){
             Queen.display="QueenPrefab";
             Queen.portrait=new("QueenPortrait");
             Queen.icon=new("QueenIcon");
-            Queen.towerSet="Primary";
-            Queen.emoteSpriteLarge=new("Zerg");
             Queen.radius=7;
             Queen.range=50;
-            var Spines=Queen.behaviors.First(a=>a.name.Contains("Attack")).Cast<AttackModel>();
+            var Spines=Queen.GetAttackModel();
             Spines.weapons[0].rate=7000f;
             Spines.range=Queen.range;
-            Spines.weapons[0].projectile.behaviors.First(a=>a.name.Contains("Damage")).Cast<DamageModel>().damage=2;
-            Queen.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="QueenPrefab";
+            Spines.weapons[0].projectile.GetDamageModel().damage=2;
+            Queen.GetBehavior<DisplayModel>().display=Queen.display;
         }
         public class QueenGroovedSpines:ModUpgrade<Queen>{
             public override string Name=>"QueenGroovedSpines";
@@ -30,7 +29,7 @@
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("HydraliskGroovedSpinesIcon");
-                Queen.range=65;
+                Queen.range+=15;
                 Queen.GetAttackModel().range=Queen.range;
             }
         }
@@ -43,9 +42,9 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenCreepTumorIcon");
-                var SpawnCreepTumor=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
+                var SpawnCreepTumor=Game.instance.model.GetTowerFromId("EngineerMonkey-100").behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
                 var CreepTumor=SpawnCreepTumor.weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
-                var CreepBuff=Game.instance.model.towers.First(a=>a.name.Contains("SniperMonkey-050")).GetBehavior<RateSupportModel>().Duplicate();
+                var CreepBuff=Game.instance.model.GetTowerFromId("SniperMonkey-050").GetBehavior<RateSupportModel>().Duplicate();
                 SpawnCreepTumor.name="SpawnCreepTumor";
                 SpawnCreepTumor.RemoveBehavior<RandomPositionModel>();
                 SpawnCreepTumor.AddBehavior(new RandomPositionBasicModel("RandomPositionBasicModel",15,20,10,false));
@@ -73,7 +72,7 @@
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenWildMutationIcon");
-                var WildMutation=Game.instance.model.towers.First(a=>a.name.Contains("AdmiralBrickell 10")).behaviors.First(a=>a.name.Contains("AbilityModel_FirstAbility")).Cast<AbilityModel>().Duplicate();
+                var WildMutation=Game.instance.model.GetTowerFromId("AdmiralBrickell 10").behaviors.First(a=>a.name.Contains("AbilityModel_FirstAbility")).Cast<AbilityModel>().Duplicate();
                 WildMutation.icon=new("QueenWildMutationIcon");
                 WildMutation.name="WildMutation";
                 WildMutation.displayName="Wild Mutation";
@@ -154,50 +153,40 @@
                 Queen.display="QueenZagaraPrefab";
             }
         }*/
-        [HarmonyPatch(typeof(Factory),nameof(Factory.FindAndSetupPrototypeAsync))]
-        public class PrototypeUDN_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
+        [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
+        public class FactoryFindAndSetupPrototypeAsync_Patch{
+            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("Queen")){
-                    var udn=GetQueen(__instance.PrototypeRoot,objectId);
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Queen")){
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Queen";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
             }
         }
-        private static AssetBundle __asset;
-        public static AssetBundle Assets{
-            get=>__asset;
-            set=>__asset=value;
-        }
-        public static UnityDisplayNode GetQueen(Transform transform,string model){
-            var udn=uObject.Instantiate(Assets.LoadAsset(model).Cast<GameObject>(),transform).AddComponent<UnityDisplayNode>();
-            udn.Active=false;
-            udn.transform.position=new(-3000,0);
-            return udn;
-        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoader_Patch{
+        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.Contains("Queen")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
             }
         }
-        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
-        public static class SpawnDart_Patch{
+        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
+        public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Queen")){

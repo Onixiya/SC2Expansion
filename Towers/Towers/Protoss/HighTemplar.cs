@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class HighTemplar:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.hightemplar);
+    public class HighTemplar:ModTower<ProtossSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hightemplar);
         public override string DisplayName=>"High Templar";
-        public override string TowerSet=>MAGIC;
         public override string BaseTower=>"WizardMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
         public override string Description=>"High ranking ranged Protoss Caster";
         public override void ModifyBaseTowerModel(TowerModel HighTemplar){
             HighTemplar.display="HighTemplarPrefab";
@@ -32,6 +32,7 @@
             public override void ApplyUpgrade(TowerModel HighTemplar){
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
                 HighTemplar.range+=10;
+                HighTemplar.GetAttackModel().range=HighTemplar.range;
             }
         }
         public class MiniPsiStorms:ModUpgrade<HighTemplar>{
@@ -81,10 +82,10 @@
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Weapon"));
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Tornado"));
                 PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Lightning"));
-                PsiOrb.name="HighTemplarPsiOrb";
+                PsiOrb.name="PsiOrb";
                 Sacrifice.name="Sacrifice";
                 Sacrifice.displayName="Sacrifice";
-                Sacrifice.cooldown=60f;
+                Sacrifice.cooldown=60;
                 SacrificeBonus.extraDamage=6;
                 SacrificeBonus.projectileDisplay.assetPath=null;
                 Sacrifice.icon=new("HighTemplarSacrificeIcon");
@@ -96,7 +97,7 @@
                 MindBlast.displayName="Mind Blast";
                 MindBlast.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("SniperMonkey-500").GetAttackModel().Duplicate();
                 MindBlast.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetDamageModel().damage=120;
-                MindBlast.cooldown=80f;
+                MindBlast.cooldown=80;
                 MindBlast.icon=new("HighTemplarMindBlastIcon");
                 MindBlast.maxActivationsPerRound=1;
                 PsiBolt.weapons[0].projectile.GetDamageModel().damage=5;
@@ -141,7 +142,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("HighTemplar")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-HighTemplar";
                     udn.isSprite=false;
@@ -160,8 +161,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("HighTemplar")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("HighTemplar")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

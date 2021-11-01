@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Battlecruiser:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.battlecruiser);
+    public class Battlecruiser:ModTower<TerranSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.battlecruiser);
         public override string DisplayName=>"Battlecruiser";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"SuperMonkey-100";
         public override int Cost=>2750;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.TerranEnabled);
         public override string Description=>"Terran capital ship, shoots lasers very fast";
         public override void ModifyBaseTowerModel(TowerModel Battlecruiser){
             Battlecruiser.display="BattlecruiserPrefab";
@@ -25,7 +25,6 @@
             Battlecruiser.GetBehavior<DisplayModel>().display=Battlecruiser.display;
             var Fire=Battlecruiser.GetAttackModel();
             Fire.name="BattlecruiserFire";
-            Fire.weapons[0].name="BattlecruiserFire";
             Fire.range=Battlecruiser.range;
             Fire.weapons[0].projectile.GetDamageModel().damage=1;
         }
@@ -85,7 +84,7 @@
                 Battlecruiser.display="BattlecruiserSovereignPrefab";
                 var MiniYamato=Battlecruiser.behaviors.First(a=>a.name.Contains("Yamato")).Cast<AbilityModel>().GetBehavior<ActivateAttackModel>().attacks[0].Duplicate();
                 MiniYamato.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=50;
-                MiniYamato.range=90;
+                MiniYamato.range=Battlecruiser.range;
                 MiniYamato.weapons[0].rate=3.5f;
                 MiniYamato.name="MiniYamato";
                 Battlecruiser.GetBehavior<DisplayModel>().display="BattlecruiserSovereignPrefab";
@@ -117,16 +116,17 @@
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
-                var Fire=Battlecruiser.GetAttackModel();
+                var Fire=Battlecruiser.GetAttackModels().First(a=>a.name.Contains("Fire"));
                 var TacJump=Battlecruiser.behaviors.First(a=>a.name.Equals("TacJump")).Cast<AbilityModel>();
-                var Yamato=Battlecruiser.GetAttackModel();
+                var Yamato=Battlecruiser.GetAttackModels().First(a=>a.name.Contains("Yamato"));
                 GetUpgradeModel().icon=new("BattlecruiserHyperionIcon");
                 Battlecruiser.display="BattlecruiserHyperionPrefab";
                 Battlecruiser.portrait=new("BattlecruiserHyperionPortrait");
                 Battlecruiser.range+=15;
                 Fire.weapons[0].rate-=0.03f;
                 Fire.weapons[0].projectile.GetDamageModel().damage+=3;
-                Yamato.range+=15;
+                Fire.range=Battlecruiser.range;
+                Yamato.range=Battlecruiser.range;
                 Yamato.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=150;
                 Yamato.weapons[0].rate=2.25f;
                 TacJump.cooldown=20;
@@ -138,7 +138,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Battlecruiser")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Battlecruiser";
                     udn.isSprite=false;
@@ -157,8 +157,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Battlecruiser")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Battlecruiser")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

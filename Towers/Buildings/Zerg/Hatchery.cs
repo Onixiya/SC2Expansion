@@ -1,19 +1,18 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Hatchery:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.hatchery);
+    public class Hatchery:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"BananaFarm-003";
         public override int Cost=>750;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Primary Zerg hub, generates creep and provides income";
         public override void ModifyBaseTowerModel(TowerModel Hatchery){
             Hatchery.display="HatcheryPrefab";
             Hatchery.portrait=new("HatcheryPortrait");
             Hatchery.icon=new("HatcheryIcon");
-            Hatchery.emoteSpriteLarge=new("Zerg");
             Hatchery.range=65;
             Hatchery.RemoveBehavior<RectangleFootprintModel>();
             Hatchery.footprint=Game.instance.model.GetTowerFromId("DartMonkey").footprint.Duplicate();
@@ -142,7 +141,6 @@
                 Hydralisk.baseId="Hydralisk";
                 Hydralisk.display="HydraliskPrefab";
                 Hydralisk.portrait=new("HydraliskPortrait");
-                Hydralisk.towerSet="Primary";
                 Hydralisk.radius=7;
                 Hydralisk.range=40;
                 Spines.weapons[0].rate=0.55f;
@@ -232,7 +230,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hatchery")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Hatchery";
                     udn.isSprite=false;
@@ -251,8 +249,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Hatchery")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Hatchery")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

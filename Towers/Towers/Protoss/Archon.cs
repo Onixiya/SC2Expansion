@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Archon:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.archon);
+    public class Archon:ModTower<ProtossSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.archon);
         public override string DisplayName=>"Archon";
-        public override string TowerSet=>PRIMARY;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
         public override string Description=>"Powerful psionic attacker, obliterates almost all non Moabs with ease";
         public override void ModifyBaseTowerModel(TowerModel Archon){
             Archon.display="ArchonPrefab";
@@ -41,6 +41,7 @@
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
                 var Lightning=Archon.GetAttackModel();
                 Archon.range+=10;
+                Lightning.range=Archon.range;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=-15;
             }
@@ -135,7 +136,8 @@
                 var Lightning=Archon.GetAttackModel();
                 var MindControl=Archon.GetAbility();
                 var MindControlAttackFilter=MindControl.GetBehavior<ActivateAttackModel>().attacks[0].GetBehavior<AttackFilterModel>();
-                Lightning.range+=10;
+                Archon.range+=10;
+                Lightning.range=Archon.range;
                 Lightning.weapons[0].rate=0.5f;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.RemoveBehavior<DamageModifierForTagModel>();
@@ -151,7 +153,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!protos.ContainsKey(objectId)&&objectId.Contains("Archon")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Archon";
                     udn.isSprite=false;
@@ -170,8 +172,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Archon")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("Archon")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }
@@ -183,7 +185,7 @@
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(TowerAssets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
                     if(__instance.attack.attackModel.name.Contains("MindControl")){
                         var MindControlProj=__instance.newProjectiles2.First().projectileModel.GetBehavior<CreateProjectileOnContactModel>().projectile;
                         MindControlProj.display=__instance.attack.target.bloon.display.displayModel.display;

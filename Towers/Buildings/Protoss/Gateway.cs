@@ -1,12 +1,12 @@
 ﻿namespace SC2Expansion.Towers{
-    public class Gateway:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.gateway);
-        public override string TowerSet=>PRIMARY;
+    public class Gateway:ModTower<ProtossSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.gateway);
         public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
         public override string Description=>"Warps in Zealots. Frontline Protoss melee troops";
         public override void ModifyBaseTowerModel(TowerModel Gateway){
             Gateway.display="GatewayPrefab";
@@ -31,6 +31,7 @@
             ZealotWarp.weapons[1].projectile.pierce=3;
             ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=ZealotWarp.weapons[1].projectile;
             ZealotWarp.weapons[1].rate=4.7f;
+            ZealotWarp.range=Gateway.range;
             Gateway.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             Gateway.GetBehavior<DisplayModel>().display=Gateway.display;
         }
@@ -120,7 +121,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Gateway")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Gateway";
                     udn.isSprite=false;
@@ -139,8 +140,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("Gateway")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference!=null&&reference.guidRef.Contains("Gateway")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

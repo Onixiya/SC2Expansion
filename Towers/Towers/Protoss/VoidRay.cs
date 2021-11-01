@@ -1,13 +1,13 @@
 ﻿namespace SC2Expansion.Towers{
-    public class VoidRay:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.voidray);
+    public class VoidRay:ModTower<ProtossSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.voidray);
         public override string DisplayName=>"Void Ray";
-        public override string TowerSet=>MAGIC;
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>1900;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
         public override string Description=>"Flying Protoss precision ranged craft. Deals double damage against Moab's";
         public override void ModifyBaseTowerModel(TowerModel VoidRay){
             VoidRay.display="VoidRayPrefab";
@@ -68,6 +68,7 @@
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayPrismaticRangeIcon");
                 VoidRay.range=65;
+                VoidRay.GetAttackModel().range=VoidRay.range;
             }
         }
         //i tried for 2 and a half days to get the beam to bounce, it didn't wanna fucking bounce at all
@@ -107,9 +108,10 @@
                 VoidRay.portrait=new("VoidRayMohandarPortrait");
                 VoidRay.display="VoidRayMohandarPrefab";
                 VoidRay.behaviors=VoidRay.behaviors.Remove(a=>a.name.Equals("Shards"));
+                VoidRay.range=85;
                 var Beam=VoidRay.GetAttackModel();
                 Beam.weapons[0].projectile.GetDamageModel().damage=4;
-                VoidRay.range=Beam.range;
+                Beam.range=VoidRay.range;
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -118,7 +120,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("VoidRay")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-VoidRay";
                     udn.isSprite=false;
@@ -137,8 +139,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("VoidRay")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("VoidRay")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

@@ -1,12 +1,12 @@
 ﻿namespace SC2Expansion.Towers{
-    public class SpawningPool:ModTower{
-        public static AssetBundle Assets=AssetBundle.LoadFromMemory(Models.Models.spawningpool);
-        public override string TowerSet=>PRIMARY;
+    public class SpawningPool:ModTower<ZergSet>{
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.spawningpool);
         public override string BaseTower=>"WizardMonkey-005";
         public override int Cost=>400;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
+        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
         public override string Description=>"Spawns Zerglings, small melee Zerg, very short life expentancy";
         public override void ModifyBaseTowerModel(TowerModel SpawningPool){
             SpawningPool.display="SpawningPoolPrefab";
@@ -30,6 +30,7 @@
             SpawnZergling.weapons[1].projectile.radius=4;
             SpawnZergling.weapons[1].projectile.pierce=7;
             SpawnZergling.weapons[1].rate=15000;
+            SpawnZergling.range=SpawningPool.range;
             SpawningPool.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             SpawningPool.GetBehavior<DisplayModel>().display=SpawningPool.display;
         }
@@ -56,7 +57,7 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel SpawningPool) {
                 GetUpgradeModel().icon=new("SpawningPoolMetabolicBoostIcon");
-                var SpawnZergling=SpawningPool.behaviors.First(a=>a.name.Equals("SpawnZergling")).Cast<AttackModel>();
+                var SpawnZergling=SpawningPool.GetAttackModel();
                 SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
                 SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingWingPrefab";
             }
@@ -114,13 +115,25 @@
                 SpawnZergling.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
             }
         }
+        [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
+        public class TowerManagerUpgradeTower_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(Tower tower,TowerModel def,string __state){
+                if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("SpawningPool")){
+                    int RandNum=new System.Random().Next(1,3);
+                    if(RandNum==1)def.GetAttackModel().weapons[1].projectile.pierce+=4;
+                    if(RandNum==2)def.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
+                    if(RandNum==3)def.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=2;
+                }
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("SpawningPool")){
-                    var udn=uObject.Instantiate(Assets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-SpawningPool";
                     udn.isSprite=false;
@@ -139,8 +152,8 @@
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref Image image){
-                if(reference.guidRef.Contains("SpawningPool")){
-                    var text=Assets.LoadAsset(reference.guidRef).Cast<Texture2D>();
+                if(reference!=null&&reference.guidRef.Contains("SpawningPool")){
+                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
                     image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
                 }

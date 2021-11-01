@@ -119,51 +119,81 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="archon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\archon.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\archon.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="artanis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Assets\artanis.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="banelingnest" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\banelingnest.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\banelingnest.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="battlecruiser" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\battlecruiser.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\battlecruiser.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="commandcenter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\commandcenter.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\commandcenter.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="gateway" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gateway.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\gateway.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="hatchery" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hatchery.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\hatchery.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="hightemplar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hightemplar.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\hightemplar.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="hydralisk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hydralisk.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\hydralisk.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="marine" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\marine.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\marine.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="mutalisk" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mutalisk.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\mutalisk.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ProtossButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ProtossButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProtossContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ProtossContainer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProtossHex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ProtossHex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="queen" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\queen.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\queen.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="roach" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\roach.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\roach.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="spawningpool" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\spawningpool.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\spawningpool.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="TerranButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TerranButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TerranContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TerranContainer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TerranPortrait" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>TerranPortrait.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ultraliskcavern" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ultraliskcavern.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\ultraliskcavern.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="viking" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\viking.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\viking.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="voidray" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\voidray.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Assets\voidray.bundle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ZergButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ZergButton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ZergContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ZergContainer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ZergCreep" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ZergCreep.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

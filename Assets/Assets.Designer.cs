@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SC2Expansion.Models {
+namespace SC2Expansion.Assets {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace SC2Expansion.Models {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Models {
+    public class Assets {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Models() {
+        internal Assets() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC2Expansion.Models.Models", typeof(Models).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SC2Expansion.Assets.Assets", typeof(Assets).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace SC2Expansion.Models {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] archon {
+        public static byte[] archon {
             get {
                 object obj = ResourceManager.GetObject("archon", resourceCulture);
                 return ((byte[])(obj));
@@ -73,7 +73,17 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] banelingnest {
+        public static byte[] artanis {
+            get {
+                object obj = ResourceManager.GetObject("artanis", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] banelingnest {
             get {
                 object obj = ResourceManager.GetObject("banelingnest", resourceCulture);
                 return ((byte[])(obj));
@@ -83,7 +93,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] battlecruiser {
+        public static byte[] battlecruiser {
             get {
                 object obj = ResourceManager.GetObject("battlecruiser", resourceCulture);
                 return ((byte[])(obj));
@@ -93,7 +103,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] commandcenter {
+        public static byte[] commandcenter {
             get {
                 object obj = ResourceManager.GetObject("commandcenter", resourceCulture);
                 return ((byte[])(obj));
@@ -103,7 +113,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] gateway {
+        public static byte[] gateway {
             get {
                 object obj = ResourceManager.GetObject("gateway", resourceCulture);
                 return ((byte[])(obj));
@@ -113,7 +123,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] hatchery {
+        public static byte[] hatchery {
             get {
                 object obj = ResourceManager.GetObject("hatchery", resourceCulture);
                 return ((byte[])(obj));
@@ -123,7 +133,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] hightemplar {
+        public static byte[] hightemplar {
             get {
                 object obj = ResourceManager.GetObject("hightemplar", resourceCulture);
                 return ((byte[])(obj));
@@ -133,7 +143,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] hydralisk {
+        public static byte[] hydralisk {
             get {
                 object obj = ResourceManager.GetObject("hydralisk", resourceCulture);
                 return ((byte[])(obj));
@@ -143,7 +153,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] marine {
+        public static byte[] marine {
             get {
                 object obj = ResourceManager.GetObject("marine", resourceCulture);
                 return ((byte[])(obj));
@@ -153,7 +163,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] mutalisk {
+        public static byte[] mutalisk {
             get {
                 object obj = ResourceManager.GetObject("mutalisk", resourceCulture);
                 return ((byte[])(obj));
@@ -161,9 +171,39 @@ namespace SC2Expansion.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProtossButton {
+            get {
+                object obj = ResourceManager.GetObject("ProtossButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProtossContainer {
+            get {
+                object obj = ResourceManager.GetObject("ProtossContainer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProtossHex {
+            get {
+                object obj = ResourceManager.GetObject("ProtossHex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] queen {
+        public static byte[] queen {
             get {
                 object obj = ResourceManager.GetObject("queen", resourceCulture);
                 return ((byte[])(obj));
@@ -173,7 +213,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] roach {
+        public static byte[] roach {
             get {
                 object obj = ResourceManager.GetObject("roach", resourceCulture);
                 return ((byte[])(obj));
@@ -183,7 +223,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] spawningpool {
+        public static byte[] spawningpool {
             get {
                 object obj = ResourceManager.GetObject("spawningpool", resourceCulture);
                 return ((byte[])(obj));
@@ -191,9 +231,39 @@ namespace SC2Expansion.Models {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap TerranButton {
+            get {
+                object obj = ResourceManager.GetObject("TerranButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap TerranContainer {
+            get {
+                object obj = ResourceManager.GetObject("TerranContainer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap TerranPortrait {
+            get {
+                object obj = ResourceManager.GetObject("TerranPortrait", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] ultraliskcavern {
+        public static byte[] ultraliskcavern {
             get {
                 object obj = ResourceManager.GetObject("ultraliskcavern", resourceCulture);
                 return ((byte[])(obj));
@@ -203,7 +273,7 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] viking {
+        public static byte[] viking {
             get {
                 object obj = ResourceManager.GetObject("viking", resourceCulture);
                 return ((byte[])(obj));
@@ -213,10 +283,40 @@ namespace SC2Expansion.Models {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] voidray {
+        public static byte[] voidray {
             get {
                 object obj = ResourceManager.GetObject("voidray", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ZergButton {
+            get {
+                object obj = ResourceManager.GetObject("ZergButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ZergContainer {
+            get {
+                object obj = ResourceManager.GetObject("ZergContainer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ZergCreep {
+            get {
+                object obj = ResourceManager.GetObject("ZergCreep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
