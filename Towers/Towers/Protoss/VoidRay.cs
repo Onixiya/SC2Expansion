@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
+        public override bool DontAddToShop=>!ProtossEnabled;
         public override string Description=>"Flying Protoss precision ranged craft. Deals double damage against Moab's";
         public override void ModifyBaseTowerModel(TowerModel VoidRay){
             VoidRay.display="VoidRayPrefab";
@@ -33,6 +33,9 @@
             Beam.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=0;
             Beam.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageMultiplier=2;
             VoidRay.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=VoidRay.display;
+            VoidRay.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="VoidRayBirth";
+            VoidRay.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2.assetId=VoidRay.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId;
+            SetUpgradeSounds(VoidRay,"VoidRayUpgrade");
         }
         public class PrismaticAlignment:ModUpgrade<VoidRay>{
             public override string Name=>"PrismaticAlignment";
@@ -44,6 +47,7 @@
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayPrismaticAlignmentIcon");
                 VoidRay.GetAttackModel().weapons[0].projectile.GetDamageModel().damage=2;
+                SetUpgradeSounds(VoidRay,"VoidRayUpgrade1");
             }
         }
         public class FluxVanes:ModUpgrade<VoidRay>{
@@ -56,6 +60,7 @@
             public override void ApplyUpgrade(TowerModel VoidRay){
                 GetUpgradeModel().icon=new("VoidRayFluxVanesIcon");
                 VoidRay.GetAttackModel().weapons[0].rate=0.075f;
+                SetUpgradeSounds(VoidRay,"VoidRayUpgrade2");
             }
         }
         public class PrismaticRange:ModUpgrade<VoidRay>{
@@ -69,6 +74,7 @@
                 GetUpgradeModel().icon=new("VoidRayPrismaticRangeIcon");
                 VoidRay.range=65;
                 VoidRay.GetAttackModel().range=VoidRay.range;
+                SetUpgradeSounds(VoidRay,"VoidRayUpgrade3");
             }
         }
         //i tried for 2 and a half days to get the beam to bounce, it didn't wanna fucking bounce at all
@@ -93,7 +99,8 @@
                 ShardsProj.pierce=2;
                 ShardsProj.display="dfc16ec49f4894148bce0161ebb0bd32";
                 Shards.name="Shards";
-                VoidRay.behaviors=VoidRay.behaviors.Add(Shards);
+                VoidRay.AddBehavior(Shards);
+                SetUpgradeSounds(VoidRay,"VoidRayUpgrade4");
             }
         }
         public class Mohandar:ModUpgrade<VoidRay>{
@@ -107,16 +114,27 @@
                 GetUpgradeModel().icon=new("VoidRayMohandarPortrait");
                 VoidRay.portrait=new("VoidRayMohandarPortrait");
                 VoidRay.display="VoidRayMohandarPrefab";
-                VoidRay.behaviors=VoidRay.behaviors.Remove(a=>a.name.Equals("Shards"));
+                VoidRay.RemoveBehavior(VoidRay.GetBehaviors<AttackModel>().First(a=>a.name.Equals("Shards")));
                 VoidRay.range=85;
                 var Beam=VoidRay.GetAttackModel();
                 Beam.weapons[0].projectile.GetDamageModel().damage=4;
                 Beam.range=VoidRay.range;
             }
         }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                __instance.RegisterAudioClip("VoidRayBirth",TowerAssets.LoadAsset("VoidRayBirth").Cast<AudioClip>());
+                __instance.RegisterAudioClip("VoidRayUpgrade",TowerAssets.LoadAsset("VoidRayUpgrade").Cast<AudioClip>());
+                __instance.RegisterAudioClip("VoidRayUpgrade1",TowerAssets.LoadAsset("VoidRayUpgrade1").Cast<AudioClip>());
+                __instance.RegisterAudioClip("VoidRayUpgrade2",TowerAssets.LoadAsset("VoidRayUpgrade2").Cast<AudioClip>());
+                __instance.RegisterAudioClip("VoidRayUpgrade3",TowerAssets.LoadAsset("VoidRayUpgrade3").Cast<AudioClip>());
+                __instance.RegisterAudioClip("VoidRayUpgrade4",TowerAssets.LoadAsset("VoidRayUpgrade4").Cast<AudioClip>());
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("VoidRay")){
@@ -138,7 +156,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("VoidRay")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

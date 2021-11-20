@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Primary Zerg hub, generates creep and provides income";
         public override void ModifyBaseTowerModel(TowerModel Hatchery){
             Hatchery.display="HatcheryPrefab";
@@ -87,7 +87,8 @@
                 SpawnZergling.weapons[1].projectile.pierce=13;
                 SpawnZergling.weapons[1].rate=1.5f;
                 NecZone.attackUsedForRangeModel.range=999;
-                Hatchery.behaviors=Hatchery.behaviors.Add(SpawnZergling,NecZone);
+                Hatchery.AddBehavior(SpawnZergling);
+                Hatchery.AddBehavior(NecZone);
                 Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=25;
                 Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=25;
             }
@@ -124,7 +125,9 @@
                 NydusWorm.display="HatcheryNydusWormPrefab";
                 NydusWorm.GetAttackModel().GetBehavior<DisplayModel>().display=null;
                 NydusWorm.RemoveBehavior<AttackModel>();
-                NydusWorm.behaviors=NydusWorm.behaviors.Add(Hatchery.GetBehavior<NecromancerZoneModel>().Duplicate(),Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Duplicate(),SpawnHydralisk);
+                NydusWorm.AddBehavior(Hatchery.GetBehavior<NecromancerZoneModel>().Duplicate());
+                NydusWorm.AddBehavior(Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Duplicate());
+                NydusWorm.AddBehavior(SpawnHydralisk);
                 NydusWorm.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[1].rate=0.65f;
                 SpawnHydralisk.name="SpawnHydralisk";
                 SpawnHydralisk.weapons[0].rate=5;
@@ -162,7 +165,7 @@
                 var Nydus=Hatchery.GetBehavior<AbilityModel>();
                 var NydusWorm=Nydus.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
                 var Hydralisk=NydusWorm.behaviors.First(a=>a.name.Contains("Hydralisk")).Cast<AttackModel>().weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
-                NydusWorm.behaviors=NydusWorm.behaviors.Remove(a=>a.name.Contains("Zergling"));
+                NydusWorm.RemoveBehavior(NydusWorm.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Zergling")));
                 NydusWorm.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Duplicate());
                 var SpawnZerglingNydus=NydusWorm.behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>();
                 var SpawnZerglingUltralisk=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>();
@@ -248,7 +251,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Hatchery")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

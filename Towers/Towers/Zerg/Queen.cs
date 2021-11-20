@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>3;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Ranged Zerg support, requires creep";
         public override void ModifyBaseTowerModel(TowerModel Queen){
             Queen.display="QueenPrefab";
@@ -177,7 +177,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Queen")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
@@ -191,7 +191,7 @@
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Queen")){
                     if(__instance.attack.attackModel.name.Contains("CreepTumor")){
-                       // __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenSpawnCreepTumorClip").Cast<AudioClip>(),Ext.ModVolume);
+                       // __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenSpawnCreepTumorClip").Cast<AudioClip>(),ModVolume);
                         __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenSpawnCreepTumorStart");
                     }
                     if(__instance.attack.attackModel.name.Contains("AttackModel_Attack_")){
@@ -206,7 +206,7 @@
             public static void Postfix(ref Ability __instance){
                 if(__instance.tower.namedMonkeyKey.Contains("Queen")){
                     __instance.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenAbility");
-                    //__instance.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenAbilityClip").Cast<AudioClip>(),Ext.ModVolume);
+                    //__instance.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenAbilityClip").Cast<AudioClip>(),ModVolume);
                 }
             }
         }

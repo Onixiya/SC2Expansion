@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
+        public override bool DontAddToShop=>!ProtossEnabled;
         public override string Description=>"High ranking ranged Protoss Caster";
         public override void ModifyBaseTowerModel(TowerModel HighTemplar){
             HighTemplar.display="HighTemplarPrefab";
@@ -19,7 +19,10 @@
             var PsiBolt=HighTemplar.GetAttackModel();
             PsiBolt.range=HighTemplar.range;
             PsiBolt.weapons[0].projectile.GetDamageModel().damage=2;
-            HighTemplar.GetBehavior<DisplayModel>().display="HighTemplarPrefab";
+            HighTemplar.GetBehavior<DisplayModel>().display=HighTemplar.display;
+            HighTemplar.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="HighTemplarBirth";
+            HighTemplar.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2.assetId=HighTemplar.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId;
+            SetUpgradeSounds(HighTemplar,"HighTemplarUpgrade");
         }
         //Ik the khala isn't used now but i cba adding nerve cords to the model, sc2 itself handles these in a special way
         public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
@@ -33,6 +36,7 @@
                 GetUpgradeModel().icon=new("HighTemplarKhaydarinAmuletIcon");
                 HighTemplar.range+=10;
                 HighTemplar.GetAttackModel().range=HighTemplar.range;
+                SetUpgradeSounds(HighTemplar,"HighTemplarUpgrade1");
             }
         }
         public class MiniPsiStorms:ModUpgrade<HighTemplar>{
@@ -49,6 +53,7 @@
                 PsiStorm.weapons[0].projectile.display="88399aeca4ae48a44aee5b08eb16cc61";
                 PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
                 HighTemplar.AddBehavior(PsiStorm);
+                SetUpgradeSounds(HighTemplar,"HighTemplarUpgrade2");
             }
         }
         public class PlasmaSurge:ModUpgrade<HighTemplar>{
@@ -63,6 +68,7 @@
                 var PsiStorm=HighTemplar.behaviors.First(a=>a.name.Equals("PsiStorms")).Cast<AttackModel>();
                 PsiStorm.weapons[0].projectile.radius=50;
                 PsiStorm.weapons[0].projectile.GetDamageModel().damage+=1;
+                SetUpgradeSounds(HighTemplar,"HighTemplarUpgrade3");
             }
         }
         public class Ascendant:ModUpgrade<HighTemplar>{
@@ -76,12 +82,17 @@
                 GetUpgradeModel().icon=new("HighTemplarAscendantIcon");
                 var PsiOrb=Game.instance.model.GetTowerFromId("Druid-400").GetAttackModel().Duplicate();
                 var Sacrifice=Game.instance.model.GetTowerFromId("MonkeyBuccaneer-040").GetBehavior<AbilityModel>().Duplicate();
-                var SacrificeBonus=Game.instance.model.GetTowerFromId("BoomerangMonkey-040").GetBehavior<AbilityModel>().GetBehavior<TurboModel>();
+                var SacrificeBonus=Game.instance.model.GetTowerFromId("BoomerangMonkey-040").GetBehavior<AbilityModel>().GetBehavior<TurboModel>().Duplicate();
                 var MindBlast=Game.instance.model.GetTowerFromId("PatFusty 10").behaviors.First(a=>a.name.Contains("Big")).Cast<AbilityModel>().Duplicate();
                 var PsiBolt=HighTemplar.GetAttackModel();
-                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Weapon"));
-                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Tornado"));
-                PsiOrb.weapons=PsiOrb.weapons.Remove(a=>a.name.Equals("WeaponModel_Lightning"));
+                var WeaponToRemove=PsiOrb.weapons.GetEnumerator();
+                while(WeaponToRemove.MoveNext()){
+                    switch(WeaponToRemove.Current.name){
+                        case "WeaponModel_Weapon"or"WeaponModel_Tornado"or"WeaponModel_Lightning":
+                            PsiOrb.RemoveWeapon(WeaponToRemove.Current);
+                            break;
+                    }
+                }
                 PsiOrb.name="PsiOrb";
                 Sacrifice.name="Sacrifice";
                 Sacrifice.displayName="Sacrifice";
@@ -91,20 +102,25 @@
                 Sacrifice.icon=new("HighTemplarSacrificeIcon");
                 Sacrifice.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetBehavior<CreateRopeEffectModel>().assetId=null;
                 Sacrifice.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetBehavior<CreateRopeEffectModel>().endAssetId=null;
+                Sacrifice.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="HighTemplarSacrificeVO";
                 Sacrifice.maxActivationsPerRound=1;
                 Sacrifice.AddBehavior(SacrificeBonus);
                 MindBlast.name="MindBlast";
                 MindBlast.displayName="Mind Blast";
                 MindBlast.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("SniperMonkey-500").GetAttackModel().Duplicate();
                 MindBlast.GetBehavior<ActivateAttackModel>().attacks[0].weapons[0].projectile.GetDamageModel().damage=120;
+                MindBlast.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="HighTemplarMindBlastVO";
                 MindBlast.cooldown=80;
                 MindBlast.icon=new("HighTemplarMindBlastIcon");
                 MindBlast.maxActivationsPerRound=1;
                 PsiBolt.weapons[0].projectile.GetDamageModel().damage=5;
                 PsiBolt.name="PsiBolt";
                 HighTemplar.display="HighTemplarAscendantPrefab";
-                HighTemplar.behaviors=HighTemplar.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
-                HighTemplar.behaviors=HighTemplar.behaviors.Add(MindBlast,Sacrifice,PsiOrb);
+                HighTemplar.RemoveBehavior(HighTemplar.GetBehaviors<AttackModel>().First(a=>a.name.Contains("PsiStorm")));
+                HighTemplar.AddBehavior(MindBlast);
+                HighTemplar.AddBehavior(Sacrifice);
+                HighTemplar.AddBehavior(PsiOrb);
+                SetUpgradeSounds(HighTemplar,"HighTemplarUpgrade4");
             }
         }
         public class Jinara:ModUpgrade<HighTemplar>{
@@ -129,11 +145,29 @@
                 Sacrifice.cooldown=50;
                 MindBlast.maxActivationsPerRound=-1;
                 Sacrifice.maxActivationsPerRound=-1;
+                Sacrifice.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="HighTemplarJinaraSacrificeVO";
                 SacrificeAttack.GetBehavior<TargetGrapplableModel>().canHitZomg=true;
                 SacrificeAttack.RemoveBehavior<AttackFilterModel>();
                 MindBlast.cooldown=40;
                 MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=400;
+                MindBlast.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="HighTemplarJinaraMindBlastVO";
                 PsiBolt.weapons[0].projectile.GetDamageModel().damage=40;
+            }
+        }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                __instance.RegisterAudioClip("HighTemplarBirth",TowerAssets.LoadAsset("HighTemplarBirth").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarUpgrade",TowerAssets.LoadAsset("HighTemplarUpgrade").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarUpgrade1",TowerAssets.LoadAsset("HighTemplarUpgrade1").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarUpgrade2",TowerAssets.LoadAsset("HighTemplarUpgrade2").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarUpgrade3",TowerAssets.LoadAsset("HighTemplarUpgrade3").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarUpgrade4",TowerAssets.LoadAsset("HighTemplarUpgrade4").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarSacrificeVO",TowerAssets.LoadAsset("HighTemplarSacrificeVO").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarMindBlastVO",TowerAssets.LoadAsset("HighTemplarMindBlastVO").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarJinaraSacrificeVO",TowerAssets.LoadAsset("HighTemplarJinaraSacrificeVO").Cast<AudioClip>());
+                __instance.RegisterAudioClip("HighTemplarJinaraMindBlastVO",TowerAssets.LoadAsset("HighTemplarJinaraMindBlastVO").Cast<AudioClip>());
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -160,7 +194,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("HighTemplar")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

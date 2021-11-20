@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Medium range Zerg armoured destroyer, spews out acid that does double damage to Lead and Ceremic bloons";
         public override void ModifyBaseTowerModel(TowerModel Roach){
             Roach.display="RoachPrefab";
@@ -26,8 +26,8 @@
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Lead",2,0,true,false));
             Acid.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Ceremic",2,0,true,false));
             Acid.weapons[0].projectile.RemoveBehavior<SlowModel>();
-            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("Glue"));
-            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.Remove(a=>a.name.Contains("TagModel"));
+            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.RemoveItem(Acid.weapons[0].projectile.filters.First(a=>a.name.Contains("Glue")));
+            Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.RemoveItem(Acid.weapons[0].projectile.filters.First(a=>a.name.Contains("TagModel")));
             Acid.weapons[0].projectile.display="97f2427a81f436547b0a59f37fb689da";
             Roach.GetBehavior<DisplayModel>().display=Roach.display;
         }
@@ -94,7 +94,7 @@
                 Bile.range=Roach.range;
                 Bile.weapons[0].projectile=Game.instance.model.GetTowerFromId("MortarMonkey-300").GetAttackModel().weapons[0].projectile;
                 Bile.weapons[0].projectile.RemoveBehavior<CreateProjectileOnExhaustFractionModel>();
-                Bile.GetBehavior<AttackFilterModel>().filters=Bile.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
+                Bile.GetBehavior<AttackFilterModel>().filters=Bile.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
             }
         }
         public class Brutalisk:ModUpgrade<Roach>{
@@ -133,7 +133,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Roach")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Spawns Zerglings, small melee Zerg, very short life expentancy";
         public override void ModifyBaseTowerModel(TowerModel SpawningPool){
             SpawningPool.display="SpawningPoolPrefab";
@@ -15,9 +15,9 @@
             SpawningPool.emoteSpriteLarge=new("Zerg");
             SpawningPool.radius=20;
             SpawningPool.range=15;
-            SpawningPool.behaviors=SpawningPool.behaviors.Remove(a=>a.name.Contains("Shimmer"));
-            SpawningPool.behaviors=SpawningPool.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
-            SpawningPool.behaviors=SpawningPool.behaviors.Remove(a=>a.name.Contains("Buff"));
+            SpawningPool.RemoveBehavior(SpawningPool.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
+            SpawningPool.RemoveBehavior(SpawningPool.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
+            SpawningPool.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
             var SpawnZergling=SpawningPool.GetAttackModel();
             SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingPrefab";
             SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
@@ -121,9 +121,17 @@
             public static void Postfix(Tower tower,TowerModel def,string __state){
                 if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("SpawningPool")){
                     int RandNum=new System.Random().Next(1,3);
-                    if(RandNum==1)def.GetAttackModel().weapons[1].projectile.pierce+=4;
-                    if(RandNum==2)def.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
-                    if(RandNum==3)def.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=2;
+                    switch(RandNum){
+                        case 1:
+                            def.GetAttackModel().weapons[1].projectile.pierce+=4;
+                            break;
+                        case 2:
+                            def.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
+                            break;
+                        case 3:
+                            def.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=2;
+                            break;
+                    }
                 }
             }
         }
@@ -151,7 +159,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("SpawningPool")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

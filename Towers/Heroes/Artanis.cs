@@ -2,8 +2,12 @@
     public static class Artanis{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.artanis);
         public static void ArtanisSetup(){
-            var Artanis=Game.instance.model.GetTowerFromId("Quincy");
+            var Artanis=Game.instance.model.GetTowerFromId("Sauda");
+            Artanis.name="Artanis";
             Artanis.display="ArtanisPrefab";
+            Artanis.GetBehavior<DisplayModel>().display=Artanis.display;
+            //Artanis.b
+            var PsiBlades=Artanis.GetAttackModel();
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
@@ -30,7 +34,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Artanis")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
@@ -42,6 +46,7 @@
         public static class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
+                MelonLogger.Msg(__instance.attack.tower.towerModel.name);
                 if(__instance.attack.tower.towerModel.name.Contains("Artanis")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArtanisAttackClose");
                 }

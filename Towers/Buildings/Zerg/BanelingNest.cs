@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Spawns Banelings. Small zerg, very explosive and suicidal. Do not poke";
         public override void ModifyBaseTowerModel(TowerModel BanelingNest){
             BanelingNest.display="BanelingNestPrefab";
@@ -15,9 +15,9 @@
             BanelingNest.emoteSpriteLarge=new("Zerg");
             BanelingNest.radius=20;
             BanelingNest.range=15;
-            BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Shimmer"));
-            BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
-            BanelingNest.behaviors=BanelingNest.behaviors.Remove(a=>a.name.Contains("Buff"));
+            BanelingNest.RemoveBehavior(BanelingNest.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
+            BanelingNest.RemoveBehavior(BanelingNest.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
+            BanelingNest.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
             var SpawnBaneling=BanelingNest.GetAttackModel();
             SpawnBaneling.weapons[1].projectile.display="BanelingNestBanelingPrefab";
             SpawnBaneling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
@@ -134,7 +134,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("BanelingNest")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Primary Zerg flyer, able to bounce its shot to hit multiple targets";
         public override void ModifyBaseTowerModel(TowerModel Mutalisk){
             Mutalisk.display="MutaliskPrefab";
@@ -222,7 +222,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Mutalisk")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

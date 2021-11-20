@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
+        public override bool DontAddToShop=>!ProtossEnabled;
         public override string Description=>"Warps in Zealots. Frontline Protoss melee troops";
         public override void ModifyBaseTowerModel(TowerModel Gateway){
             Gateway.display="GatewayPrefab";
@@ -15,9 +15,9 @@
             Gateway.emoteSpriteLarge=new("Protoss");
             Gateway.radius=30;
             Gateway.range=31;
-            Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Shimmer"));
-            Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
-            Gateway.behaviors=Gateway.behaviors.Remove(a=>a.name.Contains("Buff"));
+            Gateway.RemoveBehavior(Gateway.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
+            Gateway.RemoveBehavior(Gateway.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
+            Gateway.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
             var ZealotWarp=Gateway.GetAttackModel();
             ZealotWarp.weapons[1].projectile.display="GatewayZealotPrefab";
             ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=3;
@@ -139,7 +139,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference!=null&&reference.guidRef.Contains("Gateway")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

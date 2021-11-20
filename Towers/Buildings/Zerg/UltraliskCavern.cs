@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Spawns Ultralisks, basically living tanks and very hard to kill";
         public override void ModifyBaseTowerModel(TowerModel UltraliskCavern){
             UltraliskCavern.display="UltraliskCavernPrefab";
@@ -15,9 +15,9 @@
             UltraliskCavern.emoteSpriteLarge=new("Zerg");
             UltraliskCavern.radius=20;
             UltraliskCavern.range=15;
-            UltraliskCavern.behaviors=UltraliskCavern.behaviors.Remove(a=>a.name.Contains("Shimmer"));
-            UltraliskCavern.behaviors=UltraliskCavern.behaviors.Remove(a=>a.name.Equals("AttackModel_Attack_"));
-            UltraliskCavern.behaviors=UltraliskCavern.behaviors.Remove(a=>a.name.Contains("Buff"));
+            UltraliskCavern.RemoveBehavior(UltraliskCavern.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
+            UltraliskCavern.RemoveBehavior(UltraliskCavern.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
+            UltraliskCavern.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
             var SpawnUltralisk=UltraliskCavern.GetAttackModel();
             SpawnUltralisk.weapons[1].projectile.display="UltraliskCavernUltraliskPrefab";
             SpawnUltralisk.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
@@ -159,7 +159,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("UltraliskCavern")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

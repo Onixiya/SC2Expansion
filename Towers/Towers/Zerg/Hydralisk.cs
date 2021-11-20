@@ -6,7 +6,7 @@
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ZergEnabled);
+        public override bool DontAddToShop=>!ZergEnabled;
         public override string Description=>"Ranged Zerg shock trooper. Shoots spines";
         public override void ModifyBaseTowerModel(TowerModel Hydralisk){
             Hydralisk.display="HydraliskPrefab";
@@ -63,7 +63,7 @@
                 Frenzy.maxActivationsPerRound=1;
                 FrenzyEffect.projectileDisplay=null;
                 FrenzyEffect.lifespan=15;
-                Hydralisk.behaviors=Hydralisk.behaviors.Add(Frenzy);
+                Hydralisk.AddBehavior(Frenzy);
             }
         }
         //i know this belongs to the lurker but i haven't got a clue on where else to put it, lurker needs to be t3 to avoid any model issues and impalers are the t4
@@ -158,7 +158,7 @@
         [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
         public static class TowerManagerUpgradeTower_Patch{
             [HarmonyPostfix]
-            public static void Postfix(Tower tower,TowerModel def,string __state){
+            public static void Postfix(Tower tower,ref TowerModel def,string __state){
                 if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("Hydralisk")){
                     int RandNum=new System.Random().Next(1,3);
                     if(RandNum==1){
@@ -193,7 +193,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Hydralisk")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

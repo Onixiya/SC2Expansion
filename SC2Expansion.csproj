@@ -47,11 +47,6 @@
       <HintPath>F:\Steam\steamapps\common\Mods\BloonsTD6 Mod Helper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Facepunch.Steamworks, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Facepunch.Steamworks.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
       <Private>False</Private>
@@ -70,20 +65,19 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="NinjaKiwi.Common">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\NinjaKiwi.Common.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="SC2ExpansionModOptions">
-      <HintPath>SC2ExpansionModOptions\bin\Release\SC2ExpansionModOptions.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml" />
     <Reference Include="UnhollowerBaseLib">
       <HintPath>F:\Steam\steamapps\common\BloonsTD6\MelonLoader\Managed\UnhollowerBaseLib.dll</HintPath>
@@ -133,7 +127,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Assets.resx</DependentUpon>
     </Compile>
-    <Compile Include="Ext.cs" />
     <Compile Include="ModMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Towers\Buildings\Protoss\Gateway.cs" />
@@ -142,7 +135,8 @@
     <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
-    <Compile Include="Towers\Heroes\Artanis.cs" />
+    <None Include="SC2ExpansionAssets.unitypackage" />
+    <None Include="Towers\Heroes\Artanis.cs" />
     <Compile Include="Towers\Towers\Protoss\Archon.cs" />
     <Compile Include="Towers\Towers\Protoss\HighTemplar.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />

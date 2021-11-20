@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.TerranEnabled);
+        public override bool DontAddToShop=>!TerranEnabled;
         public override string Description=>"Terran ground fire support, fire's 2 powerful Gatling Cannons. Cannot target Moab's";
         public override void ModifyBaseTowerModel(TowerModel Viking){
             Viking.display="VikingGroundPrefab";
@@ -19,7 +19,7 @@
             Viking.range=45;
             var Gatling=Viking.GetAttackModel();
             Gatling.range=Viking.range;
-            Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.Add(new FilterOutTagModel("FilterOutTagModel","Moabs",null));
+            Gatling.GetBehavior<AttackFilterModel>().filters=Gatling.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterOutTagModel("FilterOutTagModel","Moabs",null));
             Gatling.weapons[0].name="VikingGatling";
             Gatling.weapons[0].projectile.GetDamageModel().damage=2;
             Gatling.weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
@@ -49,7 +49,7 @@
                 AirMode.cooldown=40f;
                 AirMode.icon=new("VikingAirIcon");
                 AirMode.name="AirMode";
-                Lanzer.GetBehavior<AttackFilterModel>().filters=Lanzer.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
+                Lanzer.GetBehavior<AttackFilterModel>().filters=Lanzer.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Lanzer.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
                 Lanzer.weapons[0].projectile.display="VikingMissilePrefab";
                 Lanzer.weapons[0].ejectZ=50;
@@ -87,7 +87,7 @@
                 GetUpgradeModel().icon=new("VikingDeimosGroundIcon");
                 var Gatling=Viking.GetAttackModel();
                 var AirMode=Viking.GetAbility();
-                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.Add(Game.instance.model.GetTowerFromId("BombShooter-020").
+                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.AddTo(Game.instance.model.GetTowerFromId("BombShooter-020").
                     GetAttackModel().Duplicate());
                 var WILD=AirMode.GetBehavior<ActivateAttackModel>().attacks[1];
                 Gatling.weapons[0].projectile.pierce=3;
@@ -107,7 +107,7 @@
                 WILD.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
                 WILD.weapons[0].projectile.display="VikingMissilePrefab";
                 WILD.weapons[0].ejectZ=50;
-                WILD.GetBehavior<AttackFilterModel>().filters=WILD.GetBehavior<AttackFilterModel>().filters.Add(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
+                WILD.GetBehavior<AttackFilterModel>().filters=WILD.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Viking.portrait=new("VikingDeimosPortrait");
                 Viking.display="VikingDeimosGroundPrefab";
             }
@@ -128,7 +128,7 @@
                 AirMode.GetBehavior<ActivateAttackModel>().lifespan=30;
                 Viking.portrait=new("VikingSkyFuryPortrait");
                 Viking.display="VikingSkyFuryGroundPrefab";
-                Viking.GetAttackModel().GetBehavior<AttackFilterModel>().filters=Viking.GetAttackModel().GetBehavior<AttackFilterModel>().filters.Remove(a=>a.name.Contains("TagModel"));
+                Viking.GetAttackModel().RemoveBehavior(Viking.GetAttackModel().GetBehavior<AttackFilterModel>());
             }
         }
         public class Archangel:ModUpgrade<Viking>{
@@ -185,7 +185,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Viking")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);

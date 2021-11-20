@@ -2,15 +2,11 @@
 global using System;
 global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Towers;
-global using Assets.Scripts.Models.TowerSets;
-global using Assets.Scripts.Unity.UI_New.InGame.StoreMenu;
-global using SC2Expansion.Utils;
-global using SC2Expansion.Towers;
 global using HarmonyLib;
 global using MelonLoader;
 global using System.Collections.Generic;
 global using UnityEngine;
-global using Image=UnityEngine.UI.Image;
+global using uImage=UnityEngine.UI.Image;
 global using Assets.Scripts.Models.GenericBehaviors;
 global using Assets.Scripts.Models.Map;
 global using Assets.Scripts.Unity.Display;
@@ -26,30 +22,21 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-global using UnhollowerBaseLib;
+global using static SC2Expansion.SC2Expansion;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
+global using Assets.Scripts.Unity.Audio;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Api.ModOptions;
-[assembly:MelonOptionalDependencies("SC2ExpansionModOptions")]
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
-        public static ModSettingBool ProtossEnabled=Ext.ProtossEnabled;
-        public static ModSettingBool TerranEnabled=Ext.TerranEnabled;
-        public static ModSettingBool ZergEnabled=Ext.ZergEnabled;
-        public static ModSettingBool RemoveBaseTowers=Ext.RemoveBaseTowers;
-        public static ModSettingBool HeroesEnabled=Ext.HeroesEnabled;
-        public override void OnApplicationStart(){
-            Ext.ModVolume=1;
-        }
-        /*
-        [HarmonyPatch(typeof(TitleScreen), nameof(TitleScreen.Start))]
+        /*[HarmonyPatch(typeof(TitleScreen), nameof(TitleScreen.Start))]
     internal class TitleScreen_Start
     {
         [HarmonyPostfix]
@@ -65,25 +52,53 @@ namespace SC2Expansion{
         }
     }
     */
-        public override void OnUpdate(){
-            if(uObject.FindObjectOfType<FXVolumeControl>()!=null){
-                Ext.ModVolume=uObject.FindObjectOfType<FXVolumeControl>().volume;
-            }
-        }
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
         public static class GameModelLoaderLoad_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
                 if(RemoveBaseTowers==true){
-                    __result.towerSet=__result.towerSet.Remove(a=>a.name.Contains("ShopTowerDetail"));
+                    __result.towerSet=__result.towerSet.Empty();
                 }
             }
         }
-        //would like this to be in gamemodelloader 
-        /*public override void OnTitleScreen(){
-            if(HeroesEnabled==true){
-                Artanis.ArtanisSetup();
-            }
-        }*/
+        public static void SetUpgradeSounds(TowerModel towerModel,string soundToUse){
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound1.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound2.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound3.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound4.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound5.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound6.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound7.assetId=soundToUse;
+            towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound8.assetId=soundToUse;
+        }
+        public static readonly ModSettingBool ProtossEnabled=true;
+        public static readonly ModSettingBool TerranEnabled=true;
+        public static readonly ModSettingBool ZergEnabled=true;
+        public static readonly ModSettingBool RemoveBaseTowers=false;
+        public static readonly ModSettingBool HeroesEnabled=true;
+        public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
+        public static AudioFactory AudioFactoryInstance;
+        public class ProtossSet:ModTowerSet{
+            public override string DisplayName=>"Protoss";
+            public override string Container=>"ProtossContainer";
+            public override string Button=>"ProtossButton";
+            public override string ContainerLarge=>Container;
+            public override string Portrait=>"ProtossHex";
+        }
+        public class TerranSet:ModTowerSet{
+            public override string DisplayName=>"Terran";
+            public override string Container=>"TerranContainer";
+            public override string Button=>"TerranButton";
+            public override string ContainerLarge=>Container;
+            public override string Portrait=>"TerranPortrait";
+        }
+        public class ZergSet:ModTowerSet{
+            public override string DisplayName=>"Zerg";
+            public override string Container=>"ZergContainer";
+            public override string Button=>"ZergButton";
+            public override string ContainerLarge=>Container;
+            public override string Portrait=>"ZergCreep";
+        }
     }
 }

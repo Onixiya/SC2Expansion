@@ -7,7 +7,7 @@
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
-        public override bool DontAddToShop=>new ModSettingBool(Ext.ProtossEnabled);
+        public override bool DontAddToShop=>!ProtossEnabled;
         public override string Description=>"Powerful psionic attacker, obliterates almost all non Moabs with ease";
         public override void ModifyBaseTowerModel(TowerModel Archon){
             Archon.display="ArchonPrefab";
@@ -29,6 +29,9 @@
             Lightning.weapons[0].projectile.GetDamageModel().distributeToChildren=true;
             Lightning.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModel","Moabs",0,-10,false,false));
             Archon.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display="ArchonPrefab";
+            Archon.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="ArchonBirth";
+            Archon.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2.assetId=Archon.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId;
+            SetUpgradeSounds(Archon,"ArchonUpgrade");
         }
         public class ArchonKhaydarinAmulet:ModUpgrade<Archon>{
             public override string Name=>"ArchonKhaydarinAmulet";
@@ -44,6 +47,7 @@
                 Lightning.range=Archon.range;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.GetBehavior<DamageModifierForTagModel>().damageAddative=-15;
+                SetUpgradeSounds(Archon,"ArchonUpgrade1");
             }
         }
         public class HighArchon:ModUpgrade<Archon>{
@@ -61,6 +65,7 @@
                 PsiStorm.weapons[0].projectile.RemoveBehaviors<CreateEffectOnExhaustedModel>();
                 PsiStorm.range=Archon.range;
                 Archon.AddBehavior(PsiStorm);
+                SetUpgradeSounds(Archon,"ArchonUpgrade2");
             }
         }
         public class DarkArchon:ModUpgrade<Archon>{
@@ -85,8 +90,9 @@
                 ConfusionProjectile.display=null;
                 Confusion.weapons[0].projectile.AddBehavior(new CreateProjectileOnContactModel("CreateProjectileOnContactModel",ConfusionProjectile,new SingleEmissionModel("SingleEmissionModel",null),
                     false,false,false));
-                Archon.behaviors=Archon.behaviors.Remove(a=>a.name.Contains("PsiStorm"));
+                Archon.RemoveBehavior(Archon.GetBehaviors<AttackModel>().First(a=>a.name.Contains("PsiStorm")));
                 Archon.AddBehavior(Confusion);
+                SetUpgradeSounds(Archon,"ArchonUpgrade3");
             }
         }
         public class MindControl:ModUpgrade<Archon>{
@@ -105,14 +111,18 @@
                     weapons[1].projectile.Duplicate();
                 MindControl.icon=new("ArchonMindControlIcon");
                 MindControl.cooldown=120;
+                MindControl.name="MindControl";
+                MindControl.displayName="MindControl";
+                MindControl.description="Completely dominates a bloons mind and forces it to fight bloons";
+                MindControl.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="ArchonMindControlVO";
                 MindControlAttack.RemoveBehavior<TargetCloseModel>();
                 MindControlAttack.RemoveBehavior<TargetFirstModel>();
                 MindControlAttack.RemoveBehavior<TargetLastModel>();
                 MindControlAttack.targetProvider=new TargetStrongModel("TargetStrongModel",false,false);
                 MindControlAttack.range=100;
                 MindControlAttack.name="MindControl";
-                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelBad","Bad",null));
-                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Add(new FilterOutTagModel("FilterOutTagModelDdt","Ddt",null));
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.AddTo(new FilterOutTagModel("FilterOutTagModelBad","Bad",null));
+                MindControlAttackFilter.filters=MindControlAttackFilter.filters.AddTo(new FilterOutTagModel("FilterOutTagModelDdt","Ddt",null));
                 MindControlAttack.weapons[0].rate=9999;
                 MindControlAttack.weapons[0].projectile.GetDamageModel().damage=99999999;
                 MindControlAttack.weapons[0].projectile.display=null;
@@ -122,6 +132,7 @@
                 MindControl.GetBehavior<ActivateAttackModel>().attacks[0]=MindControlAttack;
                 MindControl.GetBehavior<ActivateAttackModel>().lifespan=0.1f;
                 Archon.AddBehavior(MindControl);
+                SetUpgradeSounds(Archon,"ArchonUpgrade4");
             }
         }
         public class Ulrezaj:ModUpgrade<Archon>{
@@ -135,16 +146,29 @@
                 GetUpgradeModel().icon=new("ArchonUlrezajIcon");
                 var Lightning=Archon.GetAttackModel();
                 var MindControl=Archon.GetAbility();
-                var MindControlAttackFilter=MindControl.GetBehavior<ActivateAttackModel>().attacks[0].GetBehavior<AttackFilterModel>();
                 Archon.range+=10;
                 Lightning.range=Archon.range;
                 Lightning.weapons[0].rate=0.5f;
                 Lightning.weapons[0].projectile.GetDamageModel().damage+=5;
                 Lightning.weapons[0].projectile.RemoveBehavior<DamageModifierForTagModel>();
                 MindControl.cooldown=60;
-                MindControlAttackFilter.filters=MindControlAttackFilter.filters.Remove(a=>a.name.Contains("Bad")||a.name.Contains("Ddt"));
+                MindControl.RemoveBehavior(MindControl.GetBehavior<ActivateAttackModel>().attacks[0].GetBehavior<AttackFilterModel>());
                 Archon.display="ArchonUlrezajPrefab";
                 Archon.portrait=new("ArchonUlrezajPortrait");
+            }
+        }
+
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                __instance.RegisterAudioClip("ArchonBirth",TowerAssets.LoadAsset("ArchonBirth").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonUpgrade",TowerAssets.LoadAsset("ArchonUpgrade").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonUpgrade1",TowerAssets.LoadAsset("ArchonUpgrade1").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonUpgrade2",TowerAssets.LoadAsset("ArchonUpgrade2").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonUpgrade3",TowerAssets.LoadAsset("ArchonUpgrade3").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonUpgrade4",TowerAssets.LoadAsset("ArchonUpgrade4").Cast<AudioClip>());
+                __instance.RegisterAudioClip("ArchonMindControlVO",TowerAssets.LoadAsset("ArchonMindControlVO").Cast<AudioClip>());
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -168,10 +192,19 @@
                 return true;
             }
         }
+        [HarmonyPatch(typeof(Factory),"ProtoFlush")]
+        public class FactoryProtoFlush_Patch{
+            [HarmonyPostfix]
+            public static void Postfix() {
+                foreach (var proto in FactoryFindAndSetupPrototypeAsync_Patch.protos.Values)
+                    uObject.Destroy(proto.gameObject);
+                FactoryFindAndSetupPrototypeAsync_Patch.protos.Clear();
+            }
+        }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref Image image){
+            public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Archon")){
                     var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
                     image.canvasRenderer.SetTexture(text);
@@ -185,15 +218,13 @@
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){
                     __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(TowerAssets.LoadAsset("ArchonAttack").Cast<AudioClip>(),Ext.ModVolume);
                     if(__instance.attack.attackModel.name.Contains("MindControl")){
                         var MindControlProj=__instance.newProjectiles2.First().projectileModel.GetBehavior<CreateProjectileOnContactModel>().projectile;
                         MindControlProj.display=__instance.attack.target.bloon.display.displayModel.display;
                         MindControlProj.GetDamageModel().damage=__instance.attack.target.bloon.health/3;
                         MindControlProj.pierce=__instance.attack.target.bloon.health/2;
-                        MindControlProj.GetBehavior<AgeModel>().lifespan=999;
                         MindControlProj.GetBehavior<TravelAlongPathModel>().speedFrames=__instance.attack.target.bloon.bloonModel.speedFrames;
-                        __instance.attack.target.bloon.childrenCreatedOut=null;
+                        __instance.attack.target.bloon.childrenCreatedOut.Clear();
                     }
                 }
             }

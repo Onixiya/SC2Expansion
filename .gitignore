@@ -6,6 +6,7 @@ obj
 .editorconfig
 Towers/Towerplans.txt
 TowerJSON
+SC2ExpansionProject
 Decompilation
 tem*.txt
 *.unitypackage
