@@ -158,16 +158,18 @@
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Prefix(ref AudioFactory __instance){
-                __instance.RegisterAudioClip("HighTemplarBirth",TowerAssets.LoadAsset("HighTemplarBirth").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarUpgrade",TowerAssets.LoadAsset("HighTemplarUpgrade").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarUpgrade1",TowerAssets.LoadAsset("HighTemplarUpgrade1").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarUpgrade2",TowerAssets.LoadAsset("HighTemplarUpgrade2").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarUpgrade3",TowerAssets.LoadAsset("HighTemplarUpgrade3").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarUpgrade4",TowerAssets.LoadAsset("HighTemplarUpgrade4").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarSacrificeVO",TowerAssets.LoadAsset("HighTemplarSacrificeVO").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarMindBlastVO",TowerAssets.LoadAsset("HighTemplarMindBlastVO").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarJinaraSacrificeVO",TowerAssets.LoadAsset("HighTemplarJinaraSacrificeVO").Cast<AudioClip>());
-                __instance.RegisterAudioClip("HighTemplarJinaraMindBlastVO",TowerAssets.LoadAsset("HighTemplarJinaraMindBlastVO").Cast<AudioClip>());
+                if(ProtossEnabled){
+                    __instance.RegisterAudioClip("HighTemplarBirth",TowerAssets.LoadAsset("HighTemplarBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarUpgrade",TowerAssets.LoadAsset("HighTemplarUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarUpgrade1",TowerAssets.LoadAsset("HighTemplarUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarUpgrade2",TowerAssets.LoadAsset("HighTemplarUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarUpgrade3",TowerAssets.LoadAsset("HighTemplarUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarUpgrade4",TowerAssets.LoadAsset("HighTemplarUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarSacrificeVO",TowerAssets.LoadAsset("HighTemplarSacrificeVO").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarMindBlastVO",TowerAssets.LoadAsset("HighTemplarMindBlastVO").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarJinaraSacrificeVO",TowerAssets.LoadAsset("HighTemplarJinaraSacrificeVO").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HighTemplarJinaraMindBlastVO",TowerAssets.LoadAsset("HighTemplarJinaraMindBlastVO").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -191,7 +193,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("HighTemplar")){
@@ -202,7 +204,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class WeaponSpawnDart_Patch{
+        public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("HighTemplar")){

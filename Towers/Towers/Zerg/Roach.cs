@@ -30,6 +30,9 @@
             Acid.weapons[0].projectile.filters=Acid.weapons[0].projectile.filters.RemoveItem(Acid.weapons[0].projectile.filters.First(a=>a.name.Contains("TagModel")));
             Acid.weapons[0].projectile.display="97f2427a81f436547b0a59f37fb689da";
             Roach.GetBehavior<DisplayModel>().display=Roach.display;
+            Roach.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="RoachBirth";
+            Roach.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Roach.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
+            SetUpgradeSounds(Roach,"RoachUpgrade");
         }
         public class HydriodicBile:ModUpgrade<Roach>{
             public override string Name=>"HydriodicBile";
@@ -41,6 +44,7 @@
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachHydriodicBileIcon");
                 Roach.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                SetUpgradeSounds(Roach,"RoachUpgrade1");
             }
         }
         public class Vile:ModUpgrade<Roach>{
@@ -58,6 +62,7 @@
                 Slow.glueLevel=1;
                 Acid.weapons[0].projectile.AddBehavior(Slow);
                 Roach.display="RoachVilePrefab";
+                SetUpgradeSounds(Roach,"RoachUpgrade2");
             }
         }
         public class Ravager:ModUpgrade<Roach>{
@@ -71,13 +76,14 @@
                 GetUpgradeModel().icon=new("RoachRavagerIcon");
                 var Bile=Roach.GetAttackModel();
                 Roach.range+=20;
+                Roach.radius+=7;
                 Bile.range=Roach.range;
-                Bile.weapons[0].rate=2.5f;
                 Bile.weapons[0].projectile.display=Game.instance.model.GetTowerFromId("GlueGunner").GetAttackModel().weapons[0].projectile.display;
                 Bile.weapons[0].projectile.GetDamageModel().damage+=6;
                 Bile.weapons[0].projectile.GetBehavior<TravelStraitModel>().speed=600;
                 Bile.weapons[0].projectile.RemoveBehavior<SlowModel>();
                 Roach.display="RoachRavagerPrefab";
+                SetUpgradeSounds(Roach,"RoachUpgrade3");
             }
         }
         public class CorrosiveBile:ModUpgrade<Roach>{
@@ -92,9 +98,13 @@
                 Roach.range=9999;
                 var Bile=Roach.GetAttackModel();
                 Bile.range=Roach.range;
+                Bile.weapons[0].rate=2;
                 Bile.weapons[0].projectile=Game.instance.model.GetTowerFromId("MortarMonkey-300").GetAttackModel().weapons[0].projectile;
-                Bile.weapons[0].projectile.RemoveBehavior<CreateProjectileOnExhaustFractionModel>();
-                Bile.GetBehavior<AttackFilterModel>().filters=Bile.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
+                Bile.weapons[0].projectile.GetBehavior<CreateProjectileOnExhaustFractionModel>().projectile.GetDamageModel().damage=20;
+                Bile.weapons[0].projectile.GetBehavior<CreateProjectileOnExhaustFractionModel>().projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
+                Bile.weapons[0].projectile.radius=20;
+                Bile.GetBehavior<AttackFilterModel>().filters=new Il2CppReferenceArray<FilterModel>(new FilterModel[]{new FilterInvisibleModel("FilterInvisibleModel",true,false)});
+                SetUpgradeSounds(Roach,"RoachUpgrade4");
             }
         }
         public class Brutalisk:ModUpgrade<Roach>{
@@ -107,6 +117,27 @@
             public override void ApplyUpgrade(TowerModel Roach){
                 GetUpgradeModel().icon=new("RoachBrutaliskIcon");
                 Roach.display="RoachBrutaliskPrefab";
+                Roach.RemoveBehavior<AttackModel>();
+                Roach.AddBehavior(Game.instance.model.GetTowerFromId("Sauda").GetAttackModel().Duplicate());
+                var Brutalize=Roach.GetAttackModel();
+                Roach.range=50;
+                Brutalize.range=Roach.range;
+                Brutalize.weapons[0].projectile.GetDamageModel().damage=80;
+            }
+        }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(ZergEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("RoachBirth",TowerAssets.LoadAsset("RoachBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("RoachUpgrade",TowerAssets.LoadAsset("RoachUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("RoachUpgrade1",TowerAssets.LoadAsset("RoachUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("RoachUpgrade2",TowerAssets.LoadAsset("RoachUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("RoachUpgrade3",TowerAssets.LoadAsset("RoachUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("RoachUpgrade4",TowerAssets.LoadAsset("RoachUpgrade4").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -130,7 +161,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Roach")){
@@ -141,11 +172,17 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class SpawnDart_Patch{
+        public class SpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Roach")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("RoachAttack");
+                    if(__instance.attack.tower.towerModel.tier==5){
+                        int RandNum=new System.Random().Next(1,3);
+                        MelonLogger.Msg(RandNum);
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("BrutaliskAttack"+RandNum);
+                    }else{
+                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("RoachAttack");
+                    }
                 }
             }
         }

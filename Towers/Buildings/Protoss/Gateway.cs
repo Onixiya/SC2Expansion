@@ -136,7 +136,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference!=null&&reference.guidRef.Contains("Gateway")){

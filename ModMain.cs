@@ -32,7 +32,7 @@ global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Api.ModOptions;
-global using Assets.Scripts.Unity.UI_New.InGame;
+global using UnhollowerBaseLib;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{

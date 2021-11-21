@@ -125,12 +125,14 @@
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Prefix(ref AudioFactory __instance){
-                __instance.RegisterAudioClip("VoidRayBirth",TowerAssets.LoadAsset("VoidRayBirth").Cast<AudioClip>());
-                __instance.RegisterAudioClip("VoidRayUpgrade",TowerAssets.LoadAsset("VoidRayUpgrade").Cast<AudioClip>());
-                __instance.RegisterAudioClip("VoidRayUpgrade1",TowerAssets.LoadAsset("VoidRayUpgrade1").Cast<AudioClip>());
-                __instance.RegisterAudioClip("VoidRayUpgrade2",TowerAssets.LoadAsset("VoidRayUpgrade2").Cast<AudioClip>());
-                __instance.RegisterAudioClip("VoidRayUpgrade3",TowerAssets.LoadAsset("VoidRayUpgrade3").Cast<AudioClip>());
-                __instance.RegisterAudioClip("VoidRayUpgrade4",TowerAssets.LoadAsset("VoidRayUpgrade4").Cast<AudioClip>());
+                if(ProtossEnabled){
+                    __instance.RegisterAudioClip("VoidRayBirth",TowerAssets.LoadAsset("VoidRayBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VoidRayUpgrade",TowerAssets.LoadAsset("VoidRayUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VoidRayUpgrade1",TowerAssets.LoadAsset("VoidRayUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VoidRayUpgrade2",TowerAssets.LoadAsset("VoidRayUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VoidRayUpgrade3",TowerAssets.LoadAsset("VoidRayUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VoidRayUpgrade4",TowerAssets.LoadAsset("VoidRayUpgrade4").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -154,7 +156,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("VoidRay")){

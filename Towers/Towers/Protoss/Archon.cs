@@ -162,13 +162,15 @@
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Prefix(ref AudioFactory __instance){
-                __instance.RegisterAudioClip("ArchonBirth",TowerAssets.LoadAsset("ArchonBirth").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonUpgrade",TowerAssets.LoadAsset("ArchonUpgrade").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonUpgrade1",TowerAssets.LoadAsset("ArchonUpgrade1").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonUpgrade2",TowerAssets.LoadAsset("ArchonUpgrade2").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonUpgrade3",TowerAssets.LoadAsset("ArchonUpgrade3").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonUpgrade4",TowerAssets.LoadAsset("ArchonUpgrade4").Cast<AudioClip>());
-                __instance.RegisterAudioClip("ArchonMindControlVO",TowerAssets.LoadAsset("ArchonMindControlVO").Cast<AudioClip>());
+                if(ProtossEnabled){
+                    __instance.RegisterAudioClip("ArchonBirth",TowerAssets.LoadAsset("ArchonBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonUpgrade",TowerAssets.LoadAsset("ArchonUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonUpgrade1",TowerAssets.LoadAsset("ArchonUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonUpgrade2",TowerAssets.LoadAsset("ArchonUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonUpgrade3",TowerAssets.LoadAsset("ArchonUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonUpgrade4",TowerAssets.LoadAsset("ArchonUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("ArchonMindControlVO",TowerAssets.LoadAsset("ArchonMindControlVO").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
@@ -192,7 +194,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Archon")){
@@ -203,7 +205,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class WeaponSpawnDart_Patch{
+        public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){

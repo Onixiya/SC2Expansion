@@ -192,7 +192,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Battlecruiser")){
@@ -203,7 +203,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class WeaponSpawnDart_Patch{
+        public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Battlecruiser")&&__instance.attack.attackModel.name.Contains("Yamato")){

@@ -199,7 +199,7 @@
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Prefix(ref AudioFactory __instance){
-                if(TerranEnabled){
+                if(ZergEnabled){
                     AudioFactoryInstance=__instance;
                     __instance.RegisterAudioClip("MutaliskBirth",TowerAssets.LoadAsset("MutaliskBirth").Cast<AudioClip>());
                     __instance.RegisterAudioClip("MutaliskUpgrade",TowerAssets.LoadAsset("MutaliskUpgrade").Cast<AudioClip>());
@@ -217,13 +217,19 @@
             [HarmonyPostfix]
             public static void Postfix(Tower tower,TowerModel def,string __state){
                 if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("Mutalisk")){
-                    int RandNum=new System.Random().Next(1,3);
-                    if(RandNum==1){
-                        def.GetAttackModel().range+=8;
-                        def.range=def.GetAttackModel().range;
+                    int RandNum=new System.Random().Next(1,4);
+                    switch(RandNum){
+                        case 1:
+                            def.GetAttackModel().range+=8;
+                            def.range=def.GetAttackModel().range;
+                            break;
+                        case 2:
+                            def.GetAttackModel().weapons[0].rate-=0.25f;
+                            break;
+                        case 3:
+                            def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
+                            break;
                     }
-                    if(RandNum==2)def.GetAttackModel().weapons[0].rate-=0.25f;
-                    if(RandNum==3)def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
                 }
             }
         }
@@ -247,7 +253,7 @@
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
-        public record ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
+        public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
                 if(reference!=null&&reference.guidRef.Contains("Mutalisk")){
@@ -258,7 +264,7 @@
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
-        public static class WeaponSpawnDart_Patch{
+        public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Mutalisk")){
