@@ -1,4 +1,5 @@
-﻿namespace SC2Expansion.Towers{
+﻿using Assets.Scripts.Simulation.Objects;
+namespace SC2Expansion.Towers{
     public class Hatchery:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
@@ -174,6 +175,7 @@
                 var Income=Hatchery.behaviors.First(a=>a.name.Equals("Income")).Cast<AttackModel>();
                 Nydus.icon=new("HatcheryOmegaWormIcon");
                 Nydus.cooldown=55;
+                NydusWorm.name="OmegaWorm";
                 NydusWorm.display="HatcheryOmegaWormPrefab";
                 Hydralisk.display="HydraliskHunterKillerPrefab";
                 Hydralisk.portrait=new("HydraliskHunterKillerPortrait");
@@ -227,9 +229,33 @@
                 Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
             }
         }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(ZergEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("HatcheryNydusWormBirth",TowerAssets.LoadAsset("HatcheryNydusWormBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("HatcheryOmegaWormBirth",TowerAssets.LoadAsset("HatcheryOmegaWormBirth").Cast<AudioClip>());
+                }
+            }
+        }
+        [HarmonyPatch(typeof(Tower),"Initialise")]
+        public class TowerInitialize_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(Model modelToUse){
+                switch(modelToUse.Cast<TowerModel>().name){
+                    case "NydusWorm":
+                        AudioFactoryInstance.PlaySoundFromUnity(null,"HatcheryNydusWormBirth","FX",2,1);
+                        break;
+                    case "OmegaWorm":
+                        AudioFactoryInstance.PlaySoundFromUnity(null,"HatcheryOmegaWormBirth","FX",2,1);
+                        break;
+                }
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hatchery")){

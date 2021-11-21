@@ -29,6 +29,9 @@
             Gatling.AddWeapon(Gatling.weapons[0].Duplicate());
             Gatling.weapons[1].ejectX=-Gatling.weapons[0].ejectX;
             Viking.behaviors.First(a=>a.name.Contains("Display")).Cast<DisplayModel>().display=Viking.display;
+            Viking.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="VikingBirth";
+            Viking.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Viking.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
+            SetUpgradeSounds(Viking,"VikingUpgrade");
         }
         public class AirMode:ModUpgrade<Viking>{
             public override string Name=>"AirMode";
@@ -49,12 +52,14 @@
                 AirMode.cooldown=40f;
                 AirMode.icon=new("VikingAirIcon");
                 AirMode.name="AirMode";
+                AirMode.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="VikingTransform";
                 Lanzer.GetBehavior<AttackFilterModel>().filters=Lanzer.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Lanzer.range=Viking.range+AirMode.GetBehavior<IncreaseRangeModel>().addative;
                 Lanzer.weapons[0].projectile.display="VikingMissilePrefab";
                 Lanzer.weapons[0].ejectZ=50;
                 Lanzer.weapons[0].projectile.AddBehavior(new TrackTargetModel("TrackTargetModel",999,false,false,90,false,360,false,false));
                 Viking.AddBehavior(AirMode);
+                SetUpgradeSounds(Viking,"VikingUpgrade1");
             }
         }
         public class PhobosWeapons:ModUpgrade<Viking>{
@@ -73,6 +78,7 @@
                 Gatling.weapons[1].projectile.GetDamageModel().damage+=2;
                 Viking.GetAbility().GetBehavior<IncreaseRangeModel>().addative=40;
                 Viking.GetAbility().GetBehavior<ActivateAttackModel>().attacks[0].range=Viking.range+Viking.GetAbility().GetBehavior<IncreaseRangeModel>().addative;
+                SetUpgradeSounds(Viking,"VikingUpgrade2");
             }
         }
         public class Deimos:ModUpgrade<Viking>{
@@ -110,6 +116,7 @@
                 WILD.GetBehavior<AttackFilterModel>().filters=WILD.GetBehavior<AttackFilterModel>().filters.AddTo(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
                 Viking.portrait=new("VikingDeimosPortrait");
                 Viking.display="VikingDeimosGroundPrefab";
+                SetUpgradeSounds(Viking,"VikingUpgrade3");
             }
         }
         public class SkyFury:ModUpgrade<Viking>{
@@ -129,6 +136,7 @@
                 Viking.portrait=new("VikingSkyFuryPortrait");
                 Viking.display="VikingSkyFuryGroundPrefab";
                 Viking.GetAttackModel().RemoveBehavior(Viking.GetAttackModel().GetBehavior<AttackFilterModel>());
+                SetUpgradeSounds(Viking,"VikingUpgrade4");
             }
         }
         public class Archangel:ModUpgrade<Viking>{
@@ -161,9 +169,24 @@
                 Viking.AddBehavior(WILD);
             }
         }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(TerranEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("VikingBirth",TowerAssets.LoadAsset("VikingBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingUpgrade",TowerAssets.LoadAsset("VikingUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingUpgrade1",TowerAssets.LoadAsset("VikingUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingUpgrade2",TowerAssets.LoadAsset("VikingUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingUpgrade3",TowerAssets.LoadAsset("VikingUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingUpgrade4",TowerAssets.LoadAsset("VikingUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("VikingTransform",TowerAssets.LoadAsset("VikingTransform").Cast<AudioClip>());
+                }
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Viking")){

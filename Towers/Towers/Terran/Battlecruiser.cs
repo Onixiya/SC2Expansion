@@ -77,7 +77,7 @@
                 Yamato.icon=new("BattlecruiserYamatoIcon");
                 Yamato.cooldown=70f;
                 Yamato.GetBehavior<PauseAllOtherAttacksModel>().lifespan=7;
-                //Yamato.maxActivationsPerRound=1;
+                Yamato.maxActivationsPerRound=1;
                 Battlecruiser.AddBehavior(Yamato);
                 SetUpgradeSounds(Battlecruiser,"BattlecruiserUpgrade2");
             }
@@ -158,20 +158,21 @@
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Prefix(ref AudioFactory __instance){
-                AudioFactoryInstance=__instance;
-                __instance.RegisterAudioClip("BattlecruiserBirth",TowerAssets.LoadAsset("BattlecruiserBirth").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserUpgrade",TowerAssets.LoadAsset("BattlecruiserUpgrade").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserUpgrade1",TowerAssets.LoadAsset("BattlecruiserUpgrade1").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserUpgrade2",TowerAssets.LoadAsset("BattlecruiserUpgrade2").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserUpgrade3",TowerAssets.LoadAsset("BattlecruiserUpgrade3").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserUpgrade4",TowerAssets.LoadAsset("BattlecruiserUpgrade4").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserYamatoCharge",TowerAssets.LoadAsset("BattlecruiserYamatoCharge").Cast<AudioClip>());
-                __instance.RegisterAudioClip("BattlecruiserYamatoFire",TowerAssets.LoadAsset("BattlecruiserYamatoFire").Cast<AudioClip>());
+                if(TerranEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("BattlecruiserBirth",TowerAssets.LoadAsset("BattlecruiserBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserUpgrade",TowerAssets.LoadAsset("BattlecruiserUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserUpgrade1",TowerAssets.LoadAsset("BattlecruiserUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserUpgrade2",TowerAssets.LoadAsset("BattlecruiserUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserUpgrade3",TowerAssets.LoadAsset("BattlecruiserUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserUpgrade4",TowerAssets.LoadAsset("BattlecruiserUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserYamatoCharge",TowerAssets.LoadAsset("BattlecruiserYamatoCharge").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("BattlecruiserYamatoFire",TowerAssets.LoadAsset("BattlecruiserYamatoFire").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Battlecruiser")){

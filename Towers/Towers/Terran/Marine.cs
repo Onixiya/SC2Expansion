@@ -24,6 +24,9 @@
             C14.weapons[0].projectile.display=null;
             C14.weapons[0].projectile.GetDamageModel().damage=2.5f;
             Marine.GetBehavior<DisplayModel>().display=Marine.display;
+            Marine.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="MarineBirth";
+            Marine.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Marine.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
+            SetUpgradeSounds(Marine,"MarineUpgrade");
         }
         public class U238Shells:ModUpgrade<Marine>{
             public override string Name=>"U238Shells";
@@ -38,6 +41,7 @@
                 var C14=Marine.GetAttackModel();
                 C14.range=Marine.range;
                 C14.weapons[0].projectile.GetDamageModel().damage+=1;
+                SetUpgradeSounds(Marine,"MarineUpgrade1");
             }
         }
         public class LTS:ModUpgrade<Marine>{
@@ -52,6 +56,7 @@
                 Marine.range+=5;
                 Marine.GetAttackModel().range=Marine.range;
                 Marine.AddBehavior(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+                SetUpgradeSounds(Marine,"MarineUpgrade2");
             }
         }
         public class Stimpacks:ModUpgrade<Marine>{
@@ -64,6 +69,7 @@
             public override void ApplyUpgrade(TowerModel Marine){
                 GetUpgradeModel().icon=new("MarineStimpacksIcon");
                 var Stimpacks=Game.instance.model.GetTowerFromId("BoomerangMonkey-040").GetBehavior<AbilityModel>().Duplicate();
+                Stimpacks.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="MarineStimpack";
                 Stimpacks.name="Stimpacks";
                 Stimpacks.displayName="Stimpacks";
                 Stimpacks.icon=new("MarineStimpacksIcon");
@@ -72,6 +78,7 @@
                 Stimpacks.GetBehavior<TurboModel>().extraDamage=0;
                 Stimpacks.GetBehavior<TurboModel>().projectileDisplay=null;
                 Marine.AddBehavior(Stimpacks);
+                SetUpgradeSounds(Marine,"MarineUpgrade3");
             }
         }
         public class Warpig:ModUpgrade<Marine>{
@@ -88,6 +95,7 @@
                 var C14=Marine.GetAttackModel();
                 C14.weapons[0].rate=0.17f;
                 C14.weapons[0].projectile.GetDamageModel().damage+=2;
+                SetUpgradeSounds(Marine,"MarineUpgrade4");
             }
         }
         public class Raynor:ModUpgrade<Marine>{
@@ -108,12 +116,29 @@
                 FragGrenade.name="MarineFragGrenade";
                 FragGrenade.AddBehavior(new PauseAllOtherAttacksModel("PauseAllOtherAttacksModel",1,true,true));
                 FragGrenade.range=Marine.range-10;
+                Marine.GetAbility().GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="MarineStimpack1";
                 Marine.AddBehavior(FragGrenade);
+            }
+        }
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(TerranEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("MarineBirth",TowerAssets.LoadAsset("MarineBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineUpgrade",TowerAssets.LoadAsset("MarineUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineUpgrade1",TowerAssets.LoadAsset("MarineUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineUpgrade2",TowerAssets.LoadAsset("MarineUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineUpgrade3",TowerAssets.LoadAsset("MarineUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineUpgrade4",TowerAssets.LoadAsset("MarineUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineStimpack",TowerAssets.LoadAsset("MarineStimpack").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MarineStimpack1",TowerAssets.LoadAsset("MarineStimpack1").Cast<AudioClip>());
+                }
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Marine")){
@@ -148,11 +173,7 @@
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Marine")){
-                    if(__instance.attack.attackModel.name.Contains("Grenade")){
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineGrenade");
-                    }else{
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineAttack");
-                    }
+                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MarineAttack");
                 }
             }
         }

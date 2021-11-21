@@ -173,32 +173,22 @@
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>protos=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!protos.ContainsKey(objectId)&&objectId.Contains("Archon")){
+                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Archon")){
                     var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
                     udn.name="SC2Expansion-Archon";
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
-                    protos.Add(objectId,udn);
+                    DisplayDict.Add(objectId,udn);
                     return false;
                 }
-                if(protos.ContainsKey(objectId)){
-                    onComplete.Invoke(protos[objectId]);
+                if(DisplayDict.ContainsKey(objectId)){
+                    onComplete.Invoke(DisplayDict[objectId]);
                     return false;
                 }
                 return true;
-            }
-        }
-        [HarmonyPatch(typeof(Factory),"ProtoFlush")]
-        public class FactoryProtoFlush_Patch{
-            [HarmonyPostfix]
-            public static void Postfix() {
-                foreach (var proto in FactoryFindAndSetupPrototypeAsync_Patch.protos.Values)
-                    uObject.Destroy(proto.gameObject);
-                FactoryFindAndSetupPrototypeAsync_Patch.protos.Clear();
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]

@@ -32,6 +32,9 @@
             Glaive.range=Mutalisk.range;
             Glaive.weapons[0].rate=1.65f;
             Mutalisk.GetBehavior<DisplayModel>().display=Mutalisk.display;
+            Mutalisk.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="MutaliskBirth";
+            Mutalisk.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Mutalisk.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
+            SetUpgradeSounds(Mutalisk,"MutaliskUpgrade");
         }
         public class ViciousGlaive:ModUpgrade<Mutalisk>{
             public override string Name=>"ViciousGlaive";
@@ -45,6 +48,7 @@
                 var Glaive=Mutalisk.GetAttackModel();
                 Glaive.weapons[0].projectile.GetBehavior<RetargetOnContactModel>().maxBounces+=2;
                 Glaive.weapons[0].projectile.GetBehavior<RetargetOnContactModel>().distance+=10;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade1");
             }
         }
         public class RapidRegeneration:ModUpgrade<Mutalisk>{
@@ -57,6 +61,7 @@
             public override void ApplyUpgrade(TowerModel Mutalisk){
                 GetUpgradeModel().icon=new("MutaliskRapidRegenerationIcon");
                 Mutalisk.GetAttackModel().weapons[0].rate-=0.3f;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade2");
             }
         }
         public class SlicingGlaive:ModUpgrade<Mutalisk>{
@@ -72,6 +77,7 @@
                 Glaive.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModelMoab","Moabs",2,0,false,false));
                 Glaive.weapons[0].projectile.AddBehavior(new DamageModifierForTagModel("DamageModifierForTagModelCeremic","Ceremic",2,0,false,false));
                 Glaive.weapons[0].projectile.GetDamageModel().immuneBloonProperties=0;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade3");
             }
         }
         public class AeroGlaive:ModUpgrade<Mutalisk>{
@@ -85,6 +91,7 @@
                 GetUpgradeModel().icon=new("HydraliskFrenzyIcon");
                 Mutalisk.range+=10;
                 Mutalisk.GetAttackModel().range=Mutalisk.range;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade4");
             }
         }
         public class SunderingGlaive:ModUpgrade<Mutalisk>{
@@ -102,6 +109,7 @@
                 Glaive.weapons[0].projectile.pierce=1;
                 Glaive.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("BombShooter-030").GetAttackModel().weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>());
                 Glaive.weapons[0].projectile.GetDamageModel().damage+=5;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade5");
             }
         }
         public class Primal:ModUpgrade<Mutalisk>{
@@ -115,6 +123,7 @@
                 GetUpgradeModel().icon=new("MutaliskPrimalIcon");
                 Mutalisk.portrait=new("MutaliskPrimalPortrait");
                 Mutalisk.display="MutaliskPrimalPrefab";
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade6");
             }
         }
         public class Devourer:ModUpgrade<Mutalisk>{
@@ -135,6 +144,7 @@
                 Mutalisk.range+=10;
                 Glaive.range=Mutalisk.range;
                 Glaive.weapons[0].rate=1.4f;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade5");
             }
         }
         public class BroodLord:ModUpgrade<Mutalisk>{
@@ -159,6 +169,7 @@
                 Broodling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.6f;
                 Broodling.weapons[0].projectile.display="MutaliskBroodlingPrefab";
                 Broodling.weapons[0].projectile.GetDamageModel().damage+=10;
+                SetUpgradeSounds(Mutalisk,"MutaliskUpgrade6");
             }
         }
         /*public class Leviathan:ModUpgrade<Mutalisk>{
@@ -184,6 +195,23 @@
                 Mutalisk.behaviors=Mutalisk.behaviors.Add(Tentacle,new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
             }
         }*/
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(TerranEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("MutaliskBirth",TowerAssets.LoadAsset("MutaliskBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade",TowerAssets.LoadAsset("MutaliskUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade1",TowerAssets.LoadAsset("MutaliskUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade2",TowerAssets.LoadAsset("MutaliskUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade3",TowerAssets.LoadAsset("MutaliskUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade4",TowerAssets.LoadAsset("MutaliskUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade5",TowerAssets.LoadAsset("MutaliskUpgrade5").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("MutaliskUpgrade6",TowerAssets.LoadAsset("MutaliskUpgrade6").Cast<AudioClip>());
+                }
+            }
+        }
         [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
         public static class TowerManagerUpgradeTower_Patch{
             [HarmonyPostfix]
@@ -201,7 +229,6 @@
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Mutalisk")){

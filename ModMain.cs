@@ -32,26 +32,11 @@ global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Api.ModOptions;
+global using Assets.Scripts.Unity.UI_New.InGame;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
-        /*[HarmonyPatch(typeof(TitleScreen), nameof(TitleScreen.Start))]
-    internal class TitleScreen_Start
-    {
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.High)]
-        internal static void Postfix()
-        {
-            foreach (var mod in MelonHandler.Mods.OfType<BloonsMod>())
-            {
-                ModContent.LoadAllModContent(mod);
-            }
-
-            MelonMain.DoPatchMethods(mod => mod.OnTitleScreen());
-        }
-    }
-    */
         [HarmonyPatch(typeof(GameModelLoader),"Load")]
         public static class GameModelLoaderLoad_Patch{
             [HarmonyPostfix]
@@ -71,6 +56,12 @@ namespace SC2Expansion{
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound6.assetId=soundToUse;
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound7.assetId=soundToUse;
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound8.assetId=soundToUse;
+        }
+        public override void OnUpdate() {
+            if(DisplayDict.Count!=0){
+                foreach(var proto in DisplayDict.Values)uObject.Destroy(proto.gameObject);
+                DisplayDict.Clear();
+            }
         }
         public static readonly ModSettingBool ProtossEnabled=true;
         public static readonly ModSettingBool TerranEnabled=true;

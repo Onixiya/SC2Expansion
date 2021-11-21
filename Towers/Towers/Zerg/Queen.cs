@@ -25,7 +25,7 @@
             public override string DisplayName=>"Grooved Spines";
             public override string Description=>"Evolving small grooves into the spines increases their range";
             public override int Cost=>750;
-            public override int Path=>0;
+            public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("HydraliskGroovedSpinesIcon");
@@ -38,7 +38,7 @@
             public override string DisplayName=>"Creep Tumor";
             public override string Description=>"Spawns a Creep Tumor, generating creep around it";
             public override int Cost=>750;
-            public override int Path=>0;
+            public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenCreepTumorIcon");
@@ -68,7 +68,7 @@
             public override string DisplayName=>"WildMutation";
             public override string Description=>"Temporalily buff's the attack speed and damage of all nearby Zerg. Upgrades damage";
             public override int Cost=>750;
-            public override int Path=>0;
+            public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenWildMutationIcon");
@@ -90,7 +90,7 @@
             public override string DisplayName=>"Evolve into a Brood Mother";
             public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing Hydralisks and Zerglings";
             public override int Cost=>750;
-            public override int Path=>0;
+            public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenBroodMotherIcon");
@@ -145,7 +145,7 @@
             public override string DisplayName=>"Zagara";
             public override string Description=>"The first Brood Mother, now controls the entire Swarm. Can buff everything's attack speed and upgrade Drop Pods to call down multiple Drop Pods with Hydralisks and Roaches";
             public override int Cost=>750;
-            public override int Path=>0;
+            public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenZagaraIcon");
@@ -155,7 +155,6 @@
         }*/
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
-            public static Dictionary<string,UnityDisplayNode>DisplayDict=new();
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Queen")){
