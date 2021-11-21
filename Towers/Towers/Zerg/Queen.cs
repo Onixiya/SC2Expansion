@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.queen);
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>400;
-        public override int TopPathUpgrades=>3;
+        public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override bool DontAddToShop=>!ZergEnabled;
@@ -85,57 +85,23 @@
                 Queen.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Attack")).weapons[0].projectile.GetDamageModel().damage+=2;
             }
         }
-        /*public class BroodMother:ModUpgrade<Queen>{
+        public class BroodMother:ModUpgrade<Queen>{
             public override string Name=>"BroodMother";
             public override string DisplayName=>"Evolve into a Brood Mother";
-            public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing Hydralisks and Zerglings";
+            public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing 6 Hydralisks";
             public override int Cost=>750;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenBroodMotherIcon");
                 var DropPodAbility=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).GetBehavior<AbilityModel>().Duplicate();
-                var DropPodEnd=DropPodAbility.GetBehavior<ActivateAttackModel>();
-                DropPodEnd.attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
-                var DropPodEndTower=DropPodEnd.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
-                var SpawnHydralisk=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
-                var SpawningPool=GetTowerModel<SpawningPool>(3,0,0).Duplicate();
-                var Hydralisk=SpawnHydralisk.weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
-                var Spines=Hydralisk.GetAttackModel();
-                DropPodAbility.icon=new("QueenDropPodIcon");
-                DropPodAbility.cooldown=85;
+                var DropPod=DropPodAbility.GetBehavior<ActivateAttackModel>();
+                DropPod.attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
+                var DropPodTower=DropPod.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
                 DropPodAbility.name="ZergDropPod";
-                DropPodEnd.attacks[0].range=150;
-                DropPodEnd.attacks[0].targetProvider.Cast<RandomPositionModel>().minDistance=50;
-                DropPodEnd.attacks[0].targetProvider.Cast<RandomPositionModel>().maxDistance=100;
-                DropPodEnd.attacks[0].RemoveBehavior<RotateToTargetModel>();
-                DropPodEnd.attacks[0].weapons[0].projectile.display=null;
-                DropPodEndTower.name="DropPodEnd";
-                DropPodEndTower.display="QueenDropPodEndPrefab";
-                DropPodEndTower.GetAttackModel().GetBehavior<DisplayModel>().display=null;
-                DropPodEndTower.RemoveBehavior<AttackModel>();
-                SpawningPool.name="whatdoicallthis";
-                DropPodEndTower.behaviors=DropPodEndTower.behaviors.Add(SpawnHydralisk,SpawningPool.GetAttackModel(),SpawningPool.GetBehavior<NecromancerZoneModel>());
-                SpawningPool.GetAttackModel().weapons[1].rate=15000;
-                SpawnHydralisk.name="SpawnHydralisk";
-                SpawnHydralisk.weapons[0].rate=50000;
-                SpawnHydralisk.range=40;
-                SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().minDistance=10;
-                SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().maxDistance=25;
-                SpawnHydralisk.RemoveBehavior<RotateToTargetModel>();
-                SpawnHydralisk.weapons[0].projectile.display=null;
-                Hydralisk.behaviors=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.Duplicate();
-                Hydralisk.AddBehavior(new TowerExpireModel("TowerExpireModel",20,false,false));
-                Hydralisk.name="HydraliskSpawned";
-                Hydralisk.baseId="Hydralisk";
-                Hydralisk.display="HydraliskPrefab";
-                Hydralisk.portrait=new("HydraliskPortrait");
-                Hydralisk.towerSet="Primary";
-                Hydralisk.radius=7;
-                Hydralisk.range=40;
-                Spines.weapons[0].rate=0.55f;
-                Spines.range=Hydralisk.range;
-                Spines.weapons[0].projectile.GetDamageModel().damage=6;
+                DropPodAbility.icon=new("QueenDropPodIcon");
+                DropPodTower.RemoveBehavior<AttackModel>();
+                DropPodTower.display="QueenDropPodStartPrefab";
                 Queen.AddBehavior(DropPodAbility);
                 Queen.display="QueenBroodMotherPrefab";
             }
@@ -149,10 +115,47 @@
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Queen){
                 GetUpgradeModel().icon=new("QueenZagaraIcon");
-                var DropPod=Queen.GetAbilites().First(a=>a.name.Contains("DropPod"));
+                var DropPod=Queen.GetAbilites().First(a=>a.name.Equals("ZergDropPod"));
                 Queen.display="QueenZagaraPrefab";
             }
-        }*/
+        }
+        [HarmonyPatch(typeof(Tower),"Initialise")]
+        public class TowerInitialize_Patch{
+            [HarmonyPostfix]
+            public static void Postfix(ref Model modelToUse){
+                if(modelToUse.Cast<TowerModel>().display=="QueenDropPodStartPrefab"){
+                    PlaceDropPodEnd(modelToUse.Cast<TowerModel>());
+                }
+                static async Task PlaceDropPodEnd(TowerModel towerModel){
+                    var SpawnHydralisk=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
+                    var Hydralisk=SpawnHydralisk.weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                    var Spines=Hydralisk.GetAttackModel();
+                    SpawnHydralisk.name="SpawnHydralisk";
+                    SpawnHydralisk.weapons[0].rate=50000;
+                    SpawnHydralisk.range=40;
+                    SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().minDistance=10;
+                    SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().maxDistance=25;
+                    SpawnHydralisk.RemoveBehavior<RotateToTargetModel>();
+                    SpawnHydralisk.weapons[0].projectile.display=null;
+                    Hydralisk.behaviors=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.Duplicate();
+                    Hydralisk.AddBehavior(new TowerExpireModel("TowerExpireModel",20,false,false));
+                    Hydralisk.name="HydraliskSpawned";
+                    Hydralisk.baseId="Hydralisk";
+                    Hydralisk.display="HydraliskPrefab";
+                    Hydralisk.portrait=new("HydraliskPortrait");
+                    Hydralisk.towerSet="Primary";
+                    Hydralisk.radius=7;
+                    Hydralisk.range=40;
+                    Spines.weapons[0].rate=0.55f;
+                    Spines.range=Hydralisk.range;
+                    Spines.weapons[0].projectile.GetDamageModel().damage=6;
+                    await Task.Delay(2200);
+                    towerModel.display="QueenDropPodEndPrefab";
+                    MelonLogger.Msg(towerModel.display);
+                    towerModel.AddBehavior(SpawnHydralisk);
+                }
+            }
+        }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
@@ -160,7 +163,7 @@
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Queen")){
                     var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
                     udn.transform.position=new(-3000,0);
-                    udn.name="SC2Expansion-Queen";
+                    udn.name=objectId;
                     udn.isSprite=false;
                     onComplete.Invoke(udn);
                     DisplayDict.Add(objectId,udn);

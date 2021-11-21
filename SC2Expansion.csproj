@@ -146,7 +146,6 @@
     <Compile Include="Towers\Towers\Zerg\Hydralisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Queen.cs" />
-    <None Include="assets.unitypackage" />
     <None Include="Assets\archon.bundle" />
     <None Include="Assets\artanis.bundle" />
     <None Include="Assets\banelingnest.bundle" />
