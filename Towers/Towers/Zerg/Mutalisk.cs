@@ -238,11 +238,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Mutalisk")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.name="SC2Expansion-Mutalisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -256,10 +252,8 @@
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference.guidRef.Contains("Mutalisk")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("Mutalisk")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }

@@ -191,12 +191,18 @@
             public static void Postfix(Tower tower,ref TowerModel def,string __state){
                 if(__state!=null&&__state.Contains("Primal")&&tower.namedMonkeyKey.Contains("Hydralisk")){
                     int RandNum=new System.Random().Next(1,4);
-                    if(RandNum==1){
-                        def.GetAttackModel().range+=5;
-                        def.range=def.GetAttackModel().range;
+                    switch(RandNum){
+                        case 1:
+                            def.GetAttackModel().range+=5;
+                            def.range=def.GetAttackModel().range;
+                            break;
+                        case 2:
+                            def.GetAttackModel().weapons[0].rate-=0.2f;
+                            break;
+                        case 3:
+                            def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                            break;
                     }
-                    if(RandNum==2)def.GetAttackModel().weapons[0].rate-=0.2f;
-                    if(RandNum==3)def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
                 }
             }
         }
@@ -205,11 +211,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hydralisk")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.name="SC2Expansion-Hydralisk";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -223,10 +225,8 @@
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference.guidRef.Contains("Hydralisk")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("Hydralisk")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }

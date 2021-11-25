@@ -194,12 +194,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.transform.position=new(-3000,0);
-                    udn.name="SC2Expansion-CommandCenter";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -213,10 +208,8 @@
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference.guidRef.Contains("CommandCenter")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("CommandCenter")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }

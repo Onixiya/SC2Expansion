@@ -19,6 +19,9 @@
             Spines.range=Queen.range;
             Spines.weapons[0].projectile.GetDamageModel().damage=2;
             Queen.GetBehavior<DisplayModel>().display=Queen.display;
+            Queen.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="QueenBirth";
+            Queen.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Queen.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
+            SetUpgradeSounds(Queen,"QueenUpgrade");
         }
         public class QueenGroovedSpines:ModUpgrade<Queen>{
             public override string Name=>"QueenGroovedSpines";
@@ -31,6 +34,7 @@
                 GetUpgradeModel().icon=new("HydraliskGroovedSpinesIcon");
                 Queen.range+=15;
                 Queen.GetAttackModel().range=Queen.range;
+                SetUpgradeSounds(Queen,"QueenUpgrade1");
             }
         }
         public class CreepTumor:ModUpgrade<Queen>{
@@ -61,6 +65,7 @@
                 CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=ZergBuildings;
                 CreepTumor.AddBehavior(CreepBuff);
                 Queen.AddBehavior(SpawnCreepTumor);
+                SetUpgradeSounds(Queen,"QueenUpgrade2");
             }
         }
         public class WildMutation:ModUpgrade<Queen>{
@@ -83,6 +88,7 @@
                 Queen.AddBehavior(WildMutation);
                 Queen.display="QueenLeviathanPrefab";
                 Queen.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Attack")).weapons[0].projectile.GetDamageModel().damage+=2;
+                SetUpgradeSounds(Queen,"QueenUpgrade3");
             }
         }
         public class BroodMother:ModUpgrade<Queen>{
@@ -97,13 +103,47 @@
                 var DropPodAbility=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).GetBehavior<AbilityModel>().Duplicate();
                 var DropPod=DropPodAbility.GetBehavior<ActivateAttackModel>();
                 DropPod.attacks[0]=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
-                var DropPodTower=DropPod.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                var DropPodStartTower=DropPod.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                DropPodStartTower.GetAttackModel().weapons[0].projectile.AddBehavior(DropPod.attacks[0].weapons[0].projectile.GetBehavior<CreateTowerModel>().Duplicate());
+                var DropPodEndTower=DropPodStartTower.GetAttackModel().weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                var SpawnHydralisk=Game.instance.model.towers.First(a=>a.name.Contains("EngineerMonkey-100")).behaviors.First(a=>a.name.Contains("Spawner")).Cast<AttackModel>().Duplicate();
+                var Hydralisk=SpawnHydralisk.weapons[0].projectile.GetBehavior<CreateTowerModel>().tower;
+                var Spines=Hydralisk.GetAttackModel();
                 DropPodAbility.name="ZergDropPod";
                 DropPodAbility.icon=new("QueenDropPodIcon");
-                DropPodTower.RemoveBehavior<AttackModel>();
-                DropPodTower.display="QueenDropPodStartPrefab";
+                DropPodAbility.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="QueenAbility";
+                DropPodStartTower.GetAttackModel().weapons[0].projectile.RemoveBehavior<DamageModel>();
+                DropPodStartTower.GetAttackModel().weapons[0].rate=22000f;
+                DropPodStartTower.GetAttackModel().targetProvider=new RandomPositionModel("RandomPositionModel",0,1,1,false,1,false,false,"Land",false,false,0);
+                DropPodStartTower.GetBehavior<TowerExpireModel>().lifespan=2.3f;
+                DropPodStartTower.display="QueenDropPodStartPrefab";
+                DropPodEndTower.display="QueenDropPodEndPrefab";
+                DropPodEndTower.GetBehavior<TowerExpireModel>().lifespan=20;
+                DropPodEndTower.RemoveBehavior<AttackModel>();
+                SpawnHydralisk.name="SpawnHydralisk";
+                SpawnHydralisk.weapons[0].rate=33333;
+                SpawnHydralisk.range=40;
+                SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().minDistance=10;
+                SpawnHydralisk.targetProvider.Cast<RandomPositionModel>().maxDistance=25;
+                SpawnHydralisk.RemoveBehavior<RotateToTargetModel>();
+                SpawnHydralisk.weapons[0].projectile.display=null;
+                Hydralisk.behaviors=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).behaviors.Duplicate();
+                Hydralisk.AddBehavior(new TowerExpireModel("TowerExpireModel",20,false,false));
+                Hydralisk.name="HydraliskSpawned";
+                Hydralisk.baseId="Hydralisk";
+                Hydralisk.display="HydraliskPrefab";
+                Hydralisk.portrait=new("HydraliskPortrait");
+                Hydralisk.towerSet="Primary";
+                Hydralisk.radius=7;
+                Hydralisk.range=40;
+                Spines.weapons[0].rate=0.55f;
+                Spines.range=Hydralisk.range;
+                Spines.weapons[0].projectile.GetDamageModel().damage=6;
+                DropPodEndTower.AddBehavior(SpawnHydralisk);
                 Queen.AddBehavior(DropPodAbility);
+                Queen.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=5;
                 Queen.display="QueenBroodMotherPrefab";
+                SetUpgradeSounds(Queen,"QueenUpgrade4");
             }
         }
         public class Zagara:ModUpgrade<Queen>{
@@ -119,7 +159,31 @@
                 Queen.display="QueenZagaraPrefab";
             }
         }
-        [HarmonyPatch(typeof(Tower),"Initialise")]
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
+        public class AudioFactoryStart_Patch{
+            [HarmonyPostfix]
+            public static void Prefix(ref AudioFactory __instance){
+                if(ZergEnabled){
+                    AudioFactoryInstance=__instance;
+                    __instance.RegisterAudioClip("QueenBirth",TowerAssets.LoadAsset("QueenBirth").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenUpgrade",TowerAssets.LoadAsset("QueenUpgrade").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenUpgrade1",TowerAssets.LoadAsset("QueenUpgrade1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenUpgrade2",TowerAssets.LoadAsset("QueenUpgrade2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenUpgrade3",TowerAssets.LoadAsset("QueenUpgrade3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenUpgrade4",TowerAssets.LoadAsset("QueenUpgrade4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenAbility",TowerAssets.LoadAsset("QueenAbility").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenSpawnCreepTumor",TowerAssets.LoadAsset("QueenSpawnCreepTumor").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPod",TowerAssets.LoadAsset("QueenDropPod").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO",TowerAssets.LoadAsset("QueenDropPodVO").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO1",TowerAssets.LoadAsset("QueenDropPodVO1").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO2",TowerAssets.LoadAsset("QueenDropPodVO2").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO3",TowerAssets.LoadAsset("QueenDropPodVO3").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO4",TowerAssets.LoadAsset("QueenDropPodVO4").Cast<AudioClip>());
+                    __instance.RegisterAudioClip("QueenDropPodVO5",TowerAssets.LoadAsset("QueenDropPodVO5").Cast<AudioClip>());
+                }
+            }
+        }
+        /*[HarmonyPatch(typeof(Tower),"Initialise")]
         public class TowerInitialize_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Model modelToUse){
@@ -151,22 +215,16 @@
                     Spines.weapons[0].projectile.GetDamageModel().damage=6;
                     await Task.Delay(2200);
                     towerModel.display="QueenDropPodEndPrefab";
-                    MelonLogger.Msg(towerModel.display);
                     towerModel.AddBehavior(SpawnHydralisk);
                 }
             }
-        }
+        }*/
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Queen")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.transform.position=new(-3000,0);
-                    udn.name=objectId;
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -180,25 +238,28 @@
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference.guidRef.Contains("Queen")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("Queen")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]
         public class WeaponSpawnDart_Patch{
+            static bool DropPodFiredOnce;
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.towerModel.name.Contains("Queen")){
                     if(__instance.attack.attackModel.name.Contains("CreepTumor")){
-                       // __instance.attack.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenSpawnCreepTumorClip").Cast<AudioClip>(),ModVolume);
                         __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenSpawnCreepTumorStart");
                     }
                     if(__instance.attack.attackModel.name.Contains("AttackModel_Attack_")){
                         __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenAttack");
                     }
+                }
+                if(__instance.attack.tower.towerModel.display=="QueenDropPodStartPrefab"&&DropPodFiredOnce==false){
+                    __instance.newProjectiles.Clear();
+                    __instance.newProjectiles2.Clear();
+                    DropPodFiredOnce=true;
                 }
             }
         }
@@ -208,7 +269,6 @@
             public static void Postfix(ref Ability __instance){
                 if(__instance.tower.namedMonkeyKey.Contains("Queen")){
                     __instance.tower.Node.graphic.GetComponentInParent<Animator>().Play("QueenAbility");
-                    //__instance.tower.Node.graphic.GetComponentInParent<AudioSource>().PlayOneShot(Assets.LoadAsset("QueenAbilityClip").Cast<AudioClip>(),ModVolume);
                 }
             }
         }

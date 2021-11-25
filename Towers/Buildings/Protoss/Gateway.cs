@@ -30,7 +30,7 @@
             ZealotWarp.name="ZealotWarp";
             ZealotWarp.weapons[1].projectile.pierce=3;
             ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=ZealotWarp.weapons[1].projectile;
-            ZealotWarp.weapons[1].rate=4.7f;
+            ZealotWarp.weapons[1].rate=47000;
             ZealotWarp.range=Gateway.range;
             Gateway.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             Gateway.GetBehavior<DisplayModel>().display=Gateway.display;
@@ -109,7 +109,7 @@
                 ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
                 ZealotWarp.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.1f;
                 ZealotWarp.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=50;
-                ZealotWarp.weapons[1].rate=6;
+                ZealotWarp.weapons[1].rate=60000;
                 ZealotWarp.weapons[1].projectile.pierce=50;
                 ZealotWarp.weapons[1].projectile.GetDamageModel().damage=35;
                 ZealotWarp.weapons[1].projectile.display="GatewayKaldalisPrefab";
@@ -120,12 +120,7 @@
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Gateway")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.transform.position=new(-3000,0);
-                    udn.name="SC2Expansion-Gateway";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -139,10 +134,8 @@
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference!=null&&reference.guidRef.Contains("Gateway")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("Gateway")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }

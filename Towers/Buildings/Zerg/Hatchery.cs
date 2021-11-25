@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Simulation.Objects;
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class Hatchery:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
@@ -30,8 +29,7 @@ namespace SC2Expansion.Towers{
             CreepBuff.multiplier=0.0001f;
             CreepBuff.isGlobal=false;
             CreepBuff.buffIconName=null;
-            string[] ZergBuildings=new string[4]{"SC2Expansion-SpawningPool","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
-            CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=ZergBuildings;
+            CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=new string[4]{"SC2Expansion-SpawningPool","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
             Hatchery.AddBehavior(CreepBuff);
         }
         public class Drones:ModUpgrade<Hatchery>{
@@ -259,12 +257,7 @@ namespace SC2Expansion.Towers{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
                 if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hatchery")){
-                    var udn=uObject.Instantiate(TowerAssets.LoadAsset(objectId).Cast<GameObject>(),__instance.PrototypeRoot).AddComponent<UnityDisplayNode>();
-                    udn.transform.position=new(-3000,0);
-                    udn.name="SC2Expansion-Hatchery";
-                    udn.isSprite=false;
-                    onComplete.Invoke(udn);
-                    DisplayDict.Add(objectId,udn);
+                    LoadModel(TowerAssets,objectId,__instance,onComplete);
                     return false;
                 }
                 if(DisplayDict.ContainsKey(objectId)){
@@ -278,10 +271,8 @@ namespace SC2Expansion.Towers{
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
             public static void Postfix(SpriteReference reference,ref uImage image){
-                if(reference!=null&&reference.guidRef.Contains("Hatchery")){
-                    var text=TowerAssets.LoadAsset(reference.guidRef).Cast<Texture2D>();
-                    image.canvasRenderer.SetTexture(text);
-                    image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+                if(reference!=null&&reference.guidRef.StartsWith("Hatchery")){
+                    LoadImage(TowerAssets,reference.guidRef,image);
                 }
             }
         }

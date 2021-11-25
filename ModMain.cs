@@ -60,6 +60,19 @@ namespace SC2Expansion{
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound7.assetId=soundToUse;
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound8.assetId=soundToUse;
         }
+        public static void LoadImage(AssetBundle assetBundle,string asset,uImage image){
+            var text=assetBundle.LoadAsset(asset).Cast<Texture2D>();
+            image.canvasRenderer.SetTexture(text);
+            image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
+        }
+        public static void LoadModel(AssetBundle assetBundle,string asset,Factory factory,Il2CppSystem.Action<UnityDisplayNode>action){
+            var udn=uObject.Instantiate(assetBundle.LoadAsset(asset).Cast<GameObject>(),factory.PrototypeRoot).AddComponent<UnityDisplayNode>();
+            udn.transform.position=new(-30000,-30000);
+            udn.name=asset;
+            udn.isSprite=false;
+            action.Invoke(udn);
+            DisplayDict.Add(asset,udn);
+        }
         public override void OnUpdate() {
             if(DisplayDict.Count!=0){
                 foreach(var proto in DisplayDict.Values)uObject.Destroy(proto.gameObject);

@@ -203,6 +203,16 @@ namespace SC2Expansion.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] pylon {
+            get {
+                object obj = ResourceManager.GetObject("pylon", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] queen {
             get {
                 object obj = ResourceManager.GetObject("queen", resourceCulture);
