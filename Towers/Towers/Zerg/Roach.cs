@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.roach);
         public override string DisplayName=>"Roach";
         public override string BaseTower=>"GlueGunner";
-        public override int Cost=>400;
+        public override int Cost=>650;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -35,10 +35,9 @@
             SetUpgradeSounds(Roach,"RoachUpgrade");
         }
         public class HydriodicBile:ModUpgrade<Roach>{
-            public override string Name=>"HydriodicBile";
             public override string DisplayName=>"Hydriodic Bile";
             public override string Description=>"Increases damage";
-            public override int Cost=>750;
+            public override int Cost=>450;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Roach){
@@ -48,10 +47,9 @@
             }
         }
         public class Vile:ModUpgrade<Roach>{
-            public override string Name=>"Vile";
             public override string DisplayName=>"Vile strain";
             public override string Description=>"Evolving into the vile strain allows the acid to harden upon hitting a target and slows it down";
-            public override int Cost=>750;
+            public override int Cost=>1275;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Roach){
@@ -66,10 +64,9 @@
             }
         }
         public class Ravager:ModUpgrade<Roach>{
-            public override string Name=>"Ravager";
             public override string DisplayName=>"Morph into Ravager";
             public override string Description=>"Morphes into a Ravager, buffing range and damage";
-            public override int Cost=>750;
+            public override int Cost=>3450;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Roach){
@@ -87,10 +84,9 @@
             }
         }
         public class CorrosiveBile:ModUpgrade<Roach>{
-            public override string Name=>"CorrosiveBile";
             public override string DisplayName=>"Corrosive Bile";
             public override string Description=>"Changes attack into a slow but powerful one that can target anywhere on the map";
-            public override int Cost=>750;
+            public override int Cost=>7775;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Roach){
@@ -108,10 +104,9 @@
             }
         }
         public class Brutalisk:ModUpgrade<Roach>{
-            public override string Name=>"Brutalisk";
             public override string DisplayName=>"Morph into Brutalisk";
             public override string Description=>"\"Evolving brutalisk. Threat maximized\"";
-            public override int Cost=>750;
+            public override int Cost=>15465;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Roach){

@@ -2,7 +2,7 @@
     public class Queen:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.queen);
         public override string BaseTower=>"DartMonkey";
-        public override int Cost=>400;
+        public override int Cost=>550;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -24,10 +24,9 @@
             SetUpgradeSounds(Queen,"QueenUpgrade");
         }
         public class QueenGroovedSpines:ModUpgrade<Queen>{
-            public override string Name=>"QueenGroovedSpines";
             public override string DisplayName=>"Grooved Spines";
             public override string Description=>"Evolving small grooves into the spines increases their range";
-            public override int Cost=>750;
+            public override int Cost=>475;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Queen){
@@ -38,10 +37,9 @@
             }
         }
         public class CreepTumor:ModUpgrade<Queen>{
-            public override string Name=>"CreepTumor";
             public override string DisplayName=>"Creep Tumor";
             public override string Description=>"Spawns a Creep Tumor, generating creep around it";
-            public override int Cost=>750;
+            public override int Cost=>785;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Queen){
@@ -69,10 +67,9 @@
             }
         }
         public class WildMutation:ModUpgrade<Queen>{
-            public override string Name=>"WildMutation";
             public override string DisplayName=>"WildMutation";
             public override string Description=>"Temporalily buff's the attack speed and damage of all nearby Zerg. Upgrades damage";
-            public override int Cost=>750;
+            public override int Cost=>2350;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Queen){
@@ -92,10 +89,9 @@
             }
         }
         public class BroodMother:ModUpgrade<Queen>{
-            public override string Name=>"BroodMother";
             public override string DisplayName=>"Evolve into a Brood Mother";
             public override string Description=>"Brood Mother's control entire Broods of Zerg. Can call down a Drop Pod containing 6 Hydralisks";
-            public override int Cost=>750;
+            public override int Cost=>8950;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Queen){
@@ -147,10 +143,9 @@
             }
         }
         public class Zagara:ModUpgrade<Queen>{
-            public override string Name=>"Zagara";
             public override string DisplayName=>"Zagara";
             public override string Description=>"The first Brood Mother, now controls the entire Swarm. Can buff everything's attack speed and upgrade Drop Pods to call down multiple Drop Pods with Hydralisks and Roaches";
-            public override int Cost=>750;
+            public override int Cost=>43750;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Queen){

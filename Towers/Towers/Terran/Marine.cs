@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.marine);
         public override string DisplayName=>"Marine";
         public override string BaseTower=>"SniperMonkey";
-        public override int Cost=>400;
+        public override int Cost=>250;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -29,10 +29,9 @@
             SetUpgradeSounds(Marine,"MarineUpgrade");
         }
         public class U238Shells:ModUpgrade<Marine>{
-            public override string Name=>"U238Shells";
             public override string DisplayName=>"U-238 Shells";
             public override string Description=>"Making the ammunition casing out of depleted Uranium 238 increases range and damage";
-            public override int Cost=>750;
+            public override int Cost=>175;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Marine){
@@ -45,10 +44,9 @@
             }
         }
         public class LTS:ModUpgrade<Marine>{
-            public override string Name=>"LTS";
             public override string DisplayName=>"Laser Targeting System";
             public override string Description=>"Adding a laser pointer allows targetting camo bloons and slightly increases range";
-            public override int Cost=>750;
+            public override int Cost=>450;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Marine){
@@ -60,10 +58,9 @@
             }
         }
         public class Stimpacks:ModUpgrade<Marine>{
-            public override string Name=>"Stimpacks";
             public override string DisplayName=>"Stimpacks";
             public override string Description=>"Stimpacks increase attack speed by 50% for a short while";
-            public override int Cost=>750;
+            public override int Cost=>830;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Marine){
@@ -82,10 +79,9 @@
             }
         }
         public class Warpig:ModUpgrade<Marine>{
-            public override string Name=>"Warpig";
             public override string DisplayName=>"Warpig";
             public override string Description=>"Warpig mercenaries use upgraded (Don't ask if its legal) equipment. Increases damage and attack speed";
-            public override int Cost=>750;
+            public override int Cost=>1475;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Marine){
@@ -99,10 +95,9 @@
             }
         }
         public class Raynor:ModUpgrade<Marine>{
-            public override string Name=>"Raynor";
             public override string DisplayName=>"James Raynor";
             public override string Description=>"\"Jimmy here!\"";
-            public override int Cost=>9000;
+            public override int Cost=>8755;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Marine){

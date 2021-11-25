@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
         public override string BaseTower=>"BananaFarm-003";
-        public override int Cost=>750;
+        public override int Cost=>800;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -33,10 +33,9 @@
             Hatchery.AddBehavior(CreepBuff);
         }
         public class Drones:ModUpgrade<Hatchery>{
-            public override string Name=>"Drones";
             public override string DisplayName=>"Additional Drones";
             public override string Description=>"Morphing more drones provides income faster";
-            public override int Cost=>750;
+            public override int Cost=>700;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Hatchery){
@@ -45,10 +44,9 @@
             }
         }
         public class Extractors:ModUpgrade<Hatchery>{
-            public override string Name=>"Extractors";
             public override string DisplayName=>"Extractors";
             public override string Description=>"Morphing Extractors over local Vespene geysers increases the income made";
-            public override int Cost=>750;
+            public override int Cost=>930;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Hatchery){
@@ -59,10 +57,9 @@
             }
         }
         public class Lair:ModUpgrade<Hatchery>{
-            public override string Name=>"Lair";
             public override string DisplayName=>"Morph into Lair";
             public override string Description=>"Morphes into a Lair, automatically spawns T2 Zerglings and increases income made";
-            public override int Cost=>750;
+            public override int Cost=>1825;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Hatchery){
@@ -93,10 +90,9 @@
             }
         }
         public class Nydus:ModUpgrade<Hatchery>{
-            public override string Name=>"Nydus";
             public override string DisplayName=>"Nydus Network";
             public override string Description=>"Connects Lair to the local Nydus Network. Allows spawning of short lived Nydus Worms anywhere sending out lots of Zerglings and Hydralisks";
-            public override int Cost=>750;
+            public override int Cost=>3450;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Hatchery){
@@ -153,10 +149,9 @@
             }
         }
         public class Hive:ModUpgrade<Hatchery>{
-            public override string Name=>"Hive";
             public override string DisplayName=>"Morph into Hive";
             public override string Description=>"Morphes into Hive, now spawns Noxious Ultralisks and upgrades Zerglings. Upgrades all units from Nydus Worms and decreases the cooldown. Increases income made massively";
-            public override int Cost=>750;
+            public override int Cost=>10780;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Hatchery){

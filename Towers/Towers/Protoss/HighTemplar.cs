@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hightemplar);
         public override string DisplayName=>"High Templar";
         public override string BaseTower=>"WizardMonkey";
-        public override int Cost=>400;
+        public override int Cost=>550;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -26,10 +26,9 @@
         }
         //Ik the khala isn't used now but i cba adding nerve cords to the model, sc2 itself handles these in a special way
         public class KhaydarinAmulet:ModUpgrade<HighTemplar>{
-            public override string Name=>"KhaydarinAmulet";
             public override string DisplayName=>"Khaydarin Amulet";
             public override string Description=>"Khaydarin crystals help regulate the flow of energy from the Khala, letting the High Templar fire further";
-            public override int Cost=>750;
+            public override int Cost=>420; //funny number
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel HighTemplar){
@@ -40,10 +39,9 @@
             }
         }
         public class MiniPsiStorms:ModUpgrade<HighTemplar>{
-            public override string Name=>"MiniPsiStorms";
             public override string DisplayName=>"Mini Psi Storms";
             public override string Description=>"Further training allows the casting of Psionic Storms into the track damaging everything that passes through";
-            public override int Cost=>750;
+            public override int Cost=>725;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel HighTemplar){
@@ -57,10 +55,9 @@
             }
         }
         public class PlasmaSurge:ModUpgrade<HighTemplar>{
-            public override string Name=>"PlasmasSurge";
             public override string DisplayName=>"Plasma Surge";
             public override string Description=>"Focuses more power when casting Psi Storms increasing their radius and damage";
-            public override int Cost=>750;
+            public override int Cost=>1025;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel HighTemplar){
@@ -72,10 +69,9 @@
             }
         }
         public class Ascendant:ModUpgrade<HighTemplar>{
-            public override string Name=>"Ascendant";
             public override string DisplayName=>"Ascendant";
             public override string Description=>"Ascendants are high ranking Tal'darim and have grown very powerful after years of absorbing terrazine";
-            public override int Cost=>750;
+            public override int Cost=>4585;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel HighTemplar){
@@ -124,10 +120,9 @@
             }
         }
         public class Jinara:ModUpgrade<HighTemplar>{
-            public override string Name=>"Jinara";
             public override string DisplayName=>"Ji'nara";
             public override string Description=>"As the first Ascendant of the Tal'darim, her power is second only to the highlord";
-            public override int Cost=>750;
+            public override int Cost=>13450;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel HighTemplar){

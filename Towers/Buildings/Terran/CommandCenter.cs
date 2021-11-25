@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.commandcenter);
         public override string DisplayName=>"Command Center";
         public override string BaseTower=>"BananaFarm-003";
-        public override int Cost=>750;
+        public override int Cost=>850;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>5;
         public override int BottomPathUpgrades=>0;
@@ -25,10 +25,9 @@
             CommandCenter.GetBehavior<DisplayModel>().display=CommandCenter.display;
         }
         public class Refinery:ModUpgrade<CommandCenter>{
-            public override string Name=>"Refinery";
             public override string DisplayName=>"Refinery";
             public override string Description=>"Exploiting a local Vespene geyser increases the income generated";
-            public override int Cost=>750;
+            public override int Cost=>770;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -40,10 +39,9 @@
             }
         }
         public class SCVCore:ModUpgrade<CommandCenter>{
-            public override string Name=>"SCVCore";
             public override string DisplayName=>"Enhanced SCV's";
             public override string Description=>"Upgrading SCV power cores lets them move and mine faster";
-            public override int Cost=>750;
+            public override int Cost=>655;
             public override int Path=>MIDDLE;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -52,10 +50,9 @@
             }
         }
         public class Refinery1:ModUpgrade<CommandCenter>{
-            public override string Name=>"Refinery1";
             public override string DisplayName=>"Additional Refinery";
             public override string Description=>"Exploiting another Vespene geyser increases income even more";
-            public override int Cost=>750;
+            public override int Cost=>1070;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -66,10 +63,9 @@
             }
         }
         public class Mules:ModUpgrade<CommandCenter>{
-            public override string Name=>"Mules";
             public override string DisplayName=>"Mules";
             public override string Description=>"Mules harvest resources faster then SCV's";
-            public override int Cost=>750;
+            public override int Cost=>935;
             public override int Path=>MIDDLE;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -78,11 +74,10 @@
             }
         }
         public class OrbitalCommand:ModUpgrade<CommandCenter>{
-            public override string Name=>"OrbitalCommand";
             public override string DisplayName=>"Orbital Command";
             public override string Description=>"Upgrades the sensory equipment massively to provide camo detection to all nearby towers and gains Orbital Strike ability, "+
                 "sending down many ballistic missiles";
-            public override int Cost=>750;
+            public override int Cost=>1855;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -99,8 +94,7 @@
                 OrbitalStrike.icon=new("CommandCenterMissileIcon");
                 OrbitalStrikeAttack.weapons[0].projectile=Game.instance.model.GetTowerFromId("BombShooter-020").GetAttackModel().weapons[0].projectile.Duplicate();
                 OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(new TrackTargetModel("TrackTargetModel",999,true,true,360,true,360,false,false));
-                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.
-                    GetDamageModel().Duplicate());
+                OrbitalStrikeAttack.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().Duplicate());
                 OrbitalStrikeAttack.weapons[0].projectile.GetBehavior<TravelStraitModel>().lifespan=13;
                 OrbitalStrikeAttack.weapons[0].ejectZ=300;
                 OrbitalStrikeAttack.weapons[0].ejectX=-300;
@@ -108,10 +102,9 @@
             }
         }
         public class PlanetaryFortress:ModUpgrade<CommandCenter>{
-            public override string Name=>"PlanetaryFortress";
             public override string DisplayName=>"Planetary Fortress";
             public override string Description=>"Equips 2 powerful Ibiks cannons allowing the Command Center to attack";
-            public override int Cost=>750;
+            public override int Cost=>2160;
             public override int Path=>MIDDLE;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -132,10 +125,9 @@
             }
         }
         public class SensorTower:ModUpgrade<CommandCenter>{
-            public override string Name=>"SensorTower";
             public override string DisplayName=>"Sensor Tower";
             public override string Description=>"Constructs a mini Sensor Tower inside increasing the detection range";
-            public override int Cost=>750;
+            public override int Cost=>7630;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -144,10 +136,9 @@
             }
         }
         public class NeosteelFrame:ModUpgrade<CommandCenter>{
-            public override string Name=>"NeosteelFrame";
             public override string DisplayName=>"Neosteel Frame";
             public override string Description=>"Reinforcing the entire frame with Neosteel allows much more powerful shots to be fired";
-            public override int Cost=>750;
+            public override int Cost=>6170;
             public override int Path=>MIDDLE;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -158,10 +149,9 @@
             }
         }
         public class OrbitalBarrage:ModUpgrade<CommandCenter>{
-            public override string Name=>"OrbitalBarrage";
             public override string DisplayName=>"Orbital Barrage";
             public override string Description=>"Regularly sends down nuclear missiles";
-            public override int Cost=>750;
+            public override int Cost=>13570;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -177,10 +167,9 @@
             }
         }
         public class DominionMight:ModUpgrade<CommandCenter>{
-            public override string Name=>"DominionMight";
             public override string DisplayName=>"Might of the Dominion";
             public override string Description=>"Get a free tier 4 Marine at the end of every round";
-            public override int Cost=>750;
+            public override int Cost=>16700;
             public override int Path=>MIDDLE;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){

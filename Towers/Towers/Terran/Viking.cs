@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.viking);
         public override string DisplayName=>"Viking";
         public override string BaseTower=>"SniperMonkey";
-        public override int Cost=>400;
+        public override int Cost=>650;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -34,10 +34,9 @@
             SetUpgradeSounds(Viking,"VikingUpgrade");
         }
         public class AirMode:ModUpgrade<Viking>{
-            public override string Name=>"AirMode";
             public override string DisplayName=>"Fighter mode";
             public override string Description=>"Trains the pilot to transform and make use of the Fighter mode for a short time gaining bonus damage against Moab's. Only targets Moab's in Fighter Mode";
-            public override int Cost=>750;
+            public override int Cost=>825;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Viking){
@@ -63,10 +62,9 @@
             }
         }
         public class PhobosWeapons:ModUpgrade<Viking>{
-            public override string Name=>"PhobosWeapons";
             public override string DisplayName=>"Phobos Class weapons systems";
             public override string Description=>"Increases range and damage in all modes";
-            public override int Cost=>750;
+            public override int Cost=>1275;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Viking){
@@ -82,19 +80,18 @@
             }
         }
         public class Deimos:ModUpgrade<Viking>{
-            public override string Name=>"Deimos";
             public override string DisplayName=>"Deimos Viking";
             public override string Description=>"Dominion Vikings modified with uh, \'legal\' mercenary equipment, more pierce, damage, better fire rate and can pop Lead Bloons on the ground and"+
                 " more rockets in the air";
-            public override int Cost=>750;
+            public override int Cost=>3250;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Viking){
                 GetUpgradeModel().icon=new("VikingDeimosGroundIcon");
                 var Gatling=Viking.GetAttackModel();
                 var AirMode=Viking.GetAbility();
-                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.AddTo(Game.instance.model.GetTowerFromId("BombShooter-020").
-                    GetAttackModel().Duplicate());
+                AirMode.GetBehavior<ActivateAttackModel>().attacks=AirMode.GetBehavior<ActivateAttackModel>().attacks.AddTo(Game.instance.model.GetTowerFromId("BombShooter-020").GetAttackModel().
+                    Duplicate());
                 var WILD=AirMode.GetBehavior<ActivateAttackModel>().attacks[1];
                 Gatling.weapons[0].projectile.pierce=3;
                 Gatling.weapons[0].projectile.GetDamageModel().damage+=1;
@@ -120,10 +117,9 @@
             }
         }
         public class SkyFury:ModUpgrade<Viking>{
-            public override string Name=>"SkyFury";
             public override string DisplayName=>"Sky Fury";
             public override string Description=>"Elite Dominion Vikings, doubles the time spent in Fighter mode and can now attack Moab's in ground mode";
-            public override int Cost=>750;
+            public override int Cost=>7645;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Viking){
@@ -140,10 +136,9 @@
             }
         }
         public class Archangel:ModUpgrade<Viking>{
-            public override string Name=>"Archangel";
             public override string DisplayName=>"Archangel";
             public override string Description=>"The pride of the Dominion Engineering Corps, a Archangel is the solution to almost any threat";
-            public override int Cost=>9000;
+            public override int Cost=>15675;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Viking){

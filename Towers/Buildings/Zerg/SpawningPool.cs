@@ -2,7 +2,7 @@
     public class SpawningPool:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.spawningpool);
         public override string BaseTower=>"WizardMonkey-005";
-        public override int Cost=>400;
+        public override int Cost=>620;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -34,11 +34,10 @@
             SpawningPool.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             SpawningPool.GetBehavior<DisplayModel>().display=SpawningPool.display;
         }
-        public class HardendCarapace:ModUpgrade<SpawningPool> {
-            public override string Name=>"HardendCarapace";
+        public class HardendCarapace:ModUpgrade<SpawningPool>{
             public override string DisplayName=>"Hardend Carapace";
             public override string Description=>"Increasing the carapace density lets Zerglings take more hits before dying";
-            public override int Cost=>750;
+            public override int Cost=>530;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel SpawningPool){
@@ -48,39 +47,36 @@
                 SpawnZergling.weapons[1].projectile.pierce=13;
             }
         }
-        public class MetabolicBoost:ModUpgrade<SpawningPool> {
-            public override string Name=>"MetabolicBoost";
+        public class MetabolicBoost:ModUpgrade<SpawningPool>{
             public override string DisplayName=>"Metabolic Boost";
             public override string Description=>"Improving Zergling metabolism and evolving wings massively increases Zergling's speed";
-            public override int Cost=>750;
+            public override int Cost=>775;
             public override int Path=>TOP;
             public override int Tier=>2;
-            public override void ApplyUpgrade(TowerModel SpawningPool) {
+            public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolMetabolicBoostIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
                 SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
                 SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingWingPrefab";
             }
         }
-        public class AdrenalGlands:ModUpgrade<SpawningPool> {
-            public override string Name=>"AdrenalGlands";
+        public class AdrenalGlands:ModUpgrade<SpawningPool>{
             public override string DisplayName=>"Adrenal Glands";
             public override string Description=>"Making even more adrenaline increases Zergling damage and speed slightly";
-            public override int Cost=>750;
+            public override int Cost=>1080;
             public override int Path=>TOP;
             public override int Tier=>3;
-            public override void ApplyUpgrade(TowerModel SpawningPool) {
+            public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolAdrenalGlandsIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
                 SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.2f;
                 SpawnZergling.weapons[1].projectile.GetDamageModel().damage=3;
             }
         }
-        public class Primal:ModUpgrade<SpawningPool> {
-            public override string Name=>"ZerglingPrimal";
+        public class Primal:ModUpgrade<SpawningPool>{
             public override string DisplayName=>"Primal Evolution";
             public override string Description=>"Gains a random upgrade to speed, damage or health";
-            public override int Cost=>750;
+            public override int Cost=>2985;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel SpawningPool){
@@ -89,28 +85,16 @@
             }
         }
         public class Swarmling:ModUpgrade<SpawningPool>{
-            public override string Name=>"Swarmling";
             public override string DisplayName=>"Swarmling strain";
             public override string Description=>"Swarmling strain spawns multiple Zerglings at a time";
-            public override int Cost=>750;
+            public override int Cost=>9670;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolSwarmlingIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
-                float Pierce=SpawnZergling.weapons[1].projectile.pierce;
-                float Speed=SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames;
-                float Damage=SpawnZergling.weapons[1].projectile.GetDamageModel().damage+2;
-                SpawningPool.RemoveBehavior<AttackModel>();
-                SpawnZergling=null;
-                SpawningPool.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-004").behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Duplicate());
                 SpawnZergling=SpawningPool.GetAttackModel();
-                SpawnZergling.name="SpawnZergling";
-                SpawnZergling.weapons[0].projectile.pierce=Pierce;
-                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=Speed;
-                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=9999;
-                SpawnZergling.weapons[0].projectile.GetDamageModel().damage=Damage;
+                SpawnZergling.weapons[0].projectile.GetDamageModel().damage+=2;
                 SpawnZergling.weapons[0].rate=6500f;
                 SpawnZergling.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
             }

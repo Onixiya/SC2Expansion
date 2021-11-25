@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.battlecruiser);
         public override string DisplayName=>"Battlecruiser";
         public override string BaseTower=>"SuperMonkey-100";
-        public override int Cost=>2750;
+        public override int Cost=>2150;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -33,10 +33,9 @@
             SetUpgradeSounds(Battlecruiser,"BattlecruiserUpgrade");
         }
         public class TacJump:ModUpgrade<Battlecruiser>{
-            public override string Name=>"TacJump";
             public override string DisplayName=>"Tactical Jump";
             public override string Description=>"Allows the Battlecruiser to make use of its short range warp drive, instantly teleporting to any where on the map";
-            public override int Cost=>2000;
+            public override int Cost=>3650;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
@@ -54,10 +53,9 @@
             }
         }
         public class Yamato:ModUpgrade<Battlecruiser>{
-            public override string Name=>"Yamato";
             public override string DisplayName=>"Yamato Cannon";
             public override string Description=>"Upgrades to the colossus reactor lets the Yamato cannon be fired dealing massive damage to a single target";
-            public override int Cost=>2000;
+            public override int Cost=>5830;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
@@ -83,10 +81,9 @@
             }
         }
         public class Sovereign:ModUpgrade<Battlecruiser>{
-            public override string Name=>"Sovereign";
             public override string DisplayName=>"Sovereign Class";
             public override string Description=>"Sovereign Class Battlecruisers can fire the Yamato cannon regularly with reduced damage";
-            public override int Cost=>2000;
+            public override int Cost=>9455;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
@@ -104,10 +101,9 @@
             }
         }
         public class POA:ModUpgrade<Battlecruiser>{
-            public override string Name=>"POA";
             public override string DisplayName=>"Pride of Augustgrad";
             public override string Description=>"Elite Dominion Battlecruiser, can Tac jump much more frequently, increased damage and camo detection";
-            public override int Cost=>2000;
+            public override int Cost=>17865;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
@@ -121,10 +117,9 @@
             }
         }
         public class Hyperion:ModUpgrade<Battlecruiser>{
-            public override string Name=>"Hyperion";
             public override string DisplayName=>"Hyperion";
             public override string Description=>"A ship hailing from the days of the Confederacy, it has seen many crews and battles. Currently the flagship of the Dominion";
-            public override int Cost=>2000;
+            public override int Cost=>45785;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Battlecruiser){

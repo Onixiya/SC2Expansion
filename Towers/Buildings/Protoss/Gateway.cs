@@ -2,7 +2,7 @@
     public class Gateway:ModTower<ProtossSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.gateway);
         public override string BaseTower=>"WizardMonkey-005";
-        public override int Cost=>400;
+        public override int Cost=>785;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -35,11 +35,10 @@
             Gateway.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             Gateway.GetBehavior<DisplayModel>().display=Gateway.display;
         }
-        public class Charge:ModUpgrade<Gateway> {
-            public override string Name=>"Charge";
+        public class Charge:ModUpgrade<Gateway>{
             public override string DisplayName=>"Charge";
-            public override string Description=>"Cybernetic enhancements to the legs allow Zealots to move faster";
-            public override int Cost=>750;
+            public override string Description=>"Cybernetic leg enhancements allow Zealots to move faster";
+            public override int Cost=>625;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Gateway){
@@ -47,14 +46,13 @@
                 Gateway.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.9f;
             }
         }
-        public class Solarite:ModUpgrade<Gateway> {
-            public override string Name=>"Solarite";
+        public class Solarite:ModUpgrade<Gateway>{
             public override string DisplayName=>"Solarite Reaper";
             public override string Description=>"Solarite Reapers do more damage and have a larger radius";
-            public override int Cost=>750;
+            public override int Cost=>1030;
             public override int Path=>TOP;
             public override int Tier=>2;
-            public override void ApplyUpgrade(TowerModel Gateway) {
+            public override void ApplyUpgrade(TowerModel Gateway){
                 GetUpgradeModel().icon=new("GatewaySolariteIcon");
                 var ZealotWarp=Gateway.GetAttackModel();
                 ZealotWarp.weapons[1].projectile.GetDamageModel().damage=5;
@@ -62,11 +60,10 @@
                 ZealotWarp.weapons[1].projectile.display="GatewaySolaritePrefab";
             }
         }
-        public class Sentinel:ModUpgrade<Gateway> {
-            public override string Name=>"Sentinel";
-            public override string DisplayName=>"Sentinel";
+        public class Sentinel:ModUpgrade<Gateway>{
+            public override string DisplayName=>"Sentinel's";
             public override string Description=>"Purifier Sentinels are more durable then their biological counterparts but have timed life";
-            public override int Cost=>750;
+            public override int Cost=>1780;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Gateway){
@@ -79,11 +76,10 @@
                 ZealotWarp.weapons[1].projectile.display="GatewaySentinelPrefab";
             }
         }
-        public class Legionnaire:ModUpgrade<Gateway> {
-            public override string Name=>"Legionnaire";
+        public class Legionnaire:ModUpgrade<Gateway>{
             public override string DisplayName=>"Legionnaires";
             public override string Description=>"The Sentinels used by Talandars forces are much more powerful then their regular models";
-            public override int Cost=>750;
+            public override int Cost=>3205;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Gateway){
@@ -97,10 +93,9 @@
             }
         }
         public class Kaldalis:ModUpgrade<Gateway>{
-            public override string Name=>"Kaldalis";
             public override string DisplayName=>"Kaldalis";
             public override string Description=>"Allows the cloning of Kaldalis's personality matrix into Legionnaires";
-            public override int Cost=>750;
+            public override int Cost=>10750;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Gateway){

@@ -73,7 +73,7 @@ namespace SC2Expansion{
             action.Invoke(udn);
             DisplayDict.Add(asset,udn);
         }
-        public override void OnUpdate() {
+        public override void OnUpdate(){
             if(DisplayDict.Count!=0){
                 foreach(var proto in DisplayDict.Values)uObject.Destroy(proto.gameObject);
                 DisplayDict.Clear();

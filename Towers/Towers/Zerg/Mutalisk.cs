@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.mutalisk);
         public override string DisplayName=>"Mutalisk";
         public override string BaseTower=>"DartMonkey";
-        public override int Cost=>400;
+        public override int Cost=>525;
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
@@ -37,10 +37,9 @@
             SetUpgradeSounds(Mutalisk,"MutaliskUpgrade");
         }
         public class ViciousGlaive:ModUpgrade<Mutalisk>{
-            public override string Name=>"ViciousGlaive";
             public override string DisplayName=>"Vicious Glaive";
             public override string Description=>"Increasing the bone density of glaive wurms before they are fired allows them to survive for longer and hit more targets";
-            public override int Cost=>750;
+            public override int Cost=>550;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -52,10 +51,9 @@
             }
         }
         public class RapidRegeneration:ModUpgrade<Mutalisk>{
-            public override string Name=>"RapidRegeneration";
             public override string DisplayName=>"Rapid Regeneration";
             public override string Description=>"Decreases the time required to fully grow a glaive before firing it effectively increasing fire rate";
-            public override int Cost=>750;
+            public override int Cost=>475;
             public override int Path=>MIDDLE;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -65,10 +63,9 @@
             }
         }
         public class SlicingGlaive:ModUpgrade<Mutalisk>{
-            public override string Name=>"SlicingGlaive";
             public override string DisplayName=>"Slicing Glaive";
             public override string Description=>"Evolving the glaive to pierce through armour allows popping leads and increases damage to Moabs and Ceremics";
-            public override int Cost=>750;
+            public override int Cost=>865;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -81,10 +78,9 @@
             }
         }
         public class AeroGlaive:ModUpgrade<Mutalisk>{
-            public override string Name=>"AeroGlaive";
             public override string DisplayName=>"Aerodynamic Glaive";
             public override string Description=>"Growing more aerodynamic glaives allows them to be fired further";
-            public override int Cost=>750;
+            public override int Cost=>790;
             public override int Path=>MIDDLE;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -95,10 +91,9 @@
             }
         }
         public class SunderingGlaive:ModUpgrade<Mutalisk>{
-            public override string Name=>"SunderingGlaive";
             public override string DisplayName=>"Sundering Glaive";
             public override string Description=>"Evolving the glaive to explode when hitting a target increases damage by a lot, can no longer bounce";
-            public override int Cost=>750;
+            public override int Cost=>1650;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -112,11 +107,10 @@
                 SetUpgradeSounds(Mutalisk,"MutaliskUpgrade5");
             }
         }
-        public class Primal:ModUpgrade<Mutalisk>{
-            public override string Name=>"MutaliskPrimal";
+        public class MutaliskPrimal:ModUpgrade<Mutalisk>{
             public override string DisplayName=>"Primal Evolution";
             public override string Description=>"Gains a random bonus to attack speed, range or damage";
-            public override int Cost=>750;
+            public override int Cost=>1740;
             public override int Path=>MIDDLE;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -127,10 +121,9 @@
             }
         }
         public class Devourer:ModUpgrade<Mutalisk>{
-            public override string Name=>"Devourer";
             public override string DisplayName=>"Morph into Devourer";
             public override string Description=>"Devourers are heavy anti air flyers, dealing great damage against MOAB class bloons";
-            public override int Cost=>750;
+            public override int Cost=>7670;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -148,10 +141,9 @@
             }
         }
         public class BroodLord:ModUpgrade<Mutalisk>{
-            public override string Name=>"BroodLordPrimal";
             public override string DisplayName=>"Morph into Brood Lord";
             public override string Description=>"Heavy Zerg seige flyer based off from Guardians, attacks by shooting Broodlings at its target";
-            public override int Cost=>750;
+            public override int Cost=>6220;
             public override int Path=>MIDDLE;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Mutalisk){
@@ -173,7 +165,6 @@
             }
         }
         /*public class Leviathan:ModUpgrade<Mutalisk>{
-            public override string Name=>"Leviathan";
             public override string DisplayName=>"Morph into Leviathan";
             public override string Description=>"\"Leviathan. Largest of Zerg. Sky will belong to Swarm\"";
             public override int Cost=>750;

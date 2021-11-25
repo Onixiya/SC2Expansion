@@ -2,7 +2,7 @@
     public class Hydralisk:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hydralisk);
         public override string BaseTower=>"DartMonkey";
-        public override int Cost=>400;
+        public override int Cost=>500;
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>4;
         public override int BottomPathUpgrades=>0;
@@ -24,10 +24,9 @@
             SetUpgradeSounds(Hydralisk,"HydraliskUpgrade");
         }
         public class GroovedSpines:ModUpgrade<Hydralisk>{
-            public override string Name=>"GroovedSpines";
             public override string DisplayName=>"Grooved Spines";
             public override string Description=>"Evolving small grooves into the spines increases their range";
-            public override int Cost=>750;
+            public override int Cost=>240;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -38,10 +37,9 @@
             }
         }
         public class MuscularAugments:ModUpgrade<Hydralisk>{
-            public override string Name=>"MuscularAugments";
             public override string DisplayName=>"Muscular Augments";
             public override string Description=>"More muscles are now used to throw spines increasing damage";
-            public override int Cost=>750;
+            public override int Cost=>450;
             public override int Path=>MIDDLE;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -51,10 +49,9 @@
             }
         }
         public class Frenzy:ModUpgrade<Hydralisk>{
-            public override string Name=>"Frenzy";
             public override string DisplayName=>"Frenzy";
             public override string Description=>"By injecting testosterone, massive increase in agression can be done increasing attack speed for a short time";
-            public override int Cost=>750;
+            public override int Cost=>675;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -74,7 +71,6 @@
         }
         //i know this belongs to the lurker but i haven't got a clue on where else to put it, lurker needs to be t3 to avoid any model issues and impalers are the t4
         public class SeismicSpines:ModUpgrade<Hydralisk>{
-            public override string Name=>"SeismicSpines";
             public override string DisplayName=>"Seismic Spines";
             public override string Description=>"Even more muscles are used to throw spines, enough to break through Lead Bloons";
             public override int Cost=>750;
@@ -88,11 +84,10 @@
                 SetUpgradeSounds(Hydralisk,"HydraliskUpgrade4");
             }
         }
-        public class Primal:ModUpgrade<Hydralisk>{
-            public override string Name=>"HydraliskPrimal";
+        public class HydraliskPrimal:ModUpgrade<Hydralisk>{
             public override string DisplayName=>"Primal Evolution";
             public override string Description=>"Gains a random bonus to attack speed, damage or range";
-            public override int Cost=>750;
+            public override int Cost=>1460;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -102,10 +97,9 @@
             }
         }
         public class Lurker:ModUpgrade<Hydralisk>{
-            public override string Name=>"Lurker";
             public override string DisplayName=>"Evolve into Lurker";
             public override string Description=>"Evolves into a Lurker changing its attack into a long range attack that damages everything in its path";
-            public override int Cost=>750;
+            public override int Cost=>1790;
             public override int Path=>MIDDLE;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -125,10 +119,9 @@
             }
         }
         public class HunterKiller:ModUpgrade<Hydralisk>{
-            public override string Name=>"HunterKiller";
             public override string DisplayName=>"Hunter Killer";
             public override string Description=>"Hunter Killers are a elite strain of Hydralisks, extremely aggresive and lethal";
-            public override int Cost=>750;
+            public override int Cost=>4590;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Hydralisk){
@@ -144,10 +137,9 @@
             }
         }
         public class Impaler:ModUpgrade<Hydralisk>{
-            public override string Name=>"Impaler";
             public override string DisplayName=>"Evolve into Impaler";
             public override string Description=>"Impalers are a mobile strain of the sunken colony dealing massive damage to single targets";
-            public override int Cost=>750;
+            public override int Cost=>6745;
             public override int Path=>MIDDLE;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Hydralisk){

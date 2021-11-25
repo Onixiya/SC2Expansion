@@ -24,8 +24,7 @@
             Pylon.GetBehavior<DisplayModel>().display=Pylon.display;
             Pylon.RemoveBehavior<RotateToTargetModel>();
         }
-        public class RefinedCrystal:ModUpgrade<Pylon> {
-            public override string Name=>"RefinedCrystal";
+        public class RefinedCrystal:ModUpgrade<Pylon>{
             public override string DisplayName=>"Refined Crystal";
             public override string Description=>"Using a purer khaydarin crystal allows for a larger area to be powered";
             public override int Cost=>675;
@@ -36,22 +35,20 @@
                 Pylon.range+=10;
             }
         }
-        public class Stabilizers:ModUpgrade<Pylon> {
-            public override string Name=>"Stabilizers";
+        public class Stabilizers:ModUpgrade<Pylon>{
             public override string DisplayName=>"Stabilizers";
             public override string Description=>"Stablizing the power output boosts the speeds of nearby Protoss structures";
             public override int Cost=>925;
             public override int Path=>TOP;
             public override int Tier=>2;
-            public override void ApplyUpgrade(TowerModel Pylon) {
+            public override void ApplyUpgrade(TowerModel Pylon){
                 GetUpgradeModel().icon=new("PylonStableIcon");
                 Pylon.portrait=new("PylonStablePortrait");
                 Pylon.display="PylonStablePrefab";
                 Pylon.GetBehavior<RateSupportModel>().multiplier=0.00008f;
             }
         }
-        public class Overcharged:ModUpgrade<Pylon> {
-            public override string Name=>"Overcharged";
+        public class Overcharged:ModUpgrade<Pylon>{
             public override string DisplayName=>"Overcharged";
             public override string Description=>"Lacing small amounts of bloodshard crystals when forming allows for a fast attack";
             public override int Cost=>1350;
@@ -66,18 +63,17 @@
                 Pylon.GetAttackModel().weapons[0].rate=0.5f;
                 Pylon.GetAttackModel().weapons[0].projectile.pierce=1;
                 Pylon.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=1;
-                Pylon.GetAttackModel().weapons[0].projectile.GetBehavior<TravelStraitModel>().speed*=1.5f;
+                Pylon.GetAttackModel().weapons[0].projectile.GetBehavior<TravelStraitModel>().speed*=1.6f;
                 Pylon.GetAttackModel().GetBehavior<RotateToTargetModel>().rotateTower=false;
             }
         }
-        public class VoidPylon:ModUpgrade<Pylon> {
-            public override string Name=>"VoidPylon";
+        public class VoidPylon:ModUpgrade<Pylon>{
             public override string DisplayName=>"Dark Pylon";
             public override string Description=>"Nerazim Pylons are capable of powering and cloaking large areas. Cloaked towers get boosts to pierce and attack speed";
             public override int Cost=>7650;
             public override int Path=>TOP;
             public override int Tier=>4;
-            public override void ApplyUpgrade(TowerModel Pylon) {
+            public override void ApplyUpgrade(TowerModel Pylon){
                 GetUpgradeModel().icon=new("PylonVoidIcon");
                 Pylon.portrait=new("PylonVoidPortrait");
                 Pylon.display="PylonVoidPrefab";

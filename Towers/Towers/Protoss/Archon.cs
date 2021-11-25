@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.archon);
         public override string DisplayName=>"Archon";
         public override string BaseTower=>"DartMonkey";
-        public override int Cost=>400;
+        public override int Cost=>875;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -34,10 +34,9 @@
             SetUpgradeSounds(Archon,"ArchonUpgrade");
         }
         public class ArchonKhaydarinAmulet:ModUpgrade<Archon>{
-            public override string Name=>"ArchonKhaydarinAmulet";
             public override string DisplayName=>"Khaydarin Amulet";
             public override string Description=>"Preserving the Khaydarin Amulet before merging increases range and damage";
-            public override int Cost=>750;
+            public override int Cost=>1570;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel Archon){
@@ -51,10 +50,9 @@
             }
         }
         public class HighArchon:ModUpgrade<Archon>{
-            public override string Name=>"HighArchon";
             public override string DisplayName=>"High Archon";
             public override string Description=>"Regularly focus's great amounts of psionic energy into small areas damaging everything that passes through";
-            public override int Cost=>750;
+            public override int Cost=>2300;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Archon){
@@ -69,10 +67,9 @@
             }
         }
         public class DarkArchon:ModUpgrade<Archon>{
-            public override string Name=>"DarkArchon";
             public override string DisplayName=>"Dark Archon";
             public override string Description=>"Dark Archon's draw incredible amounts of power from the Void, gains Confusion attack confusing all bloons in a small area and forcing them to go back for short time";
-            public override int Cost=>750;
+            public override int Cost=>4630;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Archon){
@@ -88,18 +85,17 @@
                 ConfusionProjectile.AddBehavior(new WindModel("WindModel",20,150,1,false,null,0,null));
                 ConfusionProjectile.GetBehavior<AgeModel>().lifespan=0.1f;
                 ConfusionProjectile.display=null;
-                Confusion.weapons[0].projectile.AddBehavior(new CreateProjectileOnContactModel("CreateProjectileOnContactModel",ConfusionProjectile,new SingleEmissionModel("SingleEmissionModel",null),
-                    false,false,false));
+                Confusion.weapons[0].projectile.AddBehavior(new CreateProjectileOnContactModel("CreateProjectileOnContactModel",ConfusionProjectile,new SingleEmissionModel("SingleEmissionModel",
+                    null),false,false,false));
                 Archon.RemoveBehavior(Archon.GetBehaviors<AttackModel>().First(a=>a.name.Contains("PsiStorm")));
                 Archon.AddBehavior(Confusion);
                 SetUpgradeSounds(Archon,"ArchonUpgrade3");
             }
         }
         public class MindControl:ModUpgrade<Archon>{
-            public override string Name=>"MindControl";
             public override string DisplayName=>"Mind Control";
             public override string Description=>"Completely controls the strongest target on screen and forces it go back along the track. Cannot target anything higher then a ZOMG";
-            public override int Cost=>750;
+            public override int Cost=>11450;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Archon){
@@ -136,10 +132,9 @@
             }
         }
         public class Ulrezaj:ModUpgrade<Archon>{
-            public override string Name=>"Ulrezaj";
             public override string DisplayName=>"Ulrezaj";
             public override string Description=>"The combined bodies and minds of 8 Dark Templar, most nearby things simply cease to exist";
-            public override int Cost=>9000;
+            public override int Cost=>36740;
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Archon){

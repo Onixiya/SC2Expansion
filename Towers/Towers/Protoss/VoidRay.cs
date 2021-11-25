@@ -3,7 +3,7 @@
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.voidray);
         public override string DisplayName=>"Void Ray";
         public override string BaseTower=>"DartMonkey";
-        public override int Cost=>1900;
+        public override int Cost=>1850;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
@@ -22,8 +22,8 @@
             VoidRay.areaTypes[2]=AreaType.ice;
             VoidRay.areaTypes[3]=AreaType.water;
             var Beam=VoidRay.GetAttackModel();
-            Beam.weapons[0]=Game.instance.model.GetTowerFromId("Adora 10").behaviors.First(a=>a.name.Contains("Ball")).Cast<AbilityModel>().GetBehavior<AbilityCreateTowerModel>().
-                towerModel.GetAttackModel().weapons[0].Duplicate();
+            Beam.weapons[0]=Game.instance.model.GetTowerFromId("Adora 10").behaviors.First(a=>a.name.Contains("Ball")).Cast<AbilityModel>().GetBehavior<AbilityCreateTowerModel>().towerModel.
+                GetAttackModel().weapons[0].Duplicate();
             Beam.range=VoidRay.range;
             Beam.weapons[0].projectile.GetDamageModel().damage=1;
             Beam.weapons[0].projectile.pierce=1;
@@ -38,10 +38,9 @@
             SetUpgradeSounds(VoidRay,"VoidRayUpgrade");
         }
         public class PrismaticAlignment:ModUpgrade<VoidRay>{
-            public override string Name=>"PrismaticAlignment";
             public override string DisplayName=>"Prismatic Alignment";
             public override string Description=>"Training a better void lens adds more damage";
-            public override int Cost=>750;
+            public override int Cost=>970;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel VoidRay){
@@ -51,10 +50,9 @@
             }
         }
         public class FluxVanes:ModUpgrade<VoidRay>{
-            public override string Name=>"FluxVanes";
             public override string DisplayName=>"Flux Vanes";
             public override string Description=>"Better flux vanes allow for a faster attack";
-            public override int Cost=>750;
+            public override int Cost=>1475;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel VoidRay){
@@ -64,10 +62,9 @@
             }
         }
         public class PrismaticRange:ModUpgrade<VoidRay>{
-            public override string Name=>"PrismaticRange";
             public override string DisplayName=>"Prismatic Range";
             public override string Description=>"Refining the prismatic core even more lets it fire further";
-            public override int Cost=>750;
+            public override int Cost=>2450;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel VoidRay){
@@ -79,11 +76,10 @@
         }
         //i tried for 2 and a half days to get the beam to bounce, it didn't wanna fucking bounce at all
         public class Destroyer:ModUpgrade<VoidRay>{
-            public override string Name=>"Destroyer";
             public override string DisplayName=>"Destroyer";
-            public override string Description=>"Stolen Void Rays that have had their prismatic cores replaced with bloodshard crystals. Beam sometimes explodes"+
-                " upon hitting a target sending seeking shards everywhere";
-            public override int Cost=>750;
+            public override string Description=>"Stolen Void Rays that have had their prismatic cores replaced with bloodshard crystals. Beam sometimes explodes upon hitting a target sending "+
+                "seeking shards everywhere";
+            public override int Cost=>7600;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel VoidRay){
@@ -104,7 +100,6 @@
             }
         }
         public class Mohandar:ModUpgrade<VoidRay>{
-            public override string Name=>"Mohandar";
             public override string DisplayName=>"Mohandar";
             public override string Description=>"\"We linger in twilight\"";
             public override int Cost=>750;
@@ -117,7 +112,7 @@
                 VoidRay.RemoveBehavior(VoidRay.GetBehaviors<AttackModel>().First(a=>a.name.Equals("Shards")));
                 VoidRay.range=85;
                 var Beam=VoidRay.GetAttackModel();
-                Beam.weapons[0].projectile.GetDamageModel().damage=4;
+                Beam.weapons[0].projectile.GetDamageModel().damage+=4;
                 Beam.range=VoidRay.range;
             }
         }
