@@ -33,9 +33,6 @@ global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Api.ModOptions;
 global using UnhollowerBaseLib;
-global using Assets.Scripts.Simulation.Objects;
-global using System.Threading.Tasks;
-global using System.Threading;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -49,6 +46,7 @@ namespace SC2Expansion{
                 }
             }
         }
+        //i should really test if actually reads all of the soundmodel's here
         public static void SetUpgradeSounds(TowerModel towerModel,string soundToUse){
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound.assetId=soundToUse;
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound1.assetId=soundToUse;

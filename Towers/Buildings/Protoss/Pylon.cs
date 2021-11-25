@@ -38,7 +38,7 @@
         public class Stabilizers:ModUpgrade<Pylon>{
             public override string DisplayName=>"Stabilizers";
             public override string Description=>"Stablizing the power output boosts the speeds of nearby Protoss structures";
-            public override int Cost=>925;
+            public override int Cost=>1105;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Pylon){
@@ -51,7 +51,7 @@
         public class Overcharged:ModUpgrade<Pylon>{
             public override string DisplayName=>"Overcharged";
             public override string Description=>"Lacing small amounts of bloodshard crystals when forming allows for a fast attack";
-            public override int Cost=>1350;
+            public override int Cost=>2775;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel Pylon){
@@ -70,7 +70,7 @@
         public class VoidPylon:ModUpgrade<Pylon>{
             public override string DisplayName=>"Dark Pylon";
             public override string Description=>"Nerazim Pylons are capable of powering and cloaking large areas. Cloaked towers get boosts to pierce and attack speed";
-            public override int Cost=>7650;
+            public override int Cost=>8650;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel Pylon){

@@ -1,93 +1,64 @@
 ﻿namespace SC2Expansion.Towers{
     public class PhotonCannon:ModTower<ProtossSet>{
-        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.PhotonCannon);
-        public override string BaseTower=>"DartMonkey";
-        public override int Cost=>500;
+        public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.photoncannon);
+        public override string BaseTower=>"WizardMonkey";
+        public override int Cost=>600;
         public override int TopPathUpgrades=>4;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override bool DontAddToShop=>!ProtossEnabled;
         public override string Description=>"Primary Protoss defensive structure, requires power from a nearby Pylon";
         public override void ModifyBaseTowerModel(TowerModel PhotonCannon){
-            PhotonCannon.display="PhotonCannonPrefab";
+            PhotonCannon.display="PhotonCannonBasePrefab";
             PhotonCannon.portrait=new("PhotonCannonPortrait");
             PhotonCannon.icon=new("PhotonCannonIcon");
             PhotonCannon.emoteSpriteLarge=new("Protoss");
             PhotonCannon.range=50;
-            PhotonCannon.RemoveBehavior<AttackModel>();
-            PhotonCannon.AddBehavior(Game.instance.model.GetTowerFromId("SniperMonkey-050").GetBehavior<RateSupportModel>().Duplicate());
-            PhotonCannon.GetBehavior<RateSupportModel>().multiplier=0.0001f;
-            PhotonCannon.GetBehavior<RateSupportModel>().isGlobal=false;
-            PhotonCannon.GetBehavior<RateSupportModel>().showBuffIcon=false;
-            PhotonCannon.GetBehavior<RateSupportModel>().filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=new[]{"SC2Expansion-Gateway"};
-            PhotonCannon.GetBehavior<RateSupportModel>().name="RateSupportBuildings";
+            PhotonCannon.GetAttackModel().AddBehavior(PhotonCannon.GetBehavior<DisplayModel>().Duplicate());
+            PhotonCannon.GetAttackModel().GetBehavior<DisplayModel>().display="PhotonCannonCannonPrefab";
             PhotonCannon.GetBehavior<DisplayModel>().display=PhotonCannon.display;
             PhotonCannon.RemoveBehavior<RotateToTargetModel>();
         }
         public class EnhancedTargeting:ModUpgrade<PhotonCannon>{
-            public override string DisplayName=>"Refined Crystal";
-            public override string Description=>"Using a purer khaydarin crystal allows for a larger area to be powered";
+            public override string DisplayName=>"Enhanced Targeting";
+            public override string Description=>"Better targeting AI allows for a longer attack range";
             public override int Cost=>675;
             public override int Path=>TOP;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel PhotonCannon){
                 GetUpgradeModel().icon=new("PhotonCannonIcon");
                 PhotonCannon.range+=10;
+                PhotonCannon.GetAttackModel().range=PhotonCannon.range;
             }
         }
-        public class Stabilizers:ModUpgrade<PhotonCannon>{
-            
-            public override string DisplayName=>"Stabilizers";
-            public override string Description=>"Stablizing the power output boosts the speeds of nearby Protoss structures";
+        public class OptimizedOrdnance:ModUpgrade<PhotonCannon>{
+            public override string DisplayName=>"Optimized Ordnance";
+            public override string Description=>"";
             public override int Cost=>925;
             public override int Path=>TOP;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel PhotonCannon){
-                GetUpgradeModel().icon=new("PhotonCannonStableIcon");
-                PhotonCannon.portrait=new("PhotonCannonStablePortrait");
-                PhotonCannon.display="PhotonCannonStablePrefab";
-                PhotonCannon.GetBehavior<RateSupportModel>().multiplier=0.00008f;
+                GetUpgradeModel().icon=new("PhotonCannonIcon");
             }
         }
-        public class Overcharged:ModUpgrade<PhotonCannon>{
-            
-            public override string DisplayName=>"Overcharged";
-            public override string Description=>"Lacing small amounts of bloodshard crystals when forming allows for a fast attack";
+        public class KhaydarinMonolith:ModUpgrade<PhotonCannon>{
+            public override string DisplayName=>"Khaydarin Monolith";
+            public override string Description=>"Nerazim defensive structure, long range and extremely powerful attack but slow to fire";
             public override int Cost=>1350;
             public override int Path=>TOP;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel PhotonCannon){
-                GetUpgradeModel().icon=new("PhotonCannonChargedIcon");
-                PhotonCannon.portrait=new("PhotonCannonChargedPortrait");
-                PhotonCannon.display="PhotonCannonChargedPrefab";
-                PhotonCannon.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-100").GetAttackModel());
-                PhotonCannon.GetAttackModel().range=PhotonCannon.range;
-                PhotonCannon.GetAttackModel().weapons[0].rate=0.5f;
-                PhotonCannon.GetAttackModel().weapons[0].projectile.pierce=1;
-                PhotonCannon.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=1;
-                PhotonCannon.GetAttackModel().weapons[0].projectile.GetBehavior<TravelStraitModel>().speed*=1.6f;
-                PhotonCannon.GetAttackModel().GetBehavior<RotateToTargetModel>().rotateTower=false;
+                GetUpgradeModel().icon=new("PhotonCannonIcon");
             }
         }
-        public class VoidPhotonCannon:ModUpgrade<PhotonCannon>{
-            
-            public override string DisplayName=>"Dark PhotonCannon";
-            public override string Description=>"Nerazim PhotonCannons are capable of powering and cloaking large areas. Cloaked towers get boosts to pierce and attack speed";
+        public class TesseractMonolith:ModUpgrade<PhotonCannon>{
+            public override string DisplayName=>"Tesseract Monolith";
+            public override string Description=>"Khaydarin Monolith heavily modified with Xel'Naga technology, attacks now stun and slow targets";
             public override int Cost=>7650;
             public override int Path=>TOP;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel PhotonCannon){
-                GetUpgradeModel().icon=new("PhotonCannonVoidIcon");
-                PhotonCannon.portrait=new("PhotonCannonVoidPortrait");
-                PhotonCannon.display="PhotonCannonVoidPrefab";
-                PhotonCannon.range+=20;
-                PhotonCannon.GetAttackModel().range=PhotonCannon.range;
-                RateSupportModel CloakField=Game.instance.model.GetTowerFromId("SniperMonkey-050").GetBehavior<RateSupportModel>();
-                CloakField.multiplier=1.5f;
-                CloakField.name="CloakField";
-                CloakField.showBuffIcon=false;
-                CloakField.filters.First().Cast<FilterInBaseTowerIdModel>().baseIds=new[]{"SC2Expansion-HighTemplar","SC2Expansion-VoidRay","SC2Expansion-Archon"};
-                PhotonCannon.AddBehavior(CloakField);
+                GetUpgradeModel().icon=new("PhotonCannonIcon");
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]

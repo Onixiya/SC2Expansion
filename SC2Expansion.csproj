@@ -137,6 +137,7 @@
     <Compile Include="Towers\Buildings\Zerg\Hatchery.cs" />
     <Compile Include="Towers\Buildings\Zerg\SpawningPool.cs" />
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
+    <None Include="Assets\photoncannon.bundle" />
     <None Include="Assets\pylon.bundle" />
     <None Include="SC2ExpansionAssets.unitypackage" />
     <None Include="Towers\Heroes\Artanis.cs" />
