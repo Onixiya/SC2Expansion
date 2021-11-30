@@ -1,18 +1,10 @@
 ﻿//saves so much space with global using, no need to put separate usings in each file, just put them all in the main one
-global using System;
 global using Assets.Scripts.Models;
 global using Assets.Scripts.Models.Towers;
-global using HarmonyLib;
-global using MelonLoader;
-global using System.Collections.Generic;
-global using UnityEngine;
-global using uImage=UnityEngine.UI.Image;
 global using Assets.Scripts.Models.GenericBehaviors;
 global using Assets.Scripts.Models.Map;
 global using Assets.Scripts.Unity.Display;
 global using Assets.Scripts.Utils;
-global using System.Linq;
-global using uObject=UnityEngine.Object;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack;
 global using Assets.Scripts.Models.Towers.Behaviors;
 global using Assets.Scripts.Models.Towers.Behaviors.Emissions;
@@ -22,17 +14,26 @@ global using Assets.Scripts.Models.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 global using Assets.Scripts.Simulation.Towers;
 global using Assets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
-global using static SC2Expansion.SC2Expansion;
 global using Assets.Scripts.Models.Towers.TowerFilters;
 global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Unity.Audio;
+global using Assets.Scripts.Simulation.Behaviors;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
 global using BTD_Mod_Helper.Api.ModOptions;
 global using UnhollowerBaseLib;
+global using static SC2Expansion.SC2Expansion;
+global using System.Linq;
+global using uObject=UnityEngine.Object;
+global using HarmonyLib;
+global using MelonLoader;
+global using System.Collections.Generic;
+global using UnityEngine;
+global using UnityEngine.UI;
+global using System;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
 namespace SC2Expansion{
@@ -58,7 +59,7 @@ namespace SC2Expansion{
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound7.assetId=soundToUse;
             towerModel.GetBehavior<CreateSoundOnUpgradeModel>().sound8.assetId=soundToUse;
         }
-        public static void LoadImage(AssetBundle assetBundle,string asset,uImage image){
+        public static void LoadImage(AssetBundle assetBundle,string asset,Image image){
             var text=assetBundle.LoadAsset(asset).Cast<Texture2D>();
             image.canvasRenderer.SetTexture(text);
             image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());

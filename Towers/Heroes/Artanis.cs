@@ -27,7 +27,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("Artanis")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -38,8 +38,8 @@
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 MelonLogger.Msg(__instance.attack.tower.towerModel.name);
-                if(__instance.attack.tower.towerModel.name.Contains("Artanis")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArtanisAttackClose");
+                if(__instance.attack.tower.towerModel.name.StartsWith("SC2Expansion-Artanis")){
+                    __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("ArtanisAttackClose");
                 }
             }
         }

@@ -143,7 +143,7 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterNeosteelFrameIcon");
-                var Ibiks=CommandCenter.behaviors.First(a=>a.name.Equals("Ibiks")).Cast<AttackModel>();
+                var Ibiks=CommandCenter.behaviors.First(a=>a.name=="Ibiks").Cast<AttackModel>();
                 Ibiks.weapons[0].projectile.GetDamageModel().damage=12;
                 Ibiks.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=12;
             }
@@ -196,7 +196,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("CommandCenter")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -206,7 +206,7 @@
         public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.attackModel.name.Contains("Ibiks")){
+                if(__instance.attack.attackModel.name=="Ibiks"){
                     __instance.attack.entity.GetDisplayNode().graphic.GetComponent<Animator>().Play("CommandCenterAttack");
                 }
             }

@@ -156,7 +156,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("UltraliskCavern")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }

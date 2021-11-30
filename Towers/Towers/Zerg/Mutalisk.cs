@@ -171,19 +171,21 @@
             public override int Path=>TOP;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel Mutalisk){
-                GetUpgradeModel().icon=new("MutaliskLeviathanIcon");
-                Mutalisk.portrait=new("MutaliskLeviathanPortrait");
-                Mutalisk.display="MutaliskLeviathanPrefab";
-                Mutalisk.behaviors=Mutalisk.behaviors.Remove(a=>a.name.Contains("Glaive"));
-                var Tentacle=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel();
-                var test=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Cast<AbilityModel>().
-                    behaviors.First(a=>a.name.Contains("Activate")).Clone().Cast<ActivateAttackModel>().attacks[0];
-                var Bile=Game.instance.model.towers.First(a=>a.name.Contains("SuperMonkey-100")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
-                Tentacle=test;
-                Tentacle.weapons[0].rate=0.01f;
-                
-                //Tentacle.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("Take"));
-                Mutalisk.behaviors=Mutalisk.behaviors.Add(Tentacle,new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+                if(UnfinishedWork==true){
+                    GetUpgradeModel().icon=new("MutaliskLeviathanIcon");
+                    Mutalisk.portrait=new("MutaliskLeviathanPortrait");
+                    Mutalisk.display="MutaliskLeviathanPrefab";
+                    Mutalisk.RemoveBehavior(Mutalisk.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Glaive")));
+                    var Tentacle=Game.instance.model.towers.First(a=>a.name.Contains("DartMonkey")).GetAttackModel();
+                    var test=Game.instance.model.towers.First(a=>a.name.Contains("MonkeyBuccaneer-040")).behaviors.First(a=>a.name.Contains("Take")).Cast<AbilityModel>().
+                        behaviors.First(a=>a.name.Contains("Activate")).Clone().Cast<ActivateAttackModel>().attacks[0];
+                    var Bile=Game.instance.model.towers.First(a=>a.name.Contains("SuperMonkey-100")).behaviors.First(a=>a.name.Contains("Attack")).Clone().Cast<AttackModel>();
+                    Tentacle=test;
+                    Tentacle.weapons[0].rate=0.01f;
+                    //Tentacle.weapons[0].projectile.behaviors.Remove(a=>a.name.Contains("Take"));
+                    Mutalisk.AddBehavior(Tentacle);
+                    Mutalisk.AddBehavior(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
+                }
             }
         }*/
         [HarmonyPatch(typeof(AudioFactory),"Start")]
@@ -242,7 +244,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("Mutalisk")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -252,8 +254,8 @@
         public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.tower.towerModel.name.Contains("Mutalisk")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("MutaliskAttack");
+                if(__instance.attack.tower.towerModel.name.StartsWith("SC2Expansion-Mutalisk")){
+                    __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("MutaliskAttack");
                 }
             }
         }

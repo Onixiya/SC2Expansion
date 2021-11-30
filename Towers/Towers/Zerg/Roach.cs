@@ -153,7 +153,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("Roach")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -163,12 +163,12 @@
         public class SpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.tower.towerModel.name.Contains("Roach")){
+                if(__instance.attack.tower.towerModel.name.StartsWith("SC2Expansion-Roach")){
                     if(__instance.attack.tower.towerModel.tier==5){
                         int RandNum=new System.Random().Next(1,3);
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("BrutaliskAttack"+RandNum);
+                        __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("BrutaliskAttack"+RandNum);
                     }else{
-                        __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("RoachAttack");
+                        __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("RoachAttack");
                     }
                 }
             }

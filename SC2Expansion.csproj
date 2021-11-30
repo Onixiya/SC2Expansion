@@ -139,6 +139,7 @@
     <Compile Include="Towers\Buildings\Zerg\UltraliskCavern.cs" />
     <None Include="Assets\photoncannon.bundle" />
     <None Include="Assets\pylon.bundle" />
+    <None Include="Assets\raven.bundle" />
     <None Include="SC2ExpansionAssets.unitypackage" />
     <None Include="Towers\Heroes\Artanis.cs" />
     <Compile Include="Towers\Towers\Protoss\Archon.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Terran\Battlecruiser.cs" />
     <Compile Include="Towers\Towers\Terran\Marine.cs" />
+    <Compile Include="Towers\Towers\Terran\Raven.cs" />
     <Compile Include="Towers\Towers\Terran\Viking.cs" />
     <Compile Include="Towers\Towers\Zerg\Hydralisk.cs" />
     <Compile Include="Towers\Towers\Zerg\Mutalisk.cs" />

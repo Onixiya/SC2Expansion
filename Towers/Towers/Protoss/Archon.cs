@@ -186,7 +186,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("Archon")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -197,7 +197,7 @@
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
                 if(__instance.attack.tower.namedMonkeyKey.Contains("Archon")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("ArchonAttack");
+                    __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("ArchonAttack");
                     if(__instance.attack.attackModel.name.Contains("MindControl")){
                         var MindControlProj=__instance.newProjectiles2.First().projectileModel.GetBehavior<CreateProjectileOnContactModel>().projectile;
                         MindControlProj.display=__instance.attack.target.bloon.display.displayModel.display;

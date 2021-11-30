@@ -198,7 +198,7 @@
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
         public class ResourceLoaderLoadSpriteFromSpriteReferenceAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(SpriteReference reference,ref uImage image){
+            public static void Postfix(SpriteReference reference,ref Image image){
                 if(reference!=null&&reference.guidRef.StartsWith("Viking")){
                     LoadImage(TowerAssets,reference.guidRef,image);
                 }
@@ -208,8 +208,8 @@
         public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.tower.towerModel.name.Contains("Viking")){
-                    __instance.attack.tower.Node.graphic.GetComponentInParent<Animator>().Play("VikingGroundAttack");
+                if(__instance.attack.tower.towerModel.name.StartsWith("SC2Expansion-Viking")){
+                    __instance.attack.tower.Node.graphic.GetComponent<Animator>().Play("VikingGroundAttack");
                 }
             }
         }
