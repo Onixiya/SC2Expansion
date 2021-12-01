@@ -19,7 +19,6 @@ global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Unity.Audio;
-global using Assets.Scripts.Simulation.Behaviors;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
@@ -35,7 +34,7 @@ global using UnityEngine;
 global using UnityEngine.UI;
 global using System;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5","Silentstorm#5336")]
+[assembly:MelonInfo(typeof(SC2Expansion.SC2Expansion),"SC2Expansion","1.5.1","Silentstorm#5336")]
 namespace SC2Expansion{
     public class SC2Expansion:BloonsTD6Mod{
         [HarmonyPatch(typeof(GameModelLoader),"Load")]

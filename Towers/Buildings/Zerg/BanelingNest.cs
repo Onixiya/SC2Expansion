@@ -1,7 +1,7 @@
 ﻿namespace SC2Expansion.Towers{
     public class BanelingNest:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.banelingnest);
-        public override string BaseTower=>"WizardMonkey-005";
+        public override string BaseTower=>"DartMonkey";
         public override int Cost=>575;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
@@ -13,23 +13,21 @@
             BanelingNest.portrait=new("BanelingNestIcon");
             BanelingNest.icon=new("BanelingNestIcon");
             BanelingNest.emoteSpriteLarge=new("Zerg");
-            BanelingNest.radius=20;
+            BanelingNest.radius=12;
             BanelingNest.range=15;
-            BanelingNest.RemoveBehavior(BanelingNest.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
-            BanelingNest.RemoveBehavior(BanelingNest.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
-            BanelingNest.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
+            BanelingNest.RemoveBehavior(BanelingNest.GetAttackModel());
+            BanelingNest.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehavior<NecromancerZoneModel>().Duplicate());
+            BanelingNest.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehaviors<AttackModel>().First(a=>a.name=="AttackModel_Attack Necromancer_").Duplicate());
             var SpawnBaneling=BanelingNest.GetAttackModel();
-            SpawnBaneling.weapons[1].projectile.display="BanelingNestBanelingPrefab";
-            SpawnBaneling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
-            SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=1;
-            SpawnBaneling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
-            SpawnBaneling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-            SpawnBaneling.weapons[1].projectile.GetDamageModel().damage=3;
-            SpawnBaneling.weapons[1].projectile.radius=4;
-            SpawnBaneling.weapons[1].projectile.pierce=1;
-            SpawnBaneling.weapons[1].rate=17000;
-            SpawnBaneling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnBaneling.weapons[1].projectile;
-            SpawnBaneling.range=BanelingNest.range;
+            SpawnBaneling.weapons[0].projectile.display="BanelingNestBanelingPrefab";
+            SpawnBaneling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=1;
+            SpawnBaneling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+            SpawnBaneling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+            SpawnBaneling.weapons[0].projectile.GetDamageModel().damage=3;
+            SpawnBaneling.weapons[0].projectile.radius=4;
+            SpawnBaneling.weapons[0].projectile.pierce=1;
+            SpawnBaneling.weapons[0].rate=17000;
+            SpawnBaneling.range=999;
             BanelingNest.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             BanelingNest.GetBehavior<DisplayModel>().display=BanelingNest.display;
         }
@@ -87,7 +85,7 @@
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestRateIncreaseIcon");
                 var SpawnBanelings=BanelingNest.GetAttackModel();
-                SpawnBanelings.weapons[0].rate=11500f;
+                SpawnBanelings.weapons[0].rate=11500;
                 SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=9;
             }
         }
@@ -100,10 +98,10 @@
             public override void ApplyUpgrade(TowerModel BanelingNest){
                 GetUpgradeModel().icon=new("BanelingNestKaboomerIcon");
                 var SpawnBanelings=BanelingNest.GetAttackModel();
-                SpawnBanelings.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.5f;
-                SpawnBanelings.weapons[1].rate=32500f;
-                SpawnBanelings.weapons[1].projectile.GetDamageModel().damage=100;
-                SpawnBanelings.weapons[1].projectile.display="BanelingNestKaboomerPrefab";
+                SpawnBanelings.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.5f;
+                SpawnBanelings.weapons[0].rate=32500;
+                SpawnBanelings.weapons[0].projectile.GetDamageModel().damage=100;
+                SpawnBanelings.weapons[0].projectile.display="BanelingNestKaboomerPrefab";
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]

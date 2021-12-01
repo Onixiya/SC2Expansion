@@ -1,7 +1,7 @@
 ﻿namespace SC2Expansion.Towers{
     public class SpawningPool:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.spawningpool);
-        public override string BaseTower=>"WizardMonkey-005";
+        public override string BaseTower=>"DartMonkey";
         public override int Cost=>620;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>0;
@@ -13,23 +13,21 @@
             SpawningPool.portrait=new("SpawningPoolPortrait");
             SpawningPool.icon=new("SpawningPoolIcon");
             SpawningPool.emoteSpriteLarge=new("Zerg");
-            SpawningPool.radius=20;
+            SpawningPool.radius=15;
             SpawningPool.range=15;
-            SpawningPool.RemoveBehavior(SpawningPool.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Shimmer")));
-            SpawningPool.RemoveBehavior(SpawningPool.GetBehaviors<AttackModel>().First(a=>a.name.Equals("AttackModel_Attack_")));
-            SpawningPool.RemoveBehavior<PrinceOfDarknessZombieBuffModel>();
+            SpawningPool.RemoveBehavior(SpawningPool.GetAttackModel());
+            SpawningPool.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehavior<NecromancerZoneModel>().Duplicate());
+            SpawningPool.AddBehavior(Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehaviors<AttackModel>().First(a=>a.name=="AttackModel_Attack Necromancer_").Duplicate());
             var SpawnZergling=SpawningPool.GetAttackModel();
-            SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingPrefab";
-            SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
-            SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=7;
-            SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnZergling.weapons[1].projectile;
-            SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
-            SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-            SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.35f;
-            SpawnZergling.weapons[1].projectile.GetDamageModel().damage=1;
-            SpawnZergling.weapons[1].projectile.radius=4;
-            SpawnZergling.weapons[1].projectile.pierce=7;
-            SpawnZergling.weapons[1].rate=15000;
+            SpawnZergling.weapons[0].projectile.display="SpawningPoolZerglingPrefab";
+            SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=20;
+            SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+            SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+            SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.35f;
+            SpawnZergling.weapons[0].projectile.GetDamageModel().damage=1;
+            SpawnZergling.weapons[0].projectile.radius=4;
+            SpawnZergling.weapons[0].projectile.pierce=7;
+            SpawnZergling.weapons[0].rate=15000;
             SpawnZergling.range=SpawningPool.range;
             SpawningPool.GetBehavior<NecromancerZoneModel>().attackUsedForRangeModel.range=999;
             SpawningPool.GetBehavior<DisplayModel>().display=SpawningPool.display;
@@ -43,8 +41,8 @@
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolHardendCarapaceIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
-                SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=13;
-                SpawnZergling.weapons[1].projectile.pierce=13;
+                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon*=2;
+                SpawnZergling.weapons[0].projectile.pierce=13;
             }
         }
         public class MetabolicBoost:ModUpgrade<SpawningPool>{
@@ -56,8 +54,8 @@
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolMetabolicBoostIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
-                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
-                SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingWingPrefab";
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
+                SpawnZergling.weapons[0].projectile.display="SpawningPoolZerglingWingPrefab";
             }
         }
         public class AdrenalGlands:ModUpgrade<SpawningPool>{
@@ -69,8 +67,8 @@
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolAdrenalGlandsIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
-                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.2f;
-                SpawnZergling.weapons[1].projectile.GetDamageModel().damage=3;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.2f;
+                SpawnZergling.weapons[0].projectile.GetDamageModel().damage=3;
             }
         }
         public class Primal:ModUpgrade<SpawningPool>{
@@ -81,7 +79,7 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolPrimalIcon");
-                SpawningPool.GetAttackModel().weapons[1].projectile.display="SpawningPoolPrimalPrefab";
+                SpawningPool.GetAttackModel().weapons[0].projectile.display="SpawningPoolPrimalPrefab";
             }
         }
         public class Swarmling:ModUpgrade<SpawningPool>{
@@ -93,9 +91,8 @@
             public override void ApplyUpgrade(TowerModel SpawningPool){
                 GetUpgradeModel().icon=new("SpawningPoolSwarmlingIcon");
                 var SpawnZergling=SpawningPool.GetAttackModel();
-                SpawnZergling=SpawningPool.GetAttackModel();
                 SpawnZergling.weapons[0].projectile.GetDamageModel().damage+=2;
-                SpawnZergling.weapons[0].rate=6500f;
+                SpawnZergling.weapons[0].rate=3500f;
                 SpawnZergling.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
             }
         }
@@ -107,13 +104,13 @@
                     int RandNum=new System.Random().Next(1,4);
                     switch(RandNum){
                         case 1:
-                            def.GetAttackModel().weapons[1].projectile.pierce+=4;
+                            def.GetAttackModel().weapons[0].projectile.pierce+=4;
                             break;
                         case 2:
-                            def.GetAttackModel().weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
+                            def.GetAttackModel().weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames+=0.15f;
                             break;
                         case 3:
-                            def.GetAttackModel().weapons[1].projectile.GetDamageModel().damage+=2;
+                            def.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
                             break;
                     }
                 }

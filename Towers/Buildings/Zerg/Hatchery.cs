@@ -1,4 +1,8 @@
-﻿namespace SC2Expansion.Towers{
+﻿using Assets.Scripts.Models.Towers.Projectiles;
+using Assets.Scripts.Models.Towers.Weapons;
+using Assets.Scripts.Simulation.Towers.Emissions;
+using Assets.Scripts.Simulation.Towers.Projectiles;
+namespace SC2Expansion.Towers{
     public class Hatchery:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
@@ -29,7 +33,7 @@
             CreepBuff.multiplier=0.0001f;
             CreepBuff.isGlobal=false;
             CreepBuff.buffIconName=null;
-            CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=new string[4]{"SC2Expansion-SpawningPool","SC2Expansion-UltraliskCavern","SC2Expansion-BanelingNest","SC2Expansion-Queen"};
+            CreepBuff.filters[0].Cast<FilterInBaseTowerIdModel>().baseIds=new string[]{"SC2Expansion-SpawningPool","SC2Expansion-UltraliskCavern","SC2Expansion-SpawningPool","SC2Expansion-Queen"};
             Hatchery.AddBehavior(CreepBuff);
         }
         public class Drones:ModUpgrade<Hatchery>{
@@ -67,21 +71,20 @@
                 Hatchery.display="HatcheryLairPrefab";
                 Hatchery.portrait=new("HatcheryLairPortrait");
                 Hatchery.range=75;
-                var SpawnZergling=Game.instance.model.GetTowerFromId("WizardMonkey-005").behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>().Duplicate();
-                var NecZone=Game.instance.model.GetTowerFromId("WizardMonkey-005").GetBehavior<NecromancerZoneModel>().Duplicate();
+                var SpawnZergling=Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehaviors<AttackModel>().First(a=>a.name=="AttackModel_Attack Necromancer_").Duplicate();
+                var NecZone=Game.instance.model.GetTowerFromId("WizardMonkey-004").GetBehavior<NecromancerZoneModel>().Duplicate();
                 var Income=Hatchery.GetAttackModel();
-                SpawnZergling.weapons[1].projectile.display="SpawningPoolZerglingWingPrefab";
-                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=0;
-                SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=13;
-                SpawnZergling.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnZergling.weapons[1].projectile;
-                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
-                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-                SpawnZergling.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
-                SpawnZergling.weapons[1].projectile.GetDamageModel().damage=1;
-                SpawnZergling.weapons[1].projectile.radius=4;
+                SpawnZergling.weapons[0].projectile.display="SpawningPoolZerglingWingPrefab";
+                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=30;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1;
+                SpawnZergling.weapons[0].projectile.GetDamageModel().damage=1;
+                SpawnZergling.weapons[0].projectile.radius=4;
                 SpawnZergling.name="SpawnZergling";
-                SpawnZergling.weapons[1].projectile.pierce=13;
-                SpawnZergling.weapons[1].rate=1.5f;
+                SpawnZergling.weapons[0].projectile.pierce=13;
+                SpawnZergling.weapons[0].rate=1.5f;
+                SpawnZergling.range=999;
                 NecZone.attackUsedForRangeModel.range=999;
                 Hatchery.AddBehavior(SpawnZergling);
                 Hatchery.AddBehavior(NecZone);
@@ -123,7 +126,7 @@
                 NydusWorm.AddBehavior(Hatchery.GetBehavior<NecromancerZoneModel>().Duplicate());
                 NydusWorm.AddBehavior(Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Duplicate());
                 NydusWorm.AddBehavior(SpawnHydralisk);
-                NydusWorm.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[1].rate=0.65f;
+                NydusWorm.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[0].rate=0.65f;
                 SpawnHydralisk.name="SpawnHydralisk";
                 SpawnHydralisk.weapons[0].rate=5;
                 SpawnHydralisk.range=40;
@@ -162,7 +165,8 @@
                 NydusWorm.RemoveBehavior(NydusWorm.GetBehaviors<AttackModel>().First(a=>a.name.Contains("Zergling")));
                 NydusWorm.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Duplicate());
                 var SpawnZerglingNydus=NydusWorm.behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>();
-                var SpawnZerglingUltralisk=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>();
+                var SpawnZergling=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>();
+                UltraliskWeapon.projectile=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[0].projectile.Duplicate();
                 var GasCloud=Game.instance.model.GetTowerFromId("EngineerMonkey-030").behaviors.First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>().weapons[0].projectile.
                     GetBehavior<CreateProjectileOnExhaustFractionModel>().Duplicate();
                 var Income=Hatchery.behaviors.First(a=>a.name.Equals("Income")).Cast<AttackModel>();
@@ -184,33 +188,30 @@
                 SpawnZerglingNydus.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=9999;
                 SpawnZerglingNydus.weapons[0].projectile.GetDamageModel().damage=6;
                 SpawnZerglingNydus.weapons[0].projectile.display="SpawningPoolSwarmlingPrefab";
-                SpawnZerglingUltralisk.name="SpawnZerglingUltralisk";
-                SpawnZerglingUltralisk.weapons[0].projectile.display="SpawningPoolZerglingWingPrefab";
-                SpawnZerglingUltralisk.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=30;
-                SpawnZerglingUltralisk.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
-                SpawnZerglingUltralisk.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-                SpawnZerglingUltralisk.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.2f;
-                SpawnZerglingUltralisk.weapons[0].projectile.GetDamageModel().damage=3;
-                SpawnZerglingUltralisk.weapons[0].projectile.radius=4;
-                SpawnZerglingUltralisk.weapons[0].projectile.pierce=13;
-                SpawnZerglingUltralisk.weapons[0].rate=1.3f;
-                SpawnZerglingUltralisk.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=200;
-                SpawnZerglingUltralisk.weapons[1].projectile.display="UltraliskCavernNoxiousPrefab";
-                SpawnZerglingUltralisk.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().minPiercePerBloon=25;
-                SpawnZerglingUltralisk.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
-                SpawnZerglingUltralisk.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.6f;
-                SpawnZerglingUltralisk.weapons[1].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
-                SpawnZerglingUltralisk.weapons[1].projectile.GetDamageModel().damage=6;
-                SpawnZerglingUltralisk.weapons[1].projectile.radius=7;
-                SpawnZerglingUltralisk.weapons[1].projectile.pierce=25;
-                SpawnZerglingUltralisk.weapons[1].rate=5;
-                SpawnZerglingUltralisk.weapons[1].emission.Cast<PrinceOfDarknessEmissionModel>().alternateProjectile=SpawnZerglingUltralisk.weapons[1].projectile;
+                SpawnZergling.weapons[0].projectile.display="SpawningPoolZerglingWingPrefab";
+                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxPiercePerBloon=30;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+                SpawnZergling.weapons[0].projectile.GetBehavior<TravelAlongPathModel>().speedFrames=1.2f;
+                SpawnZergling.weapons[0].projectile.GetDamageModel().damage=3;
+                SpawnZergling.weapons[0].projectile.radius=4;
+                SpawnZergling.weapons[0].projectile.pierce=13;
+                SpawnZergling.weapons[0].rate=1.3f;
+                SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=200;
+                ZerglingWeapon=SpawnZergling.weapons[0].Duplicate();
+                UltraliskWeapon.projectile.display="UltraliskCavernNoxiousPrefab";
+                UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
+                UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.6f;
+                UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
+                UltraliskWeapon.projectile.GetDamageModel().damage=6;
+                UltraliskWeapon.projectile.radius=7;
+                UltraliskWeapon.projectile.pierce=25;
                 GasCloud.projectile.RemoveBehavior<RemoveBloonModifiersModel>();
                 GasCloud.projectile.display="GasPrefab";
                 GasCloud.projectile.AddBehavior(new DamageModel("DamageModel",1,1,false,false,true,0));
                 GasCloud.projectile.pierce=9999;
                 GasCloud.projectile.GetBehavior<AgeModel>().lifespan=6;
-                SpawnZerglingUltralisk.weapons[1].projectile.AddBehavior(GasCloud);
+                UltraliskWeapon.projectile.AddBehavior(GasCloud);
                 Income.weapons[0].projectile.GetBehavior<CashModel>().maximum=1000;
                 Income.weapons[0].projectile.GetBehavior<CashModel>().minimum=1000;
                 Hatchery.display="HatcheryHivePrefab";
@@ -221,7 +222,26 @@
                 Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().damage=1;
                 Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
             }
+            public static WeaponModel UltraliskWeapon=Game.instance.model.towers.First().GetAttackModel().weapons[0].Duplicate();
+            public static WeaponModel ZerglingWeapon=Game.instance.model.towers.First().GetAttackModel().weapons[0].Duplicate();
         }
+        /*[HarmonyPatch(typeof(NecromancerEmission),nameof(NecromancerEmission.BaseEmit))]
+        public class test{
+            [HarmonyPrefix]
+            public static void Prefix(){
+                MelonLogger.Msg("test");
+                /*if(__instance.Weapon.attack.tower.towerModel.name.StartsWith("SC2Expansion-Hatchery")){
+                    /*if(new System.Random().Next(1,5)<3){
+                        __instance.newProjectiles2.First().projectileModel=Hive.UltraliskWeapon.projectile;
+                        MelonLogger.Msg("ultralisk");
+                    }else{
+                        __instance.newProjectiles2.First().projectileModel=Hive.ZerglingWeapon.projectile;
+                        MelonLogger.Msg("zergling");
+                    }
+                    MelonLogger.Msg("test");
+                }
+            }
+        }*/
         [HarmonyPatch(typeof(AudioFactory),"Start")]
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
