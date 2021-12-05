@@ -1,8 +1,4 @@
-﻿using Assets.Scripts.Models.Towers.Projectiles;
-using Assets.Scripts.Models.Towers.Weapons;
-using Assets.Scripts.Simulation.Towers.Emissions;
-using Assets.Scripts.Simulation.Towers.Projectiles;
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class Hatchery:ModTower<ZergSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.hatchery);
         public override string DisplayName=>"Hatchery";
@@ -166,7 +162,7 @@ namespace SC2Expansion.Towers{
                 NydusWorm.AddBehavior(Game.instance.model.towers.First(a=>a.name.Contains("WizardMonkey-004")).behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Duplicate());
                 var SpawnZerglingNydus=NydusWorm.behaviors.First(a=>a.name.Equals("AttackModel_Attack Necromancer_")).Cast<AttackModel>();
                 var SpawnZergling=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>();
-                UltraliskWeapon.projectile=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[0].projectile.Duplicate();
+                //UltraliskWeapon.projectile=Hatchery.behaviors.First(a=>a.name.Contains("Zergling")).Cast<AttackModel>().weapons[0].projectile.Duplicate();
                 var GasCloud=Game.instance.model.GetTowerFromId("EngineerMonkey-030").behaviors.First(a=>a.name.Contains("CleansingFoam")).Cast<AttackModel>().weapons[0].projectile.
                     GetBehavior<CreateProjectileOnExhaustFractionModel>().Duplicate();
                 var Income=Hatchery.behaviors.First(a=>a.name.Equals("Income")).Cast<AttackModel>();
@@ -198,8 +194,7 @@ namespace SC2Expansion.Towers{
                 SpawnZergling.weapons[0].projectile.pierce=13;
                 SpawnZergling.weapons[0].rate=1.3f;
                 SpawnZergling.weapons[0].emission.Cast<NecromancerEmissionModel>().maxRbeSpawnedPerSecond=200;
-                ZerglingWeapon=SpawnZergling.weapons[0].Duplicate();
-                UltraliskWeapon.projectile.display="UltraliskCavernNoxiousPrefab";
+                /*UltraliskWeapon.projectile.display="UltraliskCavernNoxiousPrefab";
                 UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().lifespanFrames=99999;
                 UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().speedFrames=0.6f;
                 UltraliskWeapon.projectile.GetBehavior<TravelAlongPathModel>().disableRotateWithPathDirection=false;
@@ -211,7 +206,7 @@ namespace SC2Expansion.Towers{
                 GasCloud.projectile.AddBehavior(new DamageModel("DamageModel",1,1,false,false,true,0));
                 GasCloud.projectile.pierce=9999;
                 GasCloud.projectile.GetBehavior<AgeModel>().lifespan=6;
-                UltraliskWeapon.projectile.AddBehavior(GasCloud);
+                UltraliskWeapon.projectile.AddBehavior(GasCloud);*/
                 Income.weapons[0].projectile.GetBehavior<CashModel>().maximum=1000;
                 Income.weapons[0].projectile.GetBehavior<CashModel>().minimum=1000;
                 Hatchery.display="HatcheryHivePrefab";
@@ -222,8 +217,6 @@ namespace SC2Expansion.Towers{
                 Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().damage=1;
                 Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)17;
             }
-            public static WeaponModel UltraliskWeapon=Game.instance.model.towers.First().GetAttackModel().weapons[0].Duplicate();
-            public static WeaponModel ZerglingWeapon=Game.instance.model.towers.First().GetAttackModel().weapons[0].Duplicate();
         }
         /*[HarmonyPatch(typeof(NecromancerEmission),nameof(NecromancerEmission.BaseEmit))]
         public class test{
@@ -271,15 +264,7 @@ namespace SC2Expansion.Towers{
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Hatchery")){
-                    LoadModel(TowerAssets,objectId,__instance,onComplete);
-                    return false;
-                }
-                if(DisplayDict.ContainsKey(objectId)){
-                    onComplete.Invoke(DisplayDict[objectId]);
-                    return false;
-                }
-                return true;
+                return LoadModel(TowerAssets,objectId,"Hatchery",__instance,onComplete);
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]

@@ -19,6 +19,9 @@ global using Assets.Scripts.Simulation.Towers.Weapons;
 global using Assets.Scripts.Models.Towers.Filters;
 global using Assets.Scripts.Simulation.Towers.Behaviors.Abilities;
 global using Assets.Scripts.Unity.Audio;
+global using Assets.Scripts.Models.Bloons.Behaviors;
+global using Assets.Scripts.Simulation;
+global using Assets.Scripts.Simulation.Towers.Behaviors;
 global using BTD_Mod_Helper;
 global using BTD_Mod_Helper.Extensions;
 global using BTD_Mod_Helper.Api.Towers;
@@ -63,13 +66,23 @@ namespace SC2Expansion{
             image.canvasRenderer.SetTexture(text);
             image.sprite=Sprite.Create(text,new(0,0,text.width,text.height),new());
         }
-        public static void LoadModel(AssetBundle assetBundle,string asset,Factory factory,Il2CppSystem.Action<UnityDisplayNode>action){
-            var udn=uObject.Instantiate(assetBundle.LoadAsset(asset).Cast<GameObject>(),factory.PrototypeRoot).AddComponent<UnityDisplayNode>();
-            udn.transform.position=new(-30000,-30000);
-            udn.name=asset;
-            udn.isSprite=false;
-            action.Invoke(udn);
-            DisplayDict.Add(asset,udn);
+        public static bool LoadModel(AssetBundle assetBundle,string asset,string check,Factory factory,Il2CppSystem.Action<UnityDisplayNode>DisplayAction){
+            if(asset.StartsWith(check)){
+                if(!DisplayDict.ContainsKey(asset)){
+                    var udn=uObject.Instantiate(assetBundle.LoadAsset(asset).Cast<GameObject>(),factory.PrototypeRoot).AddComponent<UnityDisplayNode>();
+                    udn.transform.position=new(-30000,-30000);
+                    udn.name=asset;
+                    udn.isSprite=false;
+                    DisplayAction.Invoke(udn);
+                    DisplayDict.Add(asset,udn);
+                    return false;
+                }
+                if(DisplayDict.ContainsKey(asset)){
+                    DisplayAction.Invoke(DisplayDict[asset]);
+                    return false;
+                }
+            }
+            return true;
         }
         public override void OnUpdate(){
             if(DisplayDict.Count!=0){

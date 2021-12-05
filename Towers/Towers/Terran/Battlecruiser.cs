@@ -27,7 +27,8 @@
             Fire.name="BattlecruiserFire";
             Fire.range=Battlecruiser.range;
             Fire.weapons[0].ejectZ=10;
-            Fire.weapons[0].projectile.GetDamageModel().damage=1;
+            Fire.weapons[0].projectile.GetDamageModel().damage=2;
+            Fire.weapons[0].projectile.GetDamageModel().immuneBloonProperties=(BloonProperties)9;
             Battlecruiser.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1.assetId="BattlecruiserBirth";
             Battlecruiser.GetBehavior<CreateSoundOnTowerPlaceModel>().sound2=Battlecruiser.GetBehavior<CreateSoundOnTowerPlaceModel>().sound1;
             SetUpgradeSounds(Battlecruiser,"BattlecruiserUpgrade");
@@ -109,7 +110,7 @@
             public override void ApplyUpgrade(TowerModel Battlecruiser){
                 GetUpgradeModel().icon=new("BattlecruiserPOAIcon");
                 Battlecruiser.display="BattlecruiserPOAPrefab";
-                Battlecruiser.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=2;
+                Battlecruiser.GetAttackModel().weapons[0].projectile.GetDamageModel().damage+=3;
                 Battlecruiser.GetBehavior<DisplayModel>().display=Battlecruiser.display;
                 Battlecruiser.AddBehavior(new OverrideCamoDetectionModel("OverrideCamoDetectionModel_",true));
                 Battlecruiser.behaviors.First(a=>a.name.Equals("TacJump")).Cast<AbilityModel>().cooldown=40;
@@ -131,11 +132,11 @@
                 Battlecruiser.portrait=new("BattlecruiserHyperionPortrait");
                 Battlecruiser.range+=30;
                 Fire.weapons[0].rate-=0.03f;
-                Fire.weapons[0].projectile.GetDamageModel().damage+=3;
+                Fire.weapons[0].projectile.GetDamageModel().damage+=5;
                 Fire.range=Battlecruiser.range;
                 Yamato.range=Battlecruiser.range;
                 Yamato.weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().projectile.GetDamageModel().damage=150;
-                Yamato.weapons[0].rate=2.25f;
+                Yamato.weapons[0].rate=2.15f;
                 TacJump.cooldown=20;
                 Battlecruiser.GetBehavior<DisplayModel>().display=Battlecruiser.display;
             }
@@ -170,15 +171,7 @@
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Battlecruiser")){
-                    LoadModel(TowerAssets,objectId,__instance,onComplete);
-                    return false;
-                }
-                if(DisplayDict.ContainsKey(objectId)){
-                    onComplete.Invoke(DisplayDict[objectId]);
-                    return false;
-                }
-                return true;
+                return LoadModel(TowerAssets,objectId,"Battlecruiser",__instance,onComplete);
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]

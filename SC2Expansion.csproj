@@ -1999,6 +1999,7 @@
     <None Include="TowerJSON\WizardMonkey\WizardMonkey.json" />
     <None Include="Towers\Heroes\Artanis.cs" />
     <Compile Include="Towers\Towers\Protoss\Archon.cs" />
+    <None Include="Towers\Towers\Protoss\Carrier.csp" />
     <Compile Include="Towers\Towers\Protoss\HighTemplar.cs" />
     <Compile Include="Towers\Towers\Protoss\VoidRay.cs" />
     <Compile Include="Towers\Towers\Terran\Battlecruiser.cs" />

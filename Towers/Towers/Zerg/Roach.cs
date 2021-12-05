@@ -139,15 +139,7 @@
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Roach")){
-                    LoadModel(TowerAssets,objectId,__instance,onComplete);
-                    return false;
-                }
-                if(DisplayDict.ContainsKey(objectId)){
-                    onComplete.Invoke(DisplayDict[objectId]);
-                    return false;
-                }
-                return true;
+                return LoadModel(TowerAssets,objectId,"Roach",__instance,onComplete);
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]

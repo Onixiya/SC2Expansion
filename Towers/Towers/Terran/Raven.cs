@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Models.Bloons.Behaviors;
-
-namespace SC2Expansion.Towers{
+﻿namespace SC2Expansion.Towers{
     public class Raven:ModTower<TerranSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.raven);
         public override string DisplayName=>"Raven";
@@ -17,6 +15,11 @@ namespace SC2Expansion.Towers{
             Raven.icon=new("RavenIcon");
             Raven.radius=5;
             Raven.range=40;
+            Raven.areaTypes=new(4);
+            Raven.areaTypes[0]=AreaType.land;
+            Raven.areaTypes[1]=AreaType.track;
+            Raven.areaTypes[2]=AreaType.ice;
+            Raven.areaTypes[3]=AreaType.water;
             Raven.RemoveBehavior<AttackModel>();
             Raven.AddBehavior(Game.instance.model.GetTowerFromId("MonkeyVillage-020").GetBehavior<VisibilitySupportModel>().Duplicate());
             Raven.GetBehavior<DisplayModel>().display=Raven.display;
@@ -101,13 +104,13 @@ namespace SC2Expansion.Towers{
                 Raven.portrait=new("RavenScienceVesselPortrait");
                 Raven.GetBehavior<DisplayModel>().ignoreRotation=true;
                 Irradiate.name="Irradiate";
-                Irradiate.weapons[0].rate=1;
+                Irradiate.weapons[0].rate=0.45f;
                 Irradiate.weapons[0].projectile.display=null;
                 Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().lifespan=15;
-                Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().GetBehavior<DamageOverTimeModel>().Interval=1.3f;
-                Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().GetBehavior<DamageOverTimeModel>().damage=5;
+                Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().GetBehavior<DamageOverTimeModel>().Interval=1.1f;
+                Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().GetBehavior<DamageOverTimeModel>().damage=10;
                 Irradiate.weapons[0].projectile.GetBehavior<AddBehaviorToBloonModel>().GetBehavior<DamageOverTimeModel>().damageModifierModels.
-                    AddItem(new DamageModifierForTagModel("DamageModifierForTagModel","Moab",0.2f,0,false,true));
+                    AddItem(new DamageModifierForTagModel("DamageModifierForTagModel","Moab",0.5f,0,false,true));
                 foreach(var temp in Irradiate.weapons[0].projectile.GetBehavior<SlowModel>().Mutator.overlays){
                     temp.value.assetPath="UltraliskCavernGasPrefab";
                 }
@@ -132,15 +135,7 @@ namespace SC2Expansion.Towers{
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("Raven")){
-                    LoadModel(TowerAssets,objectId,__instance,onComplete);
-                    return false;
-                }
-                if(DisplayDict.ContainsKey(objectId)){
-                    onComplete.Invoke(DisplayDict[objectId]);
-                    return false;
-                }
-                return true;
+                return LoadModel(TowerAssets,objectId,"Raven",__instance,onComplete);
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]

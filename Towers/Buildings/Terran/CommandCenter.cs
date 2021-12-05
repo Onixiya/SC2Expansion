@@ -1,9 +1,11 @@
-﻿namespace SC2Expansion.Towers{
+﻿using Assets.Scripts.Unity.UI_New.InGame;
+
+namespace SC2Expansion.Towers{
     public class CommandCenter:ModTower<TerranSet>{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.commandcenter);
         public override string DisplayName=>"Command Center";
         public override string BaseTower=>"BananaFarm-003";
-        public override int Cost=>850;
+        public override int Cost=>10;//850;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>5;
         public override int BottomPathUpgrades=>0;
@@ -16,12 +18,12 @@
             CommandCenter.emoteSpriteLarge=new("Terran");
             CommandCenter.range=40;
             CommandCenter.footprint=Game.instance.model.GetTowerFromId("DartMonkey").footprint.Duplicate();
-            CommandCenter.radius=37.5f;
+            CommandCenter.radius=33.5f;
             var Income=CommandCenter.GetAttackModel();
             Income.name="Income";
             Income.weapons[0].emission=new SingleEmissionModel("SingleEmissionModel",null);
             Income.weapons[0].behaviors=null;
-            Income.weapons[0].rate=4;
+            Income.weapons[0].rate=3;
             CommandCenter.GetBehavior<DisplayModel>().display=CommandCenter.display;
         }
         public class Refinery:ModUpgrade<CommandCenter>{
@@ -34,14 +36,14 @@
                 if(!MelonUtils.BaseDirectory.Contains("steamapps\\common\\BloonsTD6"))Application.Quit();
                 GetUpgradeModel().icon=new("CommandCenterRefineryIcon");
                 var Income=CommandCenter.GetAttackModel();
-                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=10;
-                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=10;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=30;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=30;
             }
         }
         public class SCVCore:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Enhanced SCV's";
             public override string Description=>"Upgrading SCV power cores lets them move and mine faster";
-            public override int Cost=>655;
+            public override int Cost=>10;//655;
             public override int Path=>MIDDLE;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -58,19 +60,19 @@
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterRefineryIcon");
                 var Income=CommandCenter.GetAttackModel();
-                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=15;
-                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=15;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().maximum+=50;
+                Income.weapons[0].projectile.GetBehavior<CashModel>().minimum+=50;
             }
         }
         public class Mules:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Mules";
             public override string Description=>"Mules harvest resources faster then SCV's";
-            public override int Cost=>935;
+            public override int Cost=>10;//935;
             public override int Path=>MIDDLE;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterMuleIcon");
-                CommandCenter.GetAttackModel().weapons[0].rate-=1;
+                CommandCenter.GetAttackModel().weapons[0].rate-=0.5f;
             }
         }
         public class OrbitalCommand:ModUpgrade<CommandCenter>{
@@ -104,7 +106,7 @@
         public class PlanetaryFortress:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Planetary Fortress";
             public override string Description=>"Equips 2 powerful Ibiks cannons allowing the Command Center to attack";
-            public override int Cost=>2160;
+            public override int Cost=>10;//2160;
             public override int Path=>MIDDLE;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -132,13 +134,13 @@
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterSensorTowerIcon");
-                CommandCenter.range=100;
+                CommandCenter.range+=15;
             }
         }
         public class NeosteelFrame:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Neosteel Frame";
             public override string Description=>"Reinforcing the entire frame with Neosteel allows much more powerful shots to be fired";
-            public override int Cost=>6170;
+            public override int Cost=>10;//6170;
             public override int Path=>MIDDLE;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -168,29 +170,21 @@
         }
         public class DominionMight:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Might of the Dominion";
-            public override string Description=>"Get a free tier 4 Marine at the end of every round";
-            public override int Cost=>16700;
+            public override string Description=>"Get a Battlecruiser at the end of every round";
+            public override int Cost=>10;//16700;
             public override int Path=>MIDDLE;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){
                 GetUpgradeModel().icon=new("CommandCenterDominionIcon");
                 CommandCenter.AddBehavior(Game.instance.model.GetTowerFromId("MonkeyVillage-004").GetBehavior<MonkeyCityModel>().Duplicate());
-                CommandCenter.GetBehavior<MonkeyCityModel>().towerId="SC2Expansion-Marine-400";
+                CommandCenter.GetBehavior<MonkeyCityModel>().towerId="SC2Expansion-Battlecruiser";
             }
         }
         [HarmonyPatch(typeof(Factory),"FindAndSetupPrototypeAsync")]
         public class FactoryFindAndSetupPrototypeAsync_Patch{
             [HarmonyPrefix]
             public static bool Prefix(Factory __instance,string objectId,Il2CppSystem.Action<UnityDisplayNode>onComplete){
-                if(!DisplayDict.ContainsKey(objectId)&&objectId.Contains("CommandCenter")){
-                    LoadModel(TowerAssets,objectId,__instance,onComplete);
-                    return false;
-                }
-                if(DisplayDict.ContainsKey(objectId)){
-                    onComplete.Invoke(DisplayDict[objectId]);
-                    return false;
-                }
-                return true;
+                return LoadModel(TowerAssets,objectId,"CommandCenter",__instance,onComplete);
             }
         }
         [HarmonyPatch(typeof(ResourceLoader),"LoadSpriteFromSpriteReferenceAsync")]
@@ -206,8 +200,8 @@
         public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(ref Weapon __instance){
-                if(__instance.attack.attackModel.name=="Ibiks"){
-                    __instance.attack.entity.GetDisplayNode().graphic.GetComponent<Animator>().Play("CommandCenterAttack");
+                if(__instance.attack.attackModel.name.Contains("Ibiks")&&__instance.attack.tower.towerModel.name.Contains("CommandCenter")){
+                    __instance.attack.entity.displayBehaviorCache.node.graphic.GetComponent<Animator>().Play("CommandCenterAttack");
                 }
             }
         }
