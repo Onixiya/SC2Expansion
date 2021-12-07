@@ -103,6 +103,16 @@ namespace SC2Expansion.Assets {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] carrier {
+            get {
+                object obj = ResourceManager.GetObject("carrier", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] commandcenter {
             get {
                 object obj = ResourceManager.GetObject("commandcenter", resourceCulture);

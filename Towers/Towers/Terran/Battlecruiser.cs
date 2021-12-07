@@ -61,8 +61,8 @@
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel Battlecruiser){
                 GetUpgradeModel().icon=new("BattlecruiserYamatoIcon");
-                var Yamato=Game.instance.model.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>();
-                Yamato.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("BombShooter").GetAttackModel();
+                var Yamato=Game.instance.model.towers.First(a=>a.name.Equals("PatFusty 10")).behaviors.First(a=>a.name.Contains("Big")).Clone().Cast<AbilityModel>().Duplicate();
+                Yamato.GetBehavior<ActivateAttackModel>().attacks[0]=Game.instance.model.GetTowerFromId("BombShooter").GetAttackModel().Duplicate();
                 var YamatoAttack=Yamato.GetBehavior<ActivateAttackModel>().attacks[0];
                 Yamato.name="Yamato";
                 Yamato.displayName="Yamato Cannon";

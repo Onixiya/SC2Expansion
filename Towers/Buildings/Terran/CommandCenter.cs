@@ -5,7 +5,7 @@ namespace SC2Expansion.Towers{
         public static AssetBundle TowerAssets=AssetBundle.LoadFromMemory(Assets.Assets.commandcenter);
         public override string DisplayName=>"Command Center";
         public override string BaseTower=>"BananaFarm-003";
-        public override int Cost=>10;//850;
+        public override int Cost=>850;
         public override int TopPathUpgrades=>5;
         public override int MiddlePathUpgrades=>5;
         public override int BottomPathUpgrades=>0;
@@ -43,7 +43,7 @@ namespace SC2Expansion.Towers{
         public class SCVCore:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Enhanced SCV's";
             public override string Description=>"Upgrading SCV power cores lets them move and mine faster";
-            public override int Cost=>10;//655;
+            public override int Cost=>655;
             public override int Path=>MIDDLE;
             public override int Tier=>1;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -67,7 +67,7 @@ namespace SC2Expansion.Towers{
         public class Mules:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Mules";
             public override string Description=>"Mules harvest resources faster then SCV's";
-            public override int Cost=>10;//935;
+            public override int Cost=>935;
             public override int Path=>MIDDLE;
             public override int Tier=>2;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -106,7 +106,7 @@ namespace SC2Expansion.Towers{
         public class PlanetaryFortress:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Planetary Fortress";
             public override string Description=>"Equips 2 powerful Ibiks cannons allowing the Command Center to attack";
-            public override int Cost=>10;//2160;
+            public override int Cost=>2160;
             public override int Path=>MIDDLE;
             public override int Tier=>3;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -140,7 +140,7 @@ namespace SC2Expansion.Towers{
         public class NeosteelFrame:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Neosteel Frame";
             public override string Description=>"Reinforcing the entire frame with Neosteel allows much more powerful shots to be fired";
-            public override int Cost=>10;//6170;
+            public override int Cost=>6170;
             public override int Path=>MIDDLE;
             public override int Tier=>4;
             public override void ApplyUpgrade(TowerModel CommandCenter){
@@ -171,7 +171,7 @@ namespace SC2Expansion.Towers{
         public class DominionMight:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Might of the Dominion";
             public override string Description=>"Get a Battlecruiser at the end of every round";
-            public override int Cost=>10;//16700;
+            public override int Cost=>16700;
             public override int Path=>MIDDLE;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){
