@@ -171,7 +171,7 @@ namespace SC2Expansion.Towers{
         public class DominionMight:ModUpgrade<CommandCenter>{
             public override string DisplayName=>"Might of the Dominion";
             public override string Description=>"Get a Battlecruiser at the end of every round";
-            public override int Cost=>16700;
+            public override int Cost=>35600;
             public override int Path=>MIDDLE;
             public override int Tier=>5;
             public override void ApplyUpgrade(TowerModel CommandCenter){

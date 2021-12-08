@@ -93,6 +93,7 @@
                 Beam.RemoveBehavior<AttackFilterModel>();
                 Beam.AddBehavior(Game.instance.model.GetTowerFromId("DartMonkey").GetAttackModel().GetBehavior<AttackFilterModel>().Duplicate());
                 Beam.GetBehavior<AttackFilterModel>().filters.AddItem(new FilterWithTagModel("FilterWithTagModel","Moabs",false));
+                Carrier.RemoveBehavior<AttackModel>();
                 Carrier.AddBehavior(Beam);
                 SetUpgradeSounds(Carrier,"CarrierUpgrade4");
             }

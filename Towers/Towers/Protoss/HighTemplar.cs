@@ -141,7 +141,6 @@
                 MindBlast.maxActivationsPerRound=-1;
                 Sacrifice.maxActivationsPerRound=-1;
                 Sacrifice.GetBehavior<CreateSoundOnAbilityModel>().sound.assetId="HighTemplarJinaraSacrificeVO";
-                SacrificeAttack.GetBehavior<TargetGrapplableModel>().canHitZomg=true;
                 SacrificeAttack.RemoveBehavior<AttackFilterModel>();
                 MindBlast.cooldown=40;
                 MindBlastAttack.weapons[0].projectile.GetDamageModel().damage=400;
