@@ -4,7 +4,7 @@
         public override string DisplayName=>"Carrier";
         public override string BaseTower=>"DartMonkey";
         public override int Cost=>2455;
-        public override int TopPathUpgrades=>5;
+        public override int TopPathUpgrades=>2;
         public override int MiddlePathUpgrades=>0;
         public override int BottomPathUpgrades=>0;
         public override bool DontAddToShop=>!ProtossEnabled;
@@ -67,7 +67,7 @@
                 SetUpgradeSounds(Carrier,"CarrierUpgrade2");
             }
         }
-        public class Interdictors:ModUpgrade<Carrier>{
+        /*public class Interdictors:ModUpgrade<Carrier>{
             public override string DisplayName=>"Interdictor's";
             public override string Description=>"Modified Inteceptors that lay short lived plasma charges everywhere";
             public override int Cost=>9825;
@@ -78,7 +78,6 @@
                 SetUpgradeSounds(Carrier,"CarrierUpgrade3");
             }
         }
-        //i tried for 2 and a half days to get the beam to bounce, it didn't wanna fucking bounce at all
         public class SolarBeam:ModUpgrade<Carrier>{
             public override string DisplayName=>"Solar Beam";
             public override string Description=>"Weaker version of the Carrier's orbital purification beam, deals massive damage but can only target Moab's";
@@ -107,7 +106,7 @@
             public override void ApplyUpgrade(TowerModel Carrier){
                 GetUpgradeModel().icon=new("CarrierGantrithorIcon");
             }
-        }
+        }*/
         [HarmonyPatch(typeof(AudioFactory),"Start")]
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
