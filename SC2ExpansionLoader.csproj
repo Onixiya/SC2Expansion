@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/net6/0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Dependencies/SupportModules/Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MelonLoader">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/net6/MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="NinjaKiwi.Common">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNinjaKiwi.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppNewtonsoft.Json">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
