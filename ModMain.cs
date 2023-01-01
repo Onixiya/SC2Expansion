@@ -72,11 +72,16 @@ namespace SC2ExpansionLoader{
             }catch{
                 foreach(KeyValuePair<string,SC2Tower>tower in TowerTypes){
                     tower.Value.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Key.ToLower()).assetBundle;
-                    /*foreach(var thing in tower.Value.LoadedBundle.GetAllAssetNames()){
-                        Log(thing);
-                    }*/
                 }
-                return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset;
+                try{
+                    return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset;
+                }catch(Exception error){
+                    Log("Failed to load "+Asset+" from "+Bundle.name);
+                    string message=error.Message;
+                    message+="@\n"+error.StackTrace;
+                    Log(message,"error");
+                    return null;
+                }
             }
         }
         [HarmonyPatch(typeof(TitleScreen),"Start")]
@@ -101,9 +106,7 @@ namespace SC2ExpansionLoader{
                     foreach(SC2Tower tower in TowerTypes.Values){
                         towerNames.Add(tower.Name);
                         foreach(TowerModel towerModel in tower.TowerModels()){
-                            Log(1);
                             towers.Add(towerModel);
-                            Log(2);
                         }
                         towerSet.Add(tower.ShopDetails());
                         foreach(UpgradeModel upgrade in tower.Upgrades()){
@@ -114,8 +117,9 @@ namespace SC2ExpansionLoader{
                         Game.instance.model.upgrades=upgrades.ToArray();
                         Log("Loaded "+tower.Name);
                     }
-                }catch{
+                }catch(Exception error){
                     Log("Failed to add "+towerNames.Last());
+                    Log(error.Message,"error");
                 }
             }
         }
@@ -132,6 +136,11 @@ namespace SC2ExpansionLoader{
                     gObj.transform.position=new(0,0,30000);
                     gObj.AddComponent<UnityDisplayNode>();
                     gObj.AddComponent<SC2Sound>();
+                    if(tower.Behaviours.ContainsKey(gObj.name)){
+                        Log(1);
+                        gObj.AddComponent(tower.Behaviours[gObj.name]);
+                        Log(2);
+                    }
                     prototype=gObj.GetComponent<UnityDisplayNode>();
                     __instance.__4__this.active.Add(prototype);
                     __instance.onComplete.Invoke(prototype);

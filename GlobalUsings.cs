@@ -23,8 +23,6 @@ global using Il2CppAssets.Scripts.Models.Profile;
 global using MelonLoader.Utils;
 global using Il2CppAssets.Scripts.Models.TowerSets;
 global using Il2CppAssets.Scripts.Models;
-global using Il2CppInterop.Runtime.InteropTypes.Arrays;
-global using Il2CppAssets.Scripts.Models.Map;
 global using Il2CppNewtonsoft.Json;
 global using System.Reflection;
 global using SC2ExpansionLoader;

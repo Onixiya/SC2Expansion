@@ -13,6 +13,7 @@
         public virtual void Select(Tower tower){}
         public virtual void Sell(Tower tower){}
         public virtual Dictionary<string,string>SoundNames=>null;
+        public virtual Dictionary<string,Il2CppSystem.Type>Behaviours=>new();
     }
     [RegisterTypeInIl2Cpp]
     public class SC2Sound:MonoBehaviour{
