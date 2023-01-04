@@ -237,5 +237,20 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
+        /*[HarmonyPatch(typeof(Pet),nameof(Pet.Initialise))]
+        public class petinit{
+            [HarmonyPrefix]
+            public static void Prefix(Model modelToUse){
+                WanderModel wander=modelToUse.Cast<PetModelUnsynced>().behaviors.First(a=>a.GetIl2CppType().Name=="WanderModel").Cast<WanderModel>();
+                Log("Name "+wander.name+", idletimemax "+wander.IdleTimeMax+", idletimemin "+wander.IdleTimeMin+", innerradius "+wander.InnerRadius+
+                    ", outerradius "+wander.OuterRadius+", speed "+wander.Speed+", startattower "+wander.startAtTower+
+                    ", stayinarea "+wander.StayInArea+", usesyncedrandom "+wander.useSyncedRandom);
+                foreach(var thing in wander.MotionCurve){
+                    Log("intangent "+thing.inTangent+", inweight "+thing.inWeight+", outtangent "+thing.outTangent+", outweight "+thing.outWeight+
+                        ", tangentmode "+thing.tangentMode+", tangentmodeinternal "+thing.tangentModeInternal+", time "+thing.time+
+                        ", value "+thing.value+", weightedmode "+thing.weightedMode);
+                }
+            }
+        }*/
     }
 }
