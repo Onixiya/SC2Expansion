@@ -26,4 +26,5 @@ global using Il2CppAssets.Scripts.Models;
 global using Il2CppNewtonsoft.Json;
 global using System.Reflection;
 global using SC2ExpansionLoader;
+global using Il2CppInterop.Runtime.InteropTypes.Arrays;
 namespace SC2ExpansionLoader{}

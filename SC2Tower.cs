@@ -12,6 +12,8 @@
         public virtual void Create(){}
         public virtual void Select(Tower tower){}
         public virtual void Sell(Tower tower){}
+        public virtual int MaxSelectQuote=>0;
+        public virtual int MaxUpgradeQuote=>0;
         public virtual Dictionary<string,string>SoundNames=>null;
         public virtual Dictionary<string,Il2CppSystem.Type>Behaviours=>new();
     }
@@ -20,8 +22,8 @@
         public SC2Sound(IntPtr ptr):base(ptr){}
         public int LastSelectQuote=0;
         public int LastUpgradeQuote=0;
-        public int MaxSelectQuote=7;
-        public int MaxUpgradeQuote=5;
+        public int MaxSelectQuote;
+        public int MaxUpgradeQuote;
         public string TowerName;
         public void Start(){
             string[]name=gameObject.name.Split('-');
