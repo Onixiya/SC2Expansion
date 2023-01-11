@@ -199,15 +199,15 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(AudioFactory),nameof(AudioFactory.Start))]
+        [HarmonyPatch(typeof(AudioFactory),"Start")]
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Postfix(AudioFactory __instance){
                 foreach(string bundlePath in Directory.GetFiles(BundleDir)){
                     if(bundlePath.EndsWith("clips")){
                         try{
-                            AssetBundleRequest bundle=AssetBundle.LoadFromFileAsync(bundlePath).assetBundle.LoadAllAssetsAsync<AudioClip>();
-                            foreach(uObject asset in bundle.allAssets){
+                            Il2CppReferenceArray<uObject>assets=AssetBundle.LoadFromFileAsync(bundlePath).assetBundle.LoadAllAssetsAsync<AudioClip>().allAssets;
+                            foreach(uObject asset in assets){
                                 __instance.RegisterAudioClip(asset.name,asset.Cast<AudioClip>());
                             }
                         }catch(Exception error){
