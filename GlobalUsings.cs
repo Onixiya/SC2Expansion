@@ -27,4 +27,8 @@ global using Il2CppNewtonsoft.Json;
 global using System.Reflection;
 global using SC2ExpansionLoader;
 global using Il2CppInterop.Runtime.InteropTypes.Arrays;
+global using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack;
+global using Il2CppAssets.Scripts.Models.GenericBehaviors;
+global using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack.Behaviors;
+global using Il2CppAssets.Scripts.Models.Towers.Projectiles.Behaviors;
 namespace SC2ExpansionLoader{}

@@ -1,5 +1,3 @@
-using Il2CppAssets.Scripts.Data;
-
 namespace SC2ExpansionLoader{
     public class HarmonyPatches{
         [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
@@ -13,11 +11,13 @@ namespace SC2ExpansionLoader{
         public class ProfileModelValidate_Patch{
             [HarmonyPostfix]
             public static void Postfix(ProfileModel __instance){
-                foreach(string tower in TowerTypes.Keys){
+                foreach(KeyValuePair<string,SC2Tower>tower in TowerTypes){
                     try{
-                        __instance.unlockedTowers.Add(tower);
-                        foreach(UpgradeModel upgrade in TowerTypes[tower].Upgrades()){
-                            __instance.acquiredUpgrades.Add(upgrade.name);
+                        __instance.unlockedTowers.Add(tower.Value.Name);
+                        if(tower.Value.Upgradable){
+                            foreach(UpgradeModel upgrade in tower.Value.Upgrades()){
+                                __instance.acquiredUpgrades.Add(upgrade.name);
+                            }
                         }
                     }catch(Exception error){
                         Log("Failed to add "+tower+" to unlocked towers or upgrades");
@@ -33,6 +33,20 @@ namespace SC2ExpansionLoader{
             [HarmonyPostfix]
             public static void Postfix(){
                 try{
+                    //mostly suited for protoss warp things
+                    CreateTowerAttackModel=Game.instance.model.GetTowerFromId("EngineerMonkey-100").behaviors.GetModel<AttackModel>().Clone<AttackModel>();
+                    List<Model>createTowerBehav=CreateTowerAttackModel.behaviors.ToList();
+                    createTowerBehav.Remove(createTowerBehav.First(a=>a.GetIl2CppType().Name=="RotateToTargetModel"));
+                    createTowerBehav.GetModel<RandomPositionModel>().minDistance=70;
+                    createTowerBehav.GetModel<RandomPositionModel>().maxDistance=90;
+                    createTowerBehav.GetModel<RandomPositionModel>().idealDistanceWithinTrack=0;
+                    createTowerBehav.GetModel<RandomPositionModel>().useInverted=false;
+                    CreateTowerAttackModel.behaviors=createTowerBehav.ToArray();
+                    CreateTowerAttackModel.weapons[0].projectile.display=new(){guidRef=""};
+                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<ArriveAtTargetModel>().expireOnArrival=false;
+                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<ArriveAtTargetModel>().altSpeed=400;
+                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<DisplayModel>().delayedReveal=1;
+                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<DisplayModel>().positionOffset=new(0,0,190);
                     BlankAbilityModel=Game.instance.model.GetTowerFromId("Quincy 4").Cast<TowerModel>().behaviors.
                         First(a=>a.GetIl2CppType().Name=="AbilityModel").Clone().Cast<AbilityModel>();
                     BlankAbilityModel.description="AbilityDescription";
@@ -59,9 +73,13 @@ namespace SC2ExpansionLoader{
                         foreach(TowerModel towerModel in tower.TowerModels()){
                             towers.Add(towerModel);
                         }
-                        towerSet.Add(tower.ShopDetails());
-                        foreach(UpgradeModel upgrade in tower.Upgrades()){
-                            upgrades.Add(upgrade);
+                        if(tower.AddToShop){
+                            towerSet.Add(tower.ShopDetails());
+                        }
+                        if(tower.Upgradable){
+                            foreach(UpgradeModel upgrade in tower.Upgrades()){
+                                upgrades.Add(upgrade);
+                            }
                         }
                         Game.instance.model.towers=towers.ToArray();
                         Game.instance.model.towerSet=towerSet.ToArray();
@@ -119,8 +137,7 @@ namespace SC2ExpansionLoader{
                 }catch{}
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
-                        SC2Tower tower=TowerTypes[towerName];
-                        Texture2D texture=LoadAsset<Texture2D>(name,tower.LoadedBundle).Cast<Texture2D>();
+                        Texture2D texture=LoadAsset<Texture2D>(name,TowerTypes[towerName].LoadedBundle).Cast<Texture2D>();
                         __result=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
                     }catch(Exception error){
                         Log("Failed to set "+name+" up");

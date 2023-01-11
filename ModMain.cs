@@ -6,6 +6,7 @@ namespace SC2ExpansionLoader{
         public static AbilityModel BlankAbilityModel;
         private static MelonLogger.Instance mllog;
         public static string BundleDir;
+        public static AttackModel CreateTowerAttackModel;
         public static void Log(object thingtolog,string type="msg"){
             switch(type){
                 case"msg":
@@ -25,6 +26,7 @@ namespace SC2ExpansionLoader{
         public override void OnInitializeMelon(){
             mllog=LoggerInstance;
             BundleDir=MelonEnvironment.UserDataDirectory+"/SC2ExpansionBundles/";
+            BundleDir=BundleDir.Replace('\\','/');
             Directory.CreateDirectory(BundleDir);
             foreach(MelonMod mod in RegisteredMelons){
                 if(mod.Info.Name.StartsWith("SC2Expansion")){
@@ -54,17 +56,25 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        public static uObject LoadAsset<T>(string Asset,AssetBundle Bundle){
+        public static T LoadAsset<T>(string Asset,AssetBundle Bundle)where T:uObject{
             try{
-                return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset;
+                return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
             }catch{
                 foreach(KeyValuePair<string,SC2Tower>tower in TowerTypes){
                     tower.Value.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Key.ToLower()).assetBundle;
                 }
                 try{
-                    return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset;
+                    return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
                 }catch(Exception error){
                     Log("Failed to load "+Asset+" from "+Bundle.name);
+                    try{
+                        Log("Attempting to get available assets");
+                        foreach(string asset in Bundle.GetAllAssetNames()){
+                            Log(asset);
+                        }
+                    }catch{
+                        Log("Bundle is null");
+                    }
                     string message=error.Message;
                     message+="@\n"+error.StackTrace;
                     Log(message,"error");
@@ -82,9 +92,11 @@ namespace SC2ExpansionLoader{
                 Log(message,"error");
             }
         }
-        public static void PlayAnimation(UnityDisplayNode udn,string anim){
+        public static void PlayAnimation(UnityDisplayNode udn,string anim,float duration=0.2f){
             try{
-                udn.GetComponent<Animator>().CrossFade(anim,0.2f,0,0);
+                if(udn!=null){
+                    udn.GetComponent<Animator>().CrossFade(anim,duration,0,0);
+                }
             }catch(Exception error){
                 Log("Failed to play animation "+anim);
                 string message=error.Message;

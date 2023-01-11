@@ -16,6 +16,8 @@
         public virtual int MaxUpgradeQuote=>0;
         public virtual Dictionary<string,string>SoundNames=>null;
         public virtual Dictionary<string,Il2CppSystem.Type>Behaviours=>new();
+        public virtual bool AddToShop=>true;
+        public virtual bool Upgradable=>true;
     }
     [RegisterTypeInIl2Cpp]
     public class SC2Sound:MonoBehaviour{
