@@ -23,7 +23,6 @@ namespace SC2ExpansionLoader{
         public class SimulationRoundStart_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
-                Log(1);
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
                         tower.RoundStart();
@@ -40,7 +39,6 @@ namespace SC2ExpansionLoader{
         public class SimulationRoundEnd_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
-                Log(1);
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
                         tower.RoundEnd();

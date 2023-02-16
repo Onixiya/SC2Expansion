@@ -137,13 +137,9 @@ namespace SC2ExpansionLoader{
         [HideFromIl2Cpp]
         public void SetRowUp(List<Button>buttons){
             for(int i=0;i<CurrentTower.MaxTier;i++){
-				Log(i+" "+CurrentTower.Name);
                 Button button=buttons[i];
-				Log(1);
                 UpgradeModel upgrade=CurrentTower.UpgradeModels[i];
-				Log(2);
                 string iconAsset=upgrade.icon.guidRef.Split('[')[1];
-				Log(3);
                 iconAsset=iconAsset.Remove(iconAsset.Length-1);
                 Texture2D texture=LoadAsset<Texture2D>(iconAsset,CurrentTower.LoadedBundle).Cast<Texture2D>();
                 button.image.sprite=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
@@ -151,17 +147,12 @@ namespace SC2ExpansionLoader{
                 UpgradeMenuButton upgradeButton=button.gameObject.AddComponent<UpgradeMenuButton>();
                 upgradeButton.Cost=upgrade.cost;
                 upgradeButton.Description=LocManager.GetText(upgrade.name+" Description");
-				Log(4);
-				Log(CurrentTower.TowerModels[i+1].portrait.guidRef);
 				string thing=CurrentTower.TowerModels[i+1].portrait.guidRef;
-				Log(5);
                 string portraitAsset=thing.Split('[')[1];
-				Log(6);
                 portraitAsset=portraitAsset.Remove(portraitAsset.Length-1);
                 upgradeButton.PortraitAsset=portraitAsset;
                 upgradeButton.Menu=this;
                 button.gameObject.SetActive(true);
-				Log(7);
             }
         }
         public static System.Collections.IEnumerator Show(UpgradeMenuCom menu){

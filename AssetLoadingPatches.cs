@@ -59,31 +59,12 @@ namespace SC2ExpansionLoader{
         public class AudioFactoryStart_Patch{
             [HarmonyPostfix]
             public static void Postfix(AudioFactory __instance){
-				Log("audio");
                 foreach(string bundlePath in Directory.GetFiles(BundleDir)){
                     if(bundlePath.EndsWith("clips")){
                         try{
-                            Log(1);
-							AssetBundleCreateRequest bundleCreateReq=AssetBundle.LoadFromFileAsync(bundlePath);
-							Log(bundleCreateReq.isDone);
-							Log(2);
-							AssetBundle bundle=bundleCreateReq.assetBundle;
-							Log(bundle==null);
-							Log(3);
-							foreach(var thing in bundle.AllAssetNames()){
-								Log(thing);
-							}
-							Log(4);
-							AssetBundleRequest bundleReq=bundle.LoadAllAssetsAsync<AudioClip>();
-							Log(4.1f);
-                            Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<uObject>assets=bundleReq.allAssets;
-							Log(5);
-                            foreach(uObject asset in assets){
-								Log(6);
+                            foreach(uObject asset in AssetBundle.LoadFromFileAsync(bundlePath).assetBundle.LoadAllAssetsAsync<AudioClip>().allAssets){
                                 __instance.RegisterAudioClip(asset.name,asset.Cast<AudioClip>());
-								Log(7);
                             }
-							Log(8);
                         }catch(Exception error){
                             Log("Failed to add audio clips from "+bundlePath);
                             string message=error.Message;

@@ -4,7 +4,6 @@ namespace SC2ExpansionLoader{
         public class Btd6PlayerCheckForNewParagonPipEvent_Patch{
             [HarmonyPrefix]
             public static bool Prefix(){
-				Log("pip");
                 return false;
             }
         }
@@ -12,7 +11,6 @@ namespace SC2ExpansionLoader{
         public class ProfileModelValidate_Patch{
             [HarmonyPostfix]
             public static void Postfix(ProfileModel __instance){
-				Log("profile");
                 foreach(KeyValuePair<string,SC2Tower>sc2tower in TowerTypes){
                     try{
                         SC2Tower tower=sc2tower.Value;
@@ -36,7 +34,6 @@ namespace SC2ExpansionLoader{
         public class TitleScreenStart_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
-				Log("title");
                 try{
                     gameModel=Game.instance.model;
                     LocManager=LocalizationManager.Instance;
@@ -85,10 +82,8 @@ namespace SC2ExpansionLoader{
                         if(tower.AddToShop){
                             towerSet.Add(tower.ShopDetails());
                         }
-						Log(tower.Name+" "+tower.Upgradable);
                         if(tower.Upgradable){
                             foreach(UpgradeModel upgrade in tower.UpgradeModels){
-								Log(upgrade.name);
                                 upgrades.Add(upgrade);
                             }
                         }
