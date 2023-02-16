@@ -7,6 +7,8 @@ namespace SC2ExpansionLoader{
         private static MelonLogger.Instance mllog;
         public static string BundleDir;
         public static AttackModel CreateTowerAttackModel;
+        public static GameModel gameModel;
+        public static LocalizationManager LocManager;
         public static void Log(object thingtolog,string type="msg"){
             switch(type){
                 case"msg":
@@ -36,7 +38,10 @@ namespace SC2ExpansionLoader{
                             SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
                             if(tower.Name!=""){
                                 TowerTypes.Add(tower.Name,tower);
-                                TowerTypes[tower.Name].LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name.ToLower()).assetBundle;
+                                tower.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name.ToLower()).assetBundle;
+                                if(tower.TowerFaction==SC2Tower.Faction.NotSet){
+                                    Log(tower.Name+"'s faction not set!","warn");
+                                }
                             }
                         }catch{}
                     }

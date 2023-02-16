@@ -3,6 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <DefaultItemExcludes>$(DefaultItemExcludes);SC2ExpansionProject;SC2ExpansionProject\**\*</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -26,8 +27,14 @@
     <Reference Include="NinjaKiwi.Common">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNinjaKiwi.Common.dll</HintPath>
     </Reference>
+    <Reference Include="NinjaKiwi.LiNK">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNinjaKiwi.LiNK.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AnimationModule.dll</HintPath>
@@ -41,8 +48,25 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UIModule.dll</HintPath>
+    </Reference>
     <Reference Include="Il2CppNewtonsoft.Json">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppNinjaKiwi.CT.API">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNinjaKiwi.CT.API.dll</HintPath>
+    </Reference>
+	<Reference Include="Il2CppDebugLog">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppDebugLog.dll</HintPath>
+    </Reference>
+    <EmbeddedResource Include="Bundles/ui.protossupgrademenu.bundle" Link="ui.protossupgrademenu.bundle"/>
+    <EmbeddedResource Include="Bundles/ui.terranupgrademenu.bundle" Link="ui.terranupgrademenu.bundle"/>
   </ItemGroup>
 </Project>
