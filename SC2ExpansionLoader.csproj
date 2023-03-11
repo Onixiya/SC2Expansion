@@ -66,6 +66,12 @@
 	<Reference Include="Il2CppDebugLog">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppDebugLog.dll</HintPath>
     </Reference>
+	<Reference Include="UnityEngine.UI">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+	<Reference Include="Unity.ResourceManager">
+      <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Unity.ResourceManager.dll</HintPath>
+    </Reference>
     <EmbeddedResource Include="Bundles/ui.protossupgrademenu.bundle" Link="ui.protossupgrademenu.bundle"/>
     <EmbeddedResource Include="Bundles/ui.terranupgrademenu.bundle" Link="ui.terranupgrademenu.bundle"/>
   </ItemGroup>

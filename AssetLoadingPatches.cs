@@ -13,20 +13,14 @@ namespace SC2ExpansionLoader{
                         gObj.name=__instance.objectId.guidRef;
                         gObj.transform.position=new(0,0,30000);
                         gObj.AddComponent<UnityDisplayNode>();
-                        SC2Sound sound=gObj.AddComponent<SC2Sound>();
-                        sound.MaxSelectQuote=tower.MaxSelectQuote;
-                        sound.MaxUpgradeQuote=tower.MaxUpgradeQuote;
-                        if(tower.Behaviours.ContainsKey(gObj.name)){
-                            gObj.AddComponent(tower.Behaviours[gObj.name]);
+                        if(tower.Components.ContainsKey(gObj.name)){
+                            gObj.AddComponent(tower.Components[gObj.name]);
                         }
                         prototype=gObj.GetComponent<UnityDisplayNode>();
                         __instance.__4__this.active.Add(prototype);
                         __instance.onComplete.Invoke(prototype);
                     }catch(Exception error){
-                        Log("Failed to set "+__instance.objectId.guidRef+" up");
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to set "+__instance.objectId.guidRef+" up");
                     }
                     return false;
                 }
@@ -46,10 +40,7 @@ namespace SC2ExpansionLoader{
                         Texture2D texture=LoadAsset<Texture2D>(name,TowerTypes[towerName].LoadedBundle).Cast<Texture2D>();
                         __result=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
                     }catch(Exception error){
-                        Log("Failed to set "+name+" up");
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to set "+name+" up");
                     }
                 }
             }
@@ -66,10 +57,7 @@ namespace SC2ExpansionLoader{
                                 __instance.RegisterAudioClip(asset.name,asset.Cast<AudioClip>());
                             }
                         }catch(Exception error){
-                            Log("Failed to add audio clips from "+bundlePath);
-                            string message=error.Message;
-                            message+="@\n"+error.StackTrace;
-                            Log(message,"error");
+                            PrintError(error,"Failed to add audio clips from "+bundlePath);
                         }
                     }
                 }

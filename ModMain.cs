@@ -3,6 +3,7 @@
 namespace SC2ExpansionLoader{
     public class ModMain:MelonMod{
         public static Dictionary<string,SC2Tower>TowerTypes=new Dictionary<string,SC2Tower>();
+		public static Dictionary<string,SC2Tower>HeroTypes=new Dictionary<string,SC2Tower>();
         public static AbilityModel BlankAbilityModel;
         private static MelonLogger.Instance mllog;
         public static string BundleDir;
@@ -22,45 +23,62 @@ namespace SC2ExpansionLoader{
                     break;
             }
         }
-        public static void SaveIl2CppObj(string fileName,Il2CppSystem.Object obj){
-            System.IO.File.WriteAllText(fileName,JsonConvert.SerializeObject(obj,Formatting.Indented));
-        }
         public override void OnInitializeMelon(){
             mllog=LoggerInstance;
             BundleDir=MelonEnvironment.UserDataDirectory+"/SC2ExpansionBundles/";
             BundleDir=BundleDir.Replace('\\','/');
-            Directory.CreateDirectory(BundleDir);
-            foreach(MelonMod mod in RegisteredMelons){
+			if(!Directory.Exists(BundleDir)){
+            	Directory.CreateDirectory(BundleDir);
+			}
+			List<SC2Tower>towerList=new();
+			foreach(MelonMod mod in RegisteredMelons){
                 if(mod.Info.Name.StartsWith("SC2Expansion")){
                     Assembly assembly=mod.MelonAssembly.Assembly;
-                    foreach(Type type in assembly.GetTypes()){
-                        try{
-                            SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
-                            if(tower.Name!=""){
-                                TowerTypes.Add(tower.Name,tower);
-                                tower.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name.ToLower()).assetBundle;
-                                if(tower.TowerFaction==SC2Tower.Faction.NotSet){
-                                    Log(tower.Name+"'s faction not set!","warn");
-                                }
-                            }
-                        }catch{}
-                    }
-                    foreach(string bundle in assembly.GetManifestResourceNames()){
-                        try{
-                            Stream stream=assembly.GetManifestResourceStream(bundle);
-                            byte[]bytes=new byte[stream.Length];
-                            stream.Read(bytes);
-                            File.WriteAllBytes(BundleDir+bundle.Split('.')[2],bytes);
-                        }catch(Exception error){
-                            Log("Failed to write "+bundle);
-                            string message=error.Message;
-                            message+="@\n"+error.StackTrace;
-                            Log(message,"error");
-                        }
-                    }                     
-                }
-            }
-        }
+					foreach(string bundle in assembly.GetManifestResourceNames()){
+						try{
+							if(bundle.EndsWith(".bundle")){
+								Stream stream=assembly.GetManifestResourceStream(bundle);
+								byte[]bytes=new byte[stream.Length];
+								stream.Read(bytes);
+								File.WriteAllBytes(BundleDir+bundle.Split('.')[2],bytes);
+							}
+						}catch(Exception error){
+							PrintError(error,"Failed to write "+bundle);
+						}
+					}
+					foreach(Type type in assembly.GetTypes()){
+						try{
+							SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
+							if(tower.Name!=""){
+								towerList.Add(tower);
+								if(tower.HasBundle){
+									tower.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name.ToLower()).assetBundle;
+								}
+								if(tower.Hero){
+									HeroTypes.Add(tower.Name,tower);
+								}
+							}
+						}catch{}
+					}
+				}
+			}
+			//i really cannot think of any better way to sort a this, orderby from a dictionary itself fucks it over
+			if(towerList.Count()>0){
+				towerList=towerList.OrderBy(a=>a.Order).ToList();
+				foreach(SC2Tower tower in towerList){
+					TowerTypes.Add(tower.Name,tower);
+				}
+			}
+		}
+		public static void PrintError(Exception exception,string message=null){
+			if(message!=null){
+				Log(message);
+			}
+            string error=exception.Message;
+			error+="\n"+exception.TargetSite;
+            error+="\n"+exception.StackTrace;
+            Log(error,"error");
+		}
         public static T LoadAsset<T>(string Asset,AssetBundle Bundle)where T:uObject{
             try{
                 return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
@@ -71,7 +89,7 @@ namespace SC2ExpansionLoader{
                 try{
                     return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
                 }catch(Exception error){
-                    Log("Failed to load "+Asset+" from "+Bundle.name);
+					PrintError(error,"Failed to load "+Asset+" from "+Bundle.name);
                     try{
                         Log("Attempting to get available assets");
                         foreach(string asset in Bundle.GetAllAssetNames()){
@@ -80,34 +98,15 @@ namespace SC2ExpansionLoader{
                     }catch{
                         Log("Bundle is null");
                     }
-                    string message=error.Message;
-                    message+="@\n"+error.StackTrace;
-                    Log(message,"error");
                     return null;
                 }
             }
         }
         public static void PlaySound(string name){
-            try{
-                Game.instance.audioFactory.PlaySoundFromUnity(null,name,"FX",1,1);
-            }catch(Exception error){
-                Log("Failed to play clip "+name);
-                string message=error.Message;
-                message+="@\n"+error.StackTrace;
-                Log(message,"error");
-            }
+            Game.instance.audioFactory.PlaySoundFromUnity(null,name,"FX",1,1);
         }
-        public static void PlayAnimation(UnityDisplayNode udn,string anim,float duration=0.2f){
-            try{
-                if(udn!=null){
-                    udn.GetComponent<Animator>().CrossFade(anim,duration,0,0);
-                }
-            }catch(Exception error){
-                Log("Failed to play animation "+anim);
-                string message=error.Message;
-                message+="@\n"+error.StackTrace;
-                Log(message,"error");
-            }
+        public static void PlayAnimation(Animator animator,string anim,float duration=0.2f){
+        	animator.CrossFade(anim,duration,0,0);
         }
     }
 }

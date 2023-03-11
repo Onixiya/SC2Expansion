@@ -10,18 +10,19 @@ namespace SC2ExpansionLoader{
                 string towerId=towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerId)){
                     SC2Tower tower=TowerTypes[towerId];
-                    string faction=tower.TowerFaction.ToString();
-                    LoadedUIBundle=AssetBundle.LoadFromFile(BundleDir+faction.ToLower()+"upgrademenu");
-                    string scene="Assets/Scenes/"+tower.TowerFaction.ToString()+"UiScene.unity";
-                    SceneManager.LoadScene(scene,LoadSceneMode.Additive);
-                    //must be done in a coroutine as scenes need a frame to get set up;
-                    MelonCoroutines.Start(Setup(tower,tower.TowerFaction.ToString()+"UiScene"));
-                    return false;
+					if(tower.ShowUpgradeMenu){
+						string faction=tower.TowerFaction.ToString();
+						LoadedUIBundle=AssetBundle.LoadFromFile(BundleDir+faction.ToLower()+"upgrademenu");
+						string scene="Assets/Scenes/"+tower.TowerFaction.ToString()+"UiScene.unity";
+						SceneManager.LoadScene(scene,LoadSceneMode.Additive);
+						//must be done in a coroutine as scenes need a frame to get set up;
+						MelonCoroutines.Start(Setup(tower,tower.TowerFaction.ToString()+"UiScene"));
+						return false;
+					}
+					return true;
                 }
                 }catch(Exception error){
-                    string message=error.Message;
-                    message+="@\n"+error.StackTrace;
-                    Log(message,"error");
+					PrintError(error);
                 }
                 return true;
             }
@@ -125,10 +126,7 @@ namespace SC2ExpansionLoader{
                     PlaySound(CurrentTower.Name+"-Birth");
                 }
             }catch(Exception error){
-                Log("Failed to load "+CurrentTower.TowerFaction.ToString()+" upgrade menu for "+CurrentTower.Name);
-                string message=error.Message;
-                message+="@\n"+error.StackTrace;
-                Log(message,"error");
+				PrintError(error,"Failed to load "+CurrentTower.TowerFaction.ToString()+" upgrade menu for "+CurrentTower.Name);
                 uObject.Destroy(gameObject);
                 return;
             }

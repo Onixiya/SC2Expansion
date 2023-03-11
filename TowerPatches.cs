@@ -11,10 +11,7 @@ namespace SC2ExpansionLoader{
                     try{
                         TowerTypes[towerName].Attack(__instance);
                     }catch(Exception error){
-                        Log("Failed to run Attack for "+towerName);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run Attack for "+towerName);
                     }
                 }
             }
@@ -27,10 +24,7 @@ namespace SC2ExpansionLoader{
                     try{
                         tower.RoundStart();
                     }catch(Exception error){
-                        Log("Failed to run RoundStart for "+tower.Name);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run RoundStart for "+tower.Name);
                     }
                 }
             }
@@ -43,10 +37,7 @@ namespace SC2ExpansionLoader{
                     try{
                         tower.RoundEnd();
                     }catch(Exception error){
-                        Log("Failed to run RoundEnd for "+tower.Name);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run RoundEnd for "+tower.Name);
                     }
                 }
             }
@@ -60,10 +51,7 @@ namespace SC2ExpansionLoader{
                     try{
                         TowerTypes[towerName].Create(__instance);
                     }catch(Exception error){
-                        Log("Failed to run Create for "+towerName);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run Create for "+towerName);
                     }
                 }
             }
@@ -71,21 +59,20 @@ namespace SC2ExpansionLoader{
         [HarmonyPatch(typeof(Ability),"Activate")]
         public class AbilityActivate_Patch{
             [HarmonyPostfix]
-            public static void Postfix(Ability __instance){
+            public static bool Prefix(Ability __instance){
                 string towerName=__instance.tower.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
-                        TowerTypes[towerName].Ability(__instance.abilityModel.name,__instance.tower);
+                        return TowerTypes[towerName].Ability(__instance.abilityModel.name,__instance.tower);
                     }catch(Exception error){
-                        Log("Failed to run Ability for "+towerName);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run Ability for "+towerName);
+						return false;
                     }
                 }
+				return true;
             }
         }
-        [HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
+		[HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
         public class TowerManagerUpgradeTower_Patch{
             [HarmonyPostfix]
             public static void Postfix(Tower tower,TowerModel def){
@@ -94,10 +81,7 @@ namespace SC2ExpansionLoader{
                     try{
                         TowerTypes[towerName].Upgrade(def.tier,tower);
                     }catch(Exception error){
-                        Log("Failed to run Upgrade for "+towerName);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run Upgrade for "+towerName);
                     }
                 }
             }
@@ -110,11 +94,13 @@ namespace SC2ExpansionLoader{
 				Tower tower=towerManager.GetTowerById(id);
 				TowerModel towerModel=tower.towerModel;
 				if(TowerTypes.ContainsKey(towerModel.baseId)){
-					int cost=gameModel.upgrades.First(a=>a.name==towerModel.upgrades[pathIndex].upgrade).cost;
-					if(__instance.simulation.GetCash(inputId)>cost){
-						towerManager.UpgradeTower(inputId,tower,gameModel.GetTowerFromId(towerModel.upgrades[pathIndex].tower),pathIndex,cost);
+					if(!TowerTypes[towerModel.baseId].Hero){
+						int cost=gameModel.upgrades.First(a=>a.name==towerModel.upgrades[pathIndex].upgrade).cost;
+						if(__instance.simulation.GetCash(inputId)>cost){
+							towerManager.UpgradeTower(inputId,tower,gameModel.GetTowerFromId(towerModel.upgrades[pathIndex].tower),pathIndex,cost);
+						}
+						return false;
 					}
-					return false;
 				}
 				return true;
 			}
@@ -128,10 +114,7 @@ namespace SC2ExpansionLoader{
                     try{
                         TowerTypes[towerName].Select(__instance.selectedTower.tower);
                     }catch(Exception error){
-                        Log("Failed to run Select for "+towerName);
-                        string message=error.Message;
-                        message+="@\n"+error.StackTrace;
-                        Log(message,"error");
+                        PrintError(error,"Failed to run Select for "+towerName);
                     }
                 }
             }

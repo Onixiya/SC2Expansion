@@ -3,28 +3,33 @@
         public virtual string Name=>"";
         public virtual byte[]TowerBundle=>null;
         public virtual ShopTowerDetailsModel ShopDetails()=>null;
+		public virtual HeroDetailsModel GenerateHeroDetails()=>null;
+		public HeroDetailsModel HeroDetails=null;
         public virtual TowerModel[]GenerateTowerModels()=>null;
-        public TowerModel[]TowerModels;
+        public TowerModel[]TowerModels=null;
         public virtual int MaxTier=>0;
         public virtual string Description=>"";
         public virtual UpgradeModel[]GenerateUpgradeModels()=>null;
-        public UpgradeModel[]UpgradeModels;
+        public UpgradeModel[]UpgradeModels=null;
         public AssetBundle LoadedBundle=null;
         public virtual void Attack(Weapon weapon){}
         public virtual void Upgrade(int tier,Tower tower){}
-        public virtual void Ability(string ability,Tower tower){}
+        public virtual bool Ability(string ability,Tower tower){
+			return true;
+		}
+		public virtual bool HasBundle=>true;
         public virtual void Create(Tower tower){}
+		public virtual SkinData HeroSkin()=>null;
         public virtual void Select(Tower tower){}
         public virtual void Sell(Tower tower){}
         public virtual void RoundStart(){}
         public virtual void RoundEnd(){}
-        public virtual int MaxSelectQuote=>0;
-        public virtual int MaxUpgradeQuote=>0;
-        public virtual Dictionary<string,string>SoundNames=>null;
-        public virtual Dictionary<string,Il2CppSystem.Type>Behaviours=>new();
+        public virtual Dictionary<string,Il2CppSystem.Type>Components=>new();
         public virtual bool AddToShop=>true;
         public virtual bool Upgradable=>true;
         public virtual string UpgradeScreenSound=>null;
+		public virtual bool ShowUpgradeMenu=>true;
+		public virtual bool Hero=>false;
         public enum Faction{
             Protoss,
             Terran,
@@ -32,35 +37,6 @@
             NotSet
         }
         public virtual Faction TowerFaction=>Faction.NotSet;
-    }
-    [RegisterTypeInIl2Cpp]
-    public class SC2Sound:MonoBehaviour{
-        public SC2Sound(IntPtr ptr):base(ptr){}
-        public int LastSelectQuote=0;
-        public int LastUpgradeQuote=0;
-        public int MaxSelectQuote;
-        public int MaxUpgradeQuote;
-        public string TowerName;
-        public void Start(){
-            string[]name=gameObject.name.Split('-');
-            try{
-                TowerName=TowerTypes[name[0]].SoundNames[name[1]];
-            }catch{}
-        }
-        public void PlaySelectSound(){
-            LastSelectQuote++;
-            if(LastSelectQuote==MaxSelectQuote){
-                LastSelectQuote=1;
-            }
-            PlaySound(TowerName+"Select"+LastSelectQuote);
-        }
-        public void PlayUpgradeSound(){
-            LastUpgradeQuote++;
-            if(LastUpgradeQuote==MaxUpgradeQuote){
-                LastUpgradeQuote=1;
-            }
-            LastSelectQuote=1;
-            PlaySound(TowerName+"Upgrade"+LastUpgradeQuote);
-        }
+		public virtual int Order=>0;
     }
 }
