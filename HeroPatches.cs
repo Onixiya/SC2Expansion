@@ -13,7 +13,6 @@ namespace SC2ExpansionLoader.HeroPatches{
 	[HarmonyPatch(typeof(HeroUpgradeDetails),"BindDetails")]
 	public class HeroUpgradeDetailsBindDetails_Patch{
 	public static bool Prefix(ref HeroUpgradeDetails __instance,ref bool __result,string heroIdToUse,bool showingSelected,bool forceUpdate){
-		Log("binddetails");
 		if(TowerTypes.ContainsKey(heroIdToUse)){
 			try{
 				__instance.selectedHeroId=heroIdToUse;
@@ -26,13 +25,12 @@ namespace SC2ExpansionLoader.HeroPatches{
 				__instance.StartBackgroundColourSwap();
 				__instance.SetHeroFontMaterial();
 				string guidRef=skin.GetPortraitForLevel(__instance.selectedUpgradeIndex+1).guidRef;
-				Log(guidRef+" "+__instance.selectedUpgradeIndex);
 				ResourceLoader.LoadSpriteFromSpriteReferenceAsync(new(){guidRef=guidRef},__instance.heroPortrait,false);
 				__instance.selectedHeroPortraitSpriteId.guidRef=guidRef;
 				__instance.heroName.text=GameMenu.Locs.GetText(__instance.selectedHeroId);
 				__instance.heroShortDescription.text=GameMenu.Locs.GetText(skin.skinName);
 				__instance.heroDescription.text=GameMenu.Locs.GetText(skin.description);
-				__instance.buyHeroButton.SetActive(false);
+				__instance.buyHeroButton.gameObject.SetActive(false);
 				__instance.selectButton.gameObject.SetActive(true);
 				__instance.inGameCostPanel.SetActive(true);
 				__instance.heroRequirements.SetActive(false);
@@ -54,7 +52,6 @@ namespace SC2ExpansionLoader.HeroPatches{
 				var upgradeButtons=__instance.heroUpgrades;
 				for(int i=0;i<upgradeButtons.Length;i++){
 					TowerModel tower=null;
-					Log(i>=towers.Count);
 					if(i+1>=towers.Count){
 						tower=towers[i];
 					}else{
