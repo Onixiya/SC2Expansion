@@ -8,8 +8,7 @@ namespace SC2ExpansionLoader{
                 if(towerName!=null&&TowerTypes.ContainsKey(towerName)){
                     try{
                         SC2Tower tower=TowerTypes[towerName];
-                        GameObject gObj=uObject.Instantiate(LoadAsset<GameObject>(__instance.objectId.guidRef,tower.LoadedBundle).Cast<GameObject>(),
-                            __instance.__4__this.DisplayRoot);
+                        GameObject gObj=uObject.Instantiate(LoadAsset<GameObject>(__instance.objectId.guidRef,tower.LoadedBundle),__instance.__4__this.DisplayRoot);
                         gObj.name=__instance.objectId.guidRef;
                         gObj.transform.position=new(0,0,30000);
                         gObj.AddComponent<UnityDisplayNode>();
@@ -24,7 +23,7 @@ namespace SC2ExpansionLoader{
                     }
                     return false;
                 }
-                return true;                
+                return true;
             }
         }
         [HarmonyPatch(typeof(UnityEngine.U2D.SpriteAtlas),"GetSprite")]
@@ -37,10 +36,10 @@ namespace SC2ExpansionLoader{
                 }catch{}
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
-                        Texture2D texture=LoadAsset<Texture2D>(name,TowerTypes[towerName].LoadedBundle).Cast<Texture2D>();
+                        Texture2D texture=LoadAsset<Texture2D>(name,TowerTypes[towerName].LoadedBundle);
                         __result=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
                     }catch(Exception error){
-                        PrintError(error,"Failed to set "+name+" up");
+                        PrintError(error,"Failed to set "+name+" up, Sprite "+(__result==null));
                     }
                 }
             }

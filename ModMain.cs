@@ -1,9 +1,10 @@
 ﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(SC2ExpansionLoader.ModMain),ModHelperData.Name,ModHelperData.Version,"Silentstorm")]
+[assembly:MelonOptionalDependencies("SC2ExpansionLoader")]
 namespace SC2ExpansionLoader{
     public class ModMain:MelonMod{
         public static Dictionary<string,SC2Tower>TowerTypes=new Dictionary<string,SC2Tower>();
-		public static Dictionary<string,SC2Tower>HeroTypes=new Dictionary<string,SC2Tower>();
+		//public static Dictionary<string,SC2Tower>HeroTypes=new Dictionary<string,SC2Tower>();
         public static AbilityModel BlankAbilityModel;
         private static MelonLogger.Instance mllog;
         public static string BundleDir;
@@ -31,10 +32,11 @@ namespace SC2ExpansionLoader{
             	Directory.CreateDirectory(BundleDir);
 			}
 			List<SC2Tower>towerList=new();
-			foreach(MelonMod mod in RegisteredMelons){
-                if(mod.Info.Name.StartsWith("SC2Expansion")){
-                    Assembly assembly=mod.MelonAssembly.Assembly;
-					foreach(string bundle in assembly.GetManifestResourceNames()){
+			foreach(MelonMod mod in RegisteredMelons.Where(a=>a.OptionalDependencies!=null&&a.OptionalDependencies.AssemblyNames.Contains("SC2ExpansionLoader"))){
+                Assembly assembly=mod.MelonAssembly.Assembly;
+				string[]resources=assembly.GetManifestResourceNames();
+				if(resources.Count()>0){
+					foreach(string bundle in resources){
 						try{
 							if(bundle.EndsWith(".bundle")){
 								Stream stream=assembly.GetManifestResourceStream(bundle);
@@ -46,23 +48,24 @@ namespace SC2ExpansionLoader{
 							PrintError(error,"Failed to write "+bundle);
 						}
 					}
-					foreach(Type type in assembly.GetTypes()){
-						try{
-							SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
-							if(tower.Name!=""){
-								towerList.Add(tower);
-								if(tower.HasBundle){
-									tower.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name.ToLower()).assetBundle;
-								}
-								if(tower.Hero){
-									HeroTypes.Add(tower.Name,tower);
-								}
+				}
+				foreach(Type type in assembly.GetTypes()){
+					try{
+						SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
+						if(tower.Name!=""&&!tower.Hero){
+							towerList.Add(tower);
+							if(tower.HasBundle){
+								tower.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Name).assetBundle;
 							}
-						}catch{}
-					}
+							if(tower.Hero){
+								//HeroTypes.Add(tower.Name,tower);
+								Log("Custom heroes are currently not supported due to a bug");
+							}
+						}
+					}catch{}
 				}
 			}
-			//i really cannot think of any better way to sort a this, orderby from a dictionary itself fucks it over
+			//i really cannot think of any better way to sort this, orderby from a dictionary itself fucks it over
 			if(towerList.Count()>0){
 				towerList=towerList.OrderBy(a=>a.Order).ToList();
 				foreach(SC2Tower tower in towerList){
@@ -82,24 +85,17 @@ namespace SC2ExpansionLoader{
         public static T LoadAsset<T>(string Asset,AssetBundle Bundle)where T:uObject{
             try{
                 return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
-            }catch{
-                foreach(KeyValuePair<string,SC2Tower>tower in TowerTypes){
-                    tower.Value.LoadedBundle=UnityEngine.AssetBundle.LoadFromFileAsync(BundleDir+tower.Key.ToLower()).assetBundle;
-                }
+            }catch(Exception error){
+				PrintError(error,"Failed to load "+Asset);
                 try{
-                    return Bundle.LoadAssetAsync(Asset,Il2CppType.Of<T>()).asset.Cast<T>();
-                }catch(Exception error){
-					PrintError(error,"Failed to load "+Asset+" from "+Bundle.name);
-                    try{
-                        Log("Attempting to get available assets");
-                        foreach(string asset in Bundle.GetAllAssetNames()){
-                            Log(asset);
-                        }
-                    }catch{
-                        Log("Bundle is null");
+                    Log("Attempting to get available assets");
+                    foreach(string asset in Bundle.GetAllAssetNames()){
+                        Log(asset);
                     }
-                    return null;
+                }catch{
+                    Log("Bundle is null");
                 }
+                return null;
             }
         }
         public static void PlaySound(string name){

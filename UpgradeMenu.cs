@@ -54,16 +54,16 @@ namespace SC2ExpansionLoader{
     public class UpgradeMenuCom:MonoBehaviour{
         public UpgradeMenuCom(IntPtr ptr):base(ptr){}
         public SC2Tower CurrentTower;
-        public Il2CppTMPro.TextMeshProUGUI Title;
-        public Il2CppTMPro.TextMeshProUGUI Description;
-        public Il2CppTMPro.TextMeshProUGUI Cost;
-        public Il2CppTMPro.TextMeshProUGUI UpgradeDescription;
+        public NK_TextMeshProUGUI Title;
+        public NK_TextMeshProUGUI Description;
+        public NK_TextMeshProUGUI Cost;
+        public NK_TextMeshProUGUI UpgradeDescription;
         public Image Portrait;
         public List<Button>Path1Icons=new();
         public List<Button>Path2Icons=new();
         public Image Background;
         public List<Image>Images=new();
-        public List<Il2CppTMPro.TextMeshProUGUI>Texts=new();
+        public List<NK_TextMeshProUGUI>Texts=new();
         public void Start(){
             try{
                 foreach(Image image in GetComponentsInChildren<Image>()){
@@ -75,17 +75,13 @@ namespace SC2ExpansionLoader{
                         image.color=new(255,255,255,0);
                     }
                 }
-                foreach(Il2CppTMPro.TextMeshProUGUI text in GetComponentsInChildren<Il2CppTMPro.TextMeshProUGUI>()){
-                    Texts.Add(text);
-                    text.color=new(255,255,255,0);
-                }
-                Title=transform.GetChild(0).GetComponent<Il2CppTMPro.TextMeshProUGUI>();
-                Description=Title.transform.GetChild(0).GetComponent<Il2CppTMPro.TextMeshProUGUI>();
+                Title=transform.GetChild(0).gameObject.AddComponent<NK_TextMeshProUGUI>();
+                Description=Title.transform.GetChild(0).gameObject.AddComponent<NK_TextMeshProUGUI>();
                 Transform container=transform.GetChild(1);
-                Cost=container.GetChild(0).GetComponentInChildren<Il2CppTMPro.TextMeshProUGUI>();
+                Cost=container.GetChild(0).gameObject.AddComponent<NK_TextMeshProUGUI>();
                 Portrait=container.GetChild(1).GetComponent<Image>();
                 Transform upgrades=transform.GetChild(2);
-                UpgradeDescription=upgrades.GetChild(2).GetComponent<Il2CppTMPro.TextMeshProUGUI>();
+                UpgradeDescription=upgrades.GetChild(2).gameObject.AddComponent<NK_TextMeshProUGUI>();
                 foreach(Button button in upgrades.GetChild(0).GetComponentsInChildren<Button>()){
                     button.gameObject.SetActive(false);
                     Path1Icons.Add(button);
@@ -95,9 +91,21 @@ namespace SC2ExpansionLoader{
                     Path2Icons.Add(button);
                 }
                 Title.text=CurrentTower.Name;
-                Description.text=CurrentTower.Description;
+				Title.fontSize=76;
+				Title.font=uObject.FindObjectsOfType<NK_TextMeshProUGUI>().First(a=>a.font.fontInfo.Name.Contains("Luckiest")).font;
+				Title.alignment=(TextAlignmentOptions)258;
+                Description.text=LocManager.GetText(CurrentTower.Name+" Description");
+				Description.fontSize=30;
+				Description.font=Title.font;
+				Description.alignment=(TextAlignmentOptions)258;
                 Cost.text="Cost: "+CurrentTower.TowerModels[0].cost;
+				Cost.fontSize=30;
+				Cost.alignment=(TextAlignmentOptions)257;
+				Cost.font=Title.font;
                 UpgradeDescription.gameObject.SetActive(false);
+				UpgradeDescription.fontSize=36;
+				UpgradeDescription.alignment=(TextAlignmentOptions)257;
+				UpgradeDescription.font=Title.font;
                 string portraitAsset=CurrentTower.TowerModels[0].portrait.guidRef.Split('[')[1];
                 portraitAsset=portraitAsset.Remove(portraitAsset.Length-1);
                 Texture2D texture=LoadAsset<Texture2D>(portraitAsset,CurrentTower.LoadedBundle).Cast<Texture2D>();
@@ -125,6 +133,10 @@ namespace SC2ExpansionLoader{
                 }else{
                     PlaySound(CurrentTower.Name+"-Birth");
                 }
+				foreach(NK_TextMeshProUGUI text in GetComponentsInChildren<NK_TextMeshProUGUI>()){
+                    Texts.Add(text);
+                    text.color=new(255,255,255,0);
+                }
             }catch(Exception error){
 				PrintError(error,"Failed to load "+CurrentTower.TowerFaction.ToString()+" upgrade menu for "+CurrentTower.Name);
                 uObject.Destroy(gameObject);
@@ -132,7 +144,6 @@ namespace SC2ExpansionLoader{
             }
             MelonCoroutines.Start(Show(this));
         }
-        [HideFromIl2Cpp]
         public void SetRowUp(List<Button>buttons){
             for(int i=0;i<CurrentTower.MaxTier;i++){
                 Button button=buttons[i];
@@ -141,7 +152,11 @@ namespace SC2ExpansionLoader{
                 iconAsset=iconAsset.Remove(iconAsset.Length-1);
                 Texture2D texture=LoadAsset<Texture2D>(iconAsset,CurrentTower.LoadedBundle).Cast<Texture2D>();
                 button.image.sprite=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
-                button.GetComponentInChildren<Il2CppTMPro.TextMeshProUGUI>().text=upgrade.name;
+				NK_TextMeshProUGUI text=button.transform.GetChild(0).gameObject.AddComponent<NK_TextMeshProUGUI>();
+                text.text=upgrade.name;
+				text.fontSize=20;
+				text.alignment=(TextAlignmentOptions)258;
+				text.font=Title.font;
                 UpgradeMenuButton upgradeButton=button.gameObject.AddComponent<UpgradeMenuButton>();
                 upgradeButton.Cost=upgrade.cost;
                 upgradeButton.Description=LocManager.GetText(upgrade.name+" Description");
@@ -162,7 +177,7 @@ namespace SC2ExpansionLoader{
                 foreach(Image image in menu.Images){
                     image.color=new(255,255,255,image.color.a+0.025f);
                 }
-                foreach(Il2CppTMPro.TextMeshProUGUI text in menu.Texts){
+                foreach(NK_TextMeshProUGUI text in menu.Texts){
                     text.color=new(255,255,255,text.color.a+0.025f);
                 }
                 yield return new WaitForSeconds(0.001f);
@@ -177,7 +192,7 @@ namespace SC2ExpansionLoader{
                 foreach(Image image in menu.Images){
                     image.color=new(255,255,255,image.color.a-0.025f);
                 }
-                foreach(Il2CppTMPro.TextMeshProUGUI text in menu.Texts){
+                foreach(NK_TextMeshProUGUI text in menu.Texts){
                     text.color=new(255,255,255,text.color.a-0.025f);
                 }
                 yield return new WaitForSeconds(0.001f);

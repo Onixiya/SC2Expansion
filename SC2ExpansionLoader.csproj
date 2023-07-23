@@ -72,7 +72,7 @@
 	<Reference Include="Unity.ResourceManager">
       <HintPath>/home/silentstorm/.steam/steam/steamapps/common/BloonsTD6/MelonLoader/Il2CppAssemblies/Unity.ResourceManager.dll</HintPath>
     </Reference>
-    <EmbeddedResource Include="Bundles/ui.protossupgrademenu.bundle" Link="ui.protossupgrademenu.bundle"/>
-    <EmbeddedResource Include="Bundles/ui.terranupgrademenu.bundle" Link="ui.terranupgrademenu.bundle"/>
+    <EmbeddedResource Include="Bundles/protossupgrademenu.bundle"/>
+    <EmbeddedResource Include="Bundles/terranupgrademenu.bundle"/>
   </ItemGroup>
 </Project>

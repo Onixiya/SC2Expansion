@@ -8,7 +8,6 @@
         public virtual TowerModel[]GenerateTowerModels()=>null;
         public TowerModel[]TowerModels=null;
         public virtual int MaxTier=>0;
-        public virtual string Description=>"";
         public virtual UpgradeModel[]GenerateUpgradeModels()=>null;
         public UpgradeModel[]UpgradeModels=null;
         public AssetBundle LoadedBundle=null;
@@ -34,6 +33,7 @@
             Protoss,
             Terran,
             Zerg,
+			Misc,
             NotSet
         }
         public virtual Faction TowerFaction=>Faction.NotSet;

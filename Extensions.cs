@@ -16,9 +16,14 @@ namespace SC2ExpansionLoader{
                 return null;
             }
         }
-        public static Il2CppReferenceArray<Model>GetModels<T>(this Il2CppReferenceArray<Model>array)where T:Model{
+        public static Il2CppReferenceArray<T>GetModels<T>(this Il2CppReferenceArray<Model>array)where T:Model{
             try{
-                return array.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).ToArray();
+				Model[]models=array.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).ToArray();
+				Il2CppReferenceArray<T>returnArray=new Il2CppReferenceArray<T>(models.Count());
+				for(int i=0;i<models.Count();i++){
+					returnArray[i]=models[i].Cast<T>();
+				}
+				return returnArray;
             }catch(Exception error){
                 PrintError(error,"Failed to get models "+Il2CppType.Of<T>().Name+" from array");
                 return null;
