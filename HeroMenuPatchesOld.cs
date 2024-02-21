@@ -1,5 +1,5 @@
 //only left it here in case someone wants to try to understand the vanilla hero screen
-/*namespace SC2ExpansionLoader.HeroPatches{
+namespace SC2ExpansionLoader.HeroPatches{
 	[HarmonyPatch(typeof(CosmeticHelper),"ApplyTowerSkinToTowerModel")]
 	public class CosmeticHelperApplyTowerSkinToTowerModel_Patch{
 		public static bool Prefix(TowerModel towerModel){
@@ -11,7 +11,7 @@
 		}
 	}
 	//most of this specific patch is kosmics code, ty for figuring it out
-	[HarmonyPatch(typeof(HeroUpgradeDetails),"BindDetails")]
+	/*[HarmonyPatch(typeof(HeroUpgradeDetails),"BindDetails")]
 	public class HeroUpgradeDetailsBindDetails_Patch{
 		public static bool Prefix(ref HeroUpgradeDetails __instance,ref bool __result,string heroIdToUse,bool showingSelected,bool forceUpdate){
 			if(TowerTypes.ContainsKey(heroIdToUse)){
@@ -177,5 +177,5 @@
 				return true;
 			}
 		}
-	}
-}*/
+	}*/
+}

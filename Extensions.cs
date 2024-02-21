@@ -5,6 +5,7 @@ namespace SC2ExpansionLoader{
                 return array.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).Cast<T>();
             }catch(Exception error){
                 PrintError(error,"Failed to get model "+Il2CppType.Of<T>().Name+" from array");
+                ModelArrayLoop("array",array);
                 return null;
             }
         }
@@ -13,6 +14,7 @@ namespace SC2ExpansionLoader{
                 return array.First(a=>a.name.Contains(modelName)).Cast<T>();
             }catch(Exception error){
                 PrintError(error,"Failed to get model "+modelName+" with type "+Il2CppType.Of<T>().Name+" from array");
+                ModelArrayLoop("array",array);
                 return null;
             }
         }
@@ -26,6 +28,7 @@ namespace SC2ExpansionLoader{
 				return returnArray;
             }catch(Exception error){
                 PrintError(error,"Failed to get models "+Il2CppType.Of<T>().Name+" from array");
+                ModelArrayLoop("array",array);
                 return null;
             }
         }
@@ -36,6 +39,7 @@ namespace SC2ExpansionLoader{
                 return list.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).Cast<T>();
             }catch(Exception error){
                 PrintError(error,"Failed to get model "+Il2CppType.Of<T>().Name+" from list");
+                ModelArrayLoop("list",list.ToArray());
                 return null;
             }
         }
@@ -44,6 +48,7 @@ namespace SC2ExpansionLoader{
                 list.Remove(list.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()));
             }catch(Exception error){
                 PrintError(error,"Failed to remove model "+Il2CppType.Of<T>().Name+" from list");
+                ModelArrayLoop("list",list.ToArray());
                 return;
             }
         }
@@ -52,6 +57,7 @@ namespace SC2ExpansionLoader{
                 list.Remove(list.First(a=>a.name.Contains(modelName)));
             }catch(Exception error){
                 PrintError(error,"Failed to remove model "+modelName+" from list");
+                ModelArrayLoop("list",list.ToArray());
                 return;
             }
         }
@@ -60,6 +66,7 @@ namespace SC2ExpansionLoader{
                 return list.First(a=>a.name.Contains(modelName)).Cast<T>();
             }catch(Exception error){
                 PrintError(error,"Failed to get model "+modelName+" with type "+Il2CppType.Of<T>().Name+" from list");
+                ModelArrayLoop("list",list.ToArray());
                 return null;
             }
         }
@@ -68,6 +75,7 @@ namespace SC2ExpansionLoader{
                 return list.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).ToList();
             }catch(Exception error){
                 PrintError(error,"Failed to get models "+Il2CppType.Of<T>().Name+" from list");
+                ModelArrayLoop("list",list.ToArray());
                 return null;
             }
         }

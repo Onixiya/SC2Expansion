@@ -1,19 +1,14 @@
-using Il2CppAssets.Scripts.Data;
-using Il2CppAssets.Scripts.Simulation.Input;
-using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
-using Il2CppAssets.Scripts.Simulation.Towers.Weapons.Behaviors;
-
 namespace SC2ExpansionLoader{
-    public class HarmonyPatches{
+    public static class HarmonyPatches{
         [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
-        public class Btd6PlayerCheckForNewParagonPipEvent_Patch{
+        public class Btd6Player_CheckForNewParagonPipEvent_Patch{
             [HarmonyPrefix]
             public static bool Prefix(){
                 return false;
             }
         }
         [HarmonyPatch(typeof(ProfileModel),"Validate")]
-        public class ProfileModelValidate_Patch{
+        public class ProfileModel_Validate_Patch{
             public static void Prefix(ProfileModel __instance){
 				if(gameModel.GetTowerFromId(__instance.primaryHero)==null){
 					Log("Selected hero is NULL! Resetting to Quincy");
@@ -21,38 +16,35 @@ namespace SC2ExpansionLoader{
 				}
 			}
             public static void Postfix(ProfileModel __instance){
-                foreach(KeyValuePair<string,SC2Tower>sc2tower in TowerTypes){
+                foreach(KeyValuePair<string,SC2Tower>sc2Tower in TowerTypes){
                     try{
-                        SC2Tower tower=sc2tower.Value;
+                        SC2Tower tower=sc2Tower.Value;
                         __instance.unlockedTowers.AddIfNotPresent(tower.Name);
                         if(tower.Upgradable){
-							if(tower.UpgradeModels==null){
-                            	tower.UpgradeModels=tower.GenerateUpgradeModels();
-							}
-							foreach(UpgradeModel upgrade in tower.UpgradeModels){
+                            tower.UpgradeModels??=tower.GenerateUpgradeModels();
+                            foreach(UpgradeModel upgrade in tower.UpgradeModels){
 								__instance.acquiredUpgrades.AddIfNotPresent(upgrade.name);
 							}
                         }
-						if(tower.Hero){
-							__instance.unlockedHeroes.AddIfNotPresent(tower.Name);
-							__instance.seenUnlockedHeroes.AddIfNotPresent(tower.Name);
-							__instance.seenNewHeroNotification.AddIfNotPresent(tower.Name);
-						}
+                        //if(!tower.Hero)continue;
+                        __instance.unlockedHeroes.AddIfNotPresent(tower.Name);
+                        __instance.seenUnlockedHeroes.AddIfNotPresent(tower.Name);
+                        __instance.seenNewHeroNotification.AddIfNotPresent(tower.Name);
                     }catch(Exception error){
-                        PrintError(error,"Failed to add "+sc2tower.Key+" to unlocked towers or upgrades");
+                        PrintError(error,"Failed to add "+sc2Tower.Key+" to unlocked towers or upgrades");
                     }
                 }
             }
         }
         [HarmonyPatch(typeof(TitleScreen),"Start")]
-        public class TitleScreenStart_Patch{
+        public class TitleScreen_Start_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
                 gameModel=Game.instance.model;
                 LocManager=LocalizationManager.Instance;
 				try{
 					//mostly suited for protoss warp things
-                    CreateTowerAttackModel=gameModel.GetTowerFromId("EngineerMonkey-100").behaviors.GetModel<AttackModel>().Clone<AttackModel>();
+                    CreateTowerAttackModel=gameModel.GetTowerFromId("EngineerMonkey-100").behaviors.GetModel<AttackModel>("Spawner").Clone<AttackModel>();
                     List<Model>createTowerBehav=CreateTowerAttackModel.behaviors.ToList();
                     createTowerBehav.Remove(createTowerBehav.First(a=>a.GetIl2CppType().Name=="RotateToTargetModel"));
                     createTowerBehav.GetModel<RandomPositionModel>().minDistance=70;
@@ -60,11 +52,15 @@ namespace SC2ExpansionLoader{
                     createTowerBehav.GetModel<RandomPositionModel>().idealDistanceWithinTrack=0;
                     createTowerBehav.GetModel<RandomPositionModel>().useInverted=false;
                     CreateTowerAttackModel.behaviors=createTowerBehav.ToArray();
-                    CreateTowerAttackModel.weapons[0].projectile.display=new(){guidRef=""};
-                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<ArriveAtTargetModel>().expireOnArrival=false;
-                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<ArriveAtTargetModel>().altSpeed=400;
-                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<DisplayModel>().delayedReveal=1;
-                    CreateTowerAttackModel.weapons[0].projectile.behaviors.GetModel<DisplayModel>().positionOffset=new(0,0,190);
+                    ProjectileModel proj=CreateTowerAttackModel.weapons[0].projectile;
+                    proj.display=new(){guidRef=""};
+                    Il2CppReferenceArray<Model>projBehav=proj.behaviors;
+                    ArriveAtTargetModel arriveAtTargetModel=projBehav.GetModel<ArriveAtTargetModel>();
+                    arriveAtTargetModel.expireOnArrival=false;
+                    arriveAtTargetModel.altSpeed=400;
+                    DisplayModel displayModel=projBehav.GetModel<DisplayModel>();
+                    displayModel.delayedReveal=1;
+                    displayModel.positionOffset=new(0,0,190);
 				}catch(Exception error){
 					PrintError(error,"Failed to create CreateTowerAttackModel");
 				}
@@ -102,17 +98,11 @@ namespace SC2ExpansionLoader{
 						towerTypes.Add(tower.Name);
 						TowerType.towers=towerTypes.ToArray();
                         if(tower.Upgradable){
-							if(tower.UpgradeModels==null){
-								tower.UpgradeModels=tower.GenerateUpgradeModels();
-							}
-                            foreach(UpgradeModel upgrade in tower.UpgradeModels){
-                                upgrades.Add(upgrade);
-                            }
+                            tower.UpgradeModels??=tower.GenerateUpgradeModels();
+                            upgrades.AddRange(tower.UpgradeModels);
                         }
 						tower.TowerModels=tower.GenerateTowerModels();
-                        foreach(TowerModel towerModel in tower.TowerModels){
-                            towers.Add(towerModel);
-                        }
+                        towers.AddRange((tower.TowerModels));
                         gameModel.towers=towers.ToArray();
                         gameModel.towerSet=towerSet.ToArray();
                         gameModel.upgrades=upgrades.ToArray();
@@ -125,7 +115,7 @@ namespace SC2ExpansionLoader{
             }
         }
 		[HarmonyPatch(typeof(TowerInventory),"CreatedTower")]
-        public class TowerInventoryCreatedTower_Patch{
+        public class TowerInventory_CreatedTower_Patch{
             [HarmonyPrefix]
             public static bool Prefix(TowerInventory __instance,TowerModel def){
                 if(!__instance.towerCounts.ContainsKey(def.baseId)){

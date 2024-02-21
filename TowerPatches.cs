@@ -1,5 +1,4 @@
 using Il2CppAssets.Scripts.Simulation;
-
 namespace SC2ExpansionLoader{
     public class TowerPatches{
         [HarmonyPatch(typeof(Weapon),"SpawnDart")]

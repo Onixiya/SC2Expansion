@@ -18,6 +18,7 @@ namespace SC2ExpansionLoader{
                         prototype=gObj.GetComponent<UnityDisplayNode>();
                         __instance.__4__this.active.Add(prototype);
                         __instance.onComplete.Invoke(prototype);
+                        Log(__instance.objectId.guidRef);
                     }catch(Exception error){
                         PrintError(error,"Failed to set "+__instance.objectId.guidRef+" up");
                     }
@@ -38,6 +39,7 @@ namespace SC2ExpansionLoader{
                     try{
                         Texture2D texture=LoadAsset<Texture2D>(name,TowerTypes[towerName].LoadedBundle);
                         __result=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
+                        Log(name);
                     }catch(Exception error){
                         PrintError(error,"Failed to set "+name+" up, Sprite "+(__result==null));
                     }
@@ -57,9 +59,11 @@ namespace SC2ExpansionLoader{
                             }
                         }catch(Exception error){
                             PrintError(error,"Failed to add audio clips from "+bundlePath);
+                            return;
                         }
                     }
                 }
+                Log("Audio files loaded");
             }
         }
     }
