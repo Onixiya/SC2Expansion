@@ -1,3 +1,7 @@
+using Il2CppInterop.Runtime.Injection;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.AddressableAssets;
+using Il2CppSystem.Linq;
 namespace SC2ExpansionLoader{
     public static class HarmonyPatches{
         [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
@@ -36,11 +40,11 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(TitleScreen),"Start")]
-        public class TitleScreen_Start_Patch{
+        [HarmonyPatch(typeof(GameModelUtil.__c__DisplayClass4_0),"_LoadGameModelAsync_b__0")]
+        public class GameModelUtil_LoadGameModelAsync_Patch{
             [HarmonyPostfix]
-            public static void Postfix(){
-                gameModel=Game.instance.model;
+            public static void Postfix(ref GameModel __result){
+                gameModel=__result;
                 LocManager=LocalizationManager.Instance;
 				try{
 					//mostly suited for protoss warp things
@@ -53,7 +57,8 @@ namespace SC2ExpansionLoader{
                     createTowerBehav.GetModel<RandomPositionModel>().useInverted=false;
                     CreateTowerAttackModel.behaviors=createTowerBehav.ToArray();
                     ProjectileModel proj=CreateTowerAttackModel.weapons[0].projectile;
-                    proj.display=new(){guidRef=""};
+                    //proj.display=new(){guidRef=""};
+                    proj.display=new("");
                     Il2CppReferenceArray<Model>projBehav=proj.behaviors;
                     ArriveAtTargetModel arriveAtTargetModel=projBehav.GetModel<ArriveAtTargetModel>();
                     arriveAtTargetModel.expireOnArrival=false;
@@ -65,8 +70,7 @@ namespace SC2ExpansionLoader{
 					PrintError(error,"Failed to create CreateTowerAttackModel");
 				}
 				try{
-                    BlankAbilityModel=gameModel.GetTowerFromId("Quincy 4").Cast<TowerModel>().behaviors.
-                        First(a=>a.GetIl2CppType().Name=="AbilityModel").Clone().Cast<AbilityModel>();
+                    BlankAbilityModel=gameModel.GetTowerFromId("Quincy 4").behaviors.GetModel<AbilityModel>().Clone<AbilityModel>();
                     BlankAbilityModel.description="AbilityDescription";
                     BlankAbilityModel.displayName="AbilityDisplayName";
                     BlankAbilityModel.name="AbilityName";
@@ -98,11 +102,11 @@ namespace SC2ExpansionLoader{
 						towerTypes.Add(tower.Name);
 						TowerType.towers=towerTypes.ToArray();
                         if(tower.Upgradable){
-                            tower.UpgradeModels??=tower.GenerateUpgradeModels();
+                            tower.UpgradeModels=tower.GenerateUpgradeModels();
                             upgrades.AddRange(tower.UpgradeModels);
                         }
 						tower.TowerModels=tower.GenerateTowerModels();
-                        towers.AddRange((tower.TowerModels));
+                        towers.AddRange(tower.TowerModels);
                         gameModel.towers=towers.ToArray();
                         gameModel.towerSet=towerSet.ToArray();
                         gameModel.upgrades=upgrades.ToArray();
@@ -149,7 +153,7 @@ namespace SC2ExpansionLoader{
             }
         }
         [HarmonyPatch(typeof(SubTowerFilter),"FilterEmission")]
-        public class SubTowerFilterFilterEmission_Patch{
+        public class SubTowerFilter_FilterEmission_Patch{
             [HarmonyPrefix]
             public static bool Prefix(SubTowerFilter __instance,ref bool __result){
                 if(__instance.createdSubTowers.Count>=__instance.subTowerFilterModel.maxNumberOfSubTowers){
@@ -158,6 +162,16 @@ namespace SC2ExpansionLoader{
                     __result=true;
                 }
                 return false;
+            }
+        }
+        [HarmonyPatch(typeof(CreateSoundOnUpgrade),"OnUpgrade")]
+        public class CreateSoundOnUpgrade_OnUpgrade_Patch{
+            public static bool Prefix(ref CreateSoundOnUpgrade __instance){
+                if(TowerTypes.ContainsKey(__instance.tower.towerModel.baseId)){
+                    __instance.PlayHeroUpgradeSound();
+                    return false;
+                }
+                return true;
             }
         }
         /*[HarmonyPatch(typeof(Pet),nameof(Pet.Initialise))]

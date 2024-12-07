@@ -43,3 +43,5 @@ global using Il2CppAssets.Scripts.Simulation.Input;
 global using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
 global using Il2CppAssets.Scripts.Simulation.Towers.Weapons.Behaviors;
 global using Il2CppAssets.Scripts.Models.Towers.Projectiles;
+global using Il2CppAssets.Scripts.Models.Map;
+global using MelonLoader.NativeUtils;

@@ -21,8 +21,8 @@ namespace SC2ExpansionLoader{
         public static Il2CppReferenceArray<T>GetModels<T>(this Il2CppReferenceArray<Model>array)where T:Model{
             try{
 				Model[]models=array.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).ToArray();
-				Il2CppReferenceArray<T>returnArray=new Il2CppReferenceArray<T>(models.Count());
-				for(int i=0;i<models.Count();i++){
+				Il2CppReferenceArray<T>returnArray=new Il2CppReferenceArray<T>(models.Length);
+				for(int i=0;i<models.Length;i++){
 					returnArray[i]=models[i].Cast<T>();
 				}
 				return returnArray;

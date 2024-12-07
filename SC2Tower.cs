@@ -10,7 +10,8 @@
         public virtual int MaxTier=>0;
         public virtual UpgradeModel[]GenerateUpgradeModels()=>null;
         public UpgradeModel[]UpgradeModels=null;
-        public AssetBundle LoadedBundle=null;
+        public AssetBundle Bundle=null;
+        //public byte[]BundleBytes=null;
         public virtual void Attack(Weapon weapon){}
         public virtual void Upgrade(int tier,Tower tower){}
         public virtual bool Ability(string ability,Tower tower){

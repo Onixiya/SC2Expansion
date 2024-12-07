@@ -1,3 +1,5 @@
+/*using Il2CppInterop.Runtime.Attributes;
+
 namespace SC2ExpansionLoader{
     public class UpgradeMenu{
         public static AssetBundle LoadedUIBundle=null;
@@ -43,7 +45,7 @@ namespace SC2ExpansionLoader{
         void Start(){
             GetComponent<Button>().onClick.AddListener(new Action(()=>{
                 Menu.UpgradeDescription.text=Description;
-                Texture2D texture=LoadAsset<Texture2D>(PortraitAsset,Menu.CurrentTower.LoadedBundle).Cast<Texture2D>();
+                Texture2D texture=LoadAsset<Texture2D>(PortraitAsset,Menu.CurrentTower.Bundle).Cast<Texture2D>();
                 Menu.Portrait.sprite=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
                 Menu.Cost.text="Cost: "+Cost;
                 Menu.UpgradeDescription.gameObject.SetActive(true);
@@ -108,7 +110,7 @@ namespace SC2ExpansionLoader{
 				UpgradeDescription.font=Title.font;
                 string portraitAsset=CurrentTower.TowerModels[0].portrait.guidRef.Split('[')[1];
                 portraitAsset=portraitAsset.Remove(portraitAsset.Length-1);
-                Texture2D texture=LoadAsset<Texture2D>(portraitAsset,CurrentTower.LoadedBundle).Cast<Texture2D>();
+                Texture2D texture=LoadAsset<Texture2D>(portraitAsset,CurrentTower.Bundle).Cast<Texture2D>();
                 Portrait.sprite=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
                 switch(CurrentTower.TowerModels[0].upgrades.Length){
                     case 1:
@@ -124,14 +126,14 @@ namespace SC2ExpansionLoader{
                         SetRowUp(Path2Icons);
                         SetRowUp(Path3Icons);
                         break;*/
-                }
+                /*}
                 transform.GetChild(3).GetComponent<Button>().onClick.AddListener(new Action(()=>{
                     MelonCoroutines.Start(Hide(this));
                 }));
                 if(CurrentTower.UpgradeScreenSound!=null){
-                    PlaySound(CurrentTower.UpgradeScreenSound);
+                    //Audio.PlaySoundFromUnity(CurrentTower.AudioClips[CurrentTower.UpgradeScreenSound],"FX");
                 }else{
-                    PlaySound(CurrentTower.Name+"-Birth");
+                    //Audio.PlaySoundFromUnity(CurrentTower.AudioClips[CurrentTower.Name+"-Birth"],"FX");
                 }
 				foreach(NK_TextMeshProUGUI text in GetComponentsInChildren<NK_TextMeshProUGUI>()){
                     Texts.Add(text);
@@ -139,18 +141,19 @@ namespace SC2ExpansionLoader{
                 }
             }catch(Exception error){
 				PrintError(error,"Failed to load "+CurrentTower.TowerFaction.ToString()+" upgrade menu for "+CurrentTower.Name);
-                uObject.Destroy(gameObject);
+                Destroy(gameObject);
                 return;
             }
             MelonCoroutines.Start(Show(this));
         }
+        [HideFromIl2Cpp]
         public void SetRowUp(List<Button>buttons){
             for(int i=0;i<CurrentTower.MaxTier;i++){
                 Button button=buttons[i];
                 UpgradeModel upgrade=CurrentTower.UpgradeModels[i];
                 string iconAsset=upgrade.icon.guidRef.Split('[')[1];
                 iconAsset=iconAsset.Remove(iconAsset.Length-1);
-                Texture2D texture=LoadAsset<Texture2D>(iconAsset,CurrentTower.LoadedBundle).Cast<Texture2D>();
+                Texture2D texture=LoadAsset<Texture2D>(iconAsset,CurrentTower.Bundle).Cast<Texture2D>();
                 button.image.sprite=Sprite.Create(texture,new(0,0,texture.width,texture.height),new());
 				NK_TextMeshProUGUI text=button.transform.GetChild(0).gameObject.AddComponent<NK_TextMeshProUGUI>();
                 text.text=upgrade.name;
@@ -200,4 +203,4 @@ namespace SC2ExpansionLoader{
             SceneManager.UnloadScene(menu.Background.transform.SceneName());
         }
     }
-}
+}*/
