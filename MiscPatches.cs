@@ -2,6 +2,8 @@ using Il2CppInterop.Runtime.Injection;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.AddressableAssets;
 using Il2CppSystem.Linq;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors;
+using Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 namespace SC2ExpansionLoader{
     public static class HarmonyPatches{
         [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
@@ -48,16 +50,16 @@ namespace SC2ExpansionLoader{
                 LocManager=LocalizationManager.Instance;
 				try{
 					//mostly suited for protoss warp things
-                    CreateTowerAttackModel=gameModel.GetTowerFromId("EngineerMonkey-100").behaviors.GetModel<AttackModel>("Spawner").Clone<AttackModel>();
-                    List<Model>createTowerBehav=CreateTowerAttackModel.behaviors.ToList();
-                    createTowerBehav.Remove(createTowerBehav.First(a=>a.GetIl2CppType().Name=="RotateToTargetModel"));
-                    createTowerBehav.GetModel<RandomPositionModel>().minDistance=70;
-                    createTowerBehav.GetModel<RandomPositionModel>().maxDistance=90;
-                    createTowerBehav.GetModel<RandomPositionModel>().idealDistanceWithinTrack=0;
-                    createTowerBehav.GetModel<RandomPositionModel>().useInverted=false;
-                    CreateTowerAttackModel.behaviors=createTowerBehav.ToArray();
-                    ProjectileModel proj=CreateTowerAttackModel.weapons[0].projectile;
-                    //proj.display=new(){guidRef=""};
+                    AttackModel attack=gameModel.GetTowerFromId("EngineerMonkey-100").behaviors.GetModel<AttackModel>("Spawner").Clone<AttackModel>();
+                    List<Model>createTowerBehav=attack.behaviors.ToList();
+                    createTowerBehav.RemoveModel<RotateToTargetModel>();
+                    RandomPositionModel rpm=createTowerBehav.GetModel<RandomPositionModel>();
+                    rpm.minDistance=70;
+                    rpm.maxDistance=90;
+                    rpm.idealDistanceWithinTrack=0;
+                    rpm.useInverted=false;
+                    attack.behaviors=createTowerBehav.ToArray();
+                    ProjectileModel proj=attack.weapons[0].projectile;
                     proj.display=new("");
                     Il2CppReferenceArray<Model>projBehav=proj.behaviors;
                     ArriveAtTargetModel arriveAtTargetModel=projBehav.GetModel<ArriveAtTargetModel>();
@@ -66,21 +68,30 @@ namespace SC2ExpansionLoader{
                     DisplayModel displayModel=projBehav.GetModel<DisplayModel>();
                     displayModel.delayedReveal=1;
                     displayModel.positionOffset=new(0,0,190);
+                    CreateTowerAttackModel=attack;
 				}catch(Exception error){
 					PrintError(error,"Failed to create CreateTowerAttackModel");
 				}
 				try{
-                    BlankAbilityModel=gameModel.GetTowerFromId("Quincy 4").behaviors.GetModel<AbilityModel>().Clone<AbilityModel>();
-                    BlankAbilityModel.description="AbilityDescription";
-                    BlankAbilityModel.displayName="AbilityDisplayName";
-                    BlankAbilityModel.name="AbilityName";
-                    List<Model>behaviors=BlankAbilityModel.behaviors.ToList();
-                    behaviors.Remove(behaviors.First(a=>a.GetIl2CppType().Name=="TurboModel"));
-                    behaviors.Remove(behaviors.First(a=>a.GetIl2CppType().Name=="CreateEffectOnAbilityModel"));
-                    behaviors.Remove(behaviors.First(a=>a.GetIl2CppType().Name=="CreateSoundOnAbilityModel"));
-                    BlankAbilityModel.behaviors=behaviors.ToArray();
+                    AbilityModel ability=gameModel.GetTowerFromId("Quincy 4").behaviors.GetModel<AbilityModel>().Clone<AbilityModel>();
+                    ability.description="AbilityDescription";
+                    ability.displayName="AbilityDisplayName";
+                    ability.name="AbilityName";
+                    List<Model>behaviors=ability.behaviors.ToList();
+                    behaviors.RemoveModel<TurboModel>();
+                    behaviors.RemoveModel<CreateEffectOnAbilityModel>();
+                    behaviors.RemoveModel<CreateSoundOnAbilityModel>();
+                    ability.behaviors=behaviors.ToArray();
+                    BlankAbilityModel=ability;
                 }catch(Exception error){
                     PrintError(error,"Failed to create BlankAbilityModel");
+                }
+                try{
+                    CreateSoundOnSelectedModel csosm=gameModel.GetTowerFromId("Quincy").behaviors.GetModel<CreateSoundOnSelectedModel>().Clone<CreateSoundOnSelectedModel>();
+                    csosm.name="SC2Expansion-Select";
+                    SelectedSoundModel=csosm;
+                }catch(Exception error){
+                    PrintError(error,"Failed to create SelectedSoundModel");
                 }
                 List<TowerModel>towers=gameModel.towers.ToList();
                 List<TowerDetailsModel>towerSet=gameModel.towerSet.ToList();

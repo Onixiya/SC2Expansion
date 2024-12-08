@@ -13,21 +13,46 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.InputSystem;
 using Il2CppAssets.Scripts.Models.Towers.Behaviors;
+using Il2CppAssets.Scripts.Models.Audio;
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(ModMain),ModHelperData.Name,ModHelperData.Version,"Silentstorm")]
 namespace SC2ExpansionLoader{
     public class ModMain:MelonMod{
         public static readonly Dictionary<string,SC2Tower>TowerTypes=new();
 		public static Dictionary<string,SC2Tower>HeroTypes=new();
-        public static AbilityModel BlankAbilityModel;
+        private static AbilityModel _blankAbilityModel;
+        public static AbilityModel BlankAbilityModel{
+            get{
+                return _blankAbilityModel.Clone<AbilityModel>();
+            }
+            set{
+                _blankAbilityModel=value;
+            }
+        }
         private static MelonLogger.Instance _mllog;
-        public static string BundleDir;
-        public static AttackModel CreateTowerAttackModel;
+        private static AttackModel _createTowerAttackModel;
+        public static AttackModel CreateTowerAttackModel{
+            get{
+                return _createTowerAttackModel.Clone<AttackModel>();
+            }
+            set{
+                _createTowerAttackModel=value;
+            }
+        }
         public static GameModel gameModel;
         public static LocalizationManager LocManager;
 		public static Il2CppStructArray<AreaType>FlyingAreaTypes;
         public static AudioFactory Audio;
         public static AssetPoolBehaviour AssetPool;
+        private static CreateSoundOnSelectedModel _selectedSoundModel;
+        public static CreateSoundOnSelectedModel SelectedSoundModel{
+            get{
+                return _selectedSoundModel.Clone<CreateSoundOnSelectedModel>();
+            }
+            set{
+                _selectedSoundModel=value;
+            }
+        }
         public static void Log(object thing,string type="msg"){
             switch(type){
                 case"msg":
@@ -71,10 +96,15 @@ namespace SC2ExpansionLoader{
 				}
 			}
 		}
-        public static void SetSounds(TowerModel model,bool place,bool select,bool upgrade){
+        public static void SetSounds(TowerModel model,bool place,bool select,bool upgrade,bool sameSound){
             if(place){
                 CreateSoundOnTowerPlaceModel csontpm=model.behaviors.GetModel<CreateSoundOnTowerPlaceModel>();
-                csontpm.sound1=new(model.baseId+"-Birth",new(model.baseId+"-Birth"));
+                if(sameSound){
+                    string sound=model.baseId+"-"+new System.Random().Next(1,10);
+                    csontpm.sound1=new(sound,new(sound));
+                }else{
+                    csontpm.sound1=new(model.baseId+"-Birth",new(model.baseId+"-Birth"));
+                }
                 csontpm.sound2=csontpm.sound1;
                 csontpm.heroSound1=csontpm.sound1;
                 csontpm.heroSound2=csontpm.sound1;
@@ -83,26 +113,49 @@ namespace SC2ExpansionLoader{
             }
             if(select){
                 CreateSoundOnSelectedModel csosm=model.behaviors.GetModel<CreateSoundOnSelectedModel>();
-                csosm.sound1=new(model.baseId+"-Select1",new(model.baseId+"-Select1"));
-                csosm.sound2=new(model.baseId+"-Select2",new(model.baseId+"-Select2"));
-                csosm.sound3=new(model.baseId+"-Select3",new(model.baseId+"-Select3"));
-                csosm.sound4=new(model.baseId+"-Select4",new(model.baseId+"-Select4"));
-                csosm.sound5=new(model.baseId+"-Select5",new(model.baseId+"-Select5"));
-                csosm.sound6=new(model.baseId+"-Select6",new(model.baseId+"-Select6"));
-                csosm.altSound1=new(model.baseId+"-Select7",new(model.baseId+"-Select7"));
-                csosm.altSound2=new(model.baseId+"-Select8",new(model.baseId+"-Select8"));
+                if(sameSound){
+                    csosm.sound1=new(model.baseId+"-1",new(model.baseId+"-1"));
+                    csosm.sound2=new(model.baseId+"-2",new(model.baseId+"-2"));
+                    csosm.sound3=new(model.baseId+"-3",new(model.baseId+"-3"));
+                    csosm.sound4=new(model.baseId+"-4",new(model.baseId+"-4"));
+                    csosm.sound5=new(model.baseId+"-5",new(model.baseId+"-5"));
+                    csosm.sound6=new(model.baseId+"-6",new(model.baseId+"-6"));
+                    csosm.altSound1=new(model.baseId+"-7",new(model.baseId+"-7"));
+                    csosm.altSound2=new(model.baseId+"-8",new(model.baseId+"-8"));
+                }else{
+                    csosm.sound1=new(model.baseId+"-Select1",new(model.baseId+"-Select1"));
+                    csosm.sound2=new(model.baseId+"-Select2",new(model.baseId+"-Select2"));
+                    csosm.sound3=new(model.baseId+"-Select3",new(model.baseId+"-Select3"));
+                    csosm.sound4=new(model.baseId+"-Select4",new(model.baseId+"-Select4"));
+                    csosm.sound5=new(model.baseId+"-Select5",new(model.baseId+"-Select5"));
+                    csosm.sound6=new(model.baseId+"-Select6",new(model.baseId+"-Select6"));
+                    csosm.altSound1=new(model.baseId+"-Select7",new(model.baseId+"-Select7"));
+                    csosm.altSound2=new(model.baseId+"-Select8",new(model.baseId+"-Select8"));
+                }
             }
             if(upgrade){
                 CreateSoundOnUpgradeModel csoum=model.behaviors.GetModel<CreateSoundOnUpgradeModel>();
-                csoum.sound=new(model.baseId+"-Upgrade1",new(model.baseId+"-Upgrade1"));
-                csoum.sound1=new(model.baseId+"-Upgrade2",new(model.baseId+"-Upgrade2"));
-                csoum.sound2=new(model.baseId+"-Upgrade3",new(model.baseId+"-Upgrade3"));
-                csoum.sound3=new(model.baseId+"-Upgrade4",new(model.baseId+"-Upgrade4"));
-                csoum.sound4=new(model.baseId+"-Upgrade5",new(model.baseId+"-Upgrade5"));
-                csoum.sound5=new(model.baseId+"-Upgrade6",new(model.baseId+"-Upgrade6"));
-                csoum.sound6=new(model.baseId+"-Upgrade7",new(model.baseId+"-Upgrade7"));
-                csoum.sound7=new(model.baseId+"-Upgrade8",new(model.baseId+"-Upgrade8"));
-                csoum.sound8=new(model.baseId+"-Upgrade9",new(model.baseId+"-Upgrade9"));
+                if(sameSound){
+                    csoum.sound=new(model.baseId+"-1",new(model.baseId+"-1"));
+                    csoum.sound1=new(model.baseId+"-2",new(model.baseId+"-2"));
+                    csoum.sound2=new(model.baseId+"-3",new(model.baseId+"-3"));
+                    csoum.sound3=new(model.baseId+"-4",new(model.baseId+"-4"));
+                    csoum.sound4=new(model.baseId+"-5",new(model.baseId+"-5"));
+                    csoum.sound5=new(model.baseId+"-6",new(model.baseId+"-6"));
+                    csoum.sound6=new(model.baseId+"-7",new(model.baseId+"-7"));
+                    csoum.sound7=new(model.baseId+"-8",new(model.baseId+"-8"));
+                    csoum.sound8=new(model.baseId+"-9",new(model.baseId+"-9"));
+                }else{
+                    csoum.sound=new(model.baseId+"-Upgrade1",new(model.baseId+"-Upgrade1"));
+                    csoum.sound1=new(model.baseId+"-Upgrade2",new(model.baseId+"-Upgrade2"));
+                    csoum.sound2=new(model.baseId+"-Upgrade3",new(model.baseId+"-Upgrade3"));
+                    csoum.sound3=new(model.baseId+"-Upgrade4",new(model.baseId+"-Upgrade4"));
+                    csoum.sound4=new(model.baseId+"-Upgrade5",new(model.baseId+"-Upgrade5"));
+                    csoum.sound5=new(model.baseId+"-Upgrade6",new(model.baseId+"-Upgrade6"));
+                    csoum.sound6=new(model.baseId+"-Upgrade7",new(model.baseId+"-Upgrade7"));
+                    csoum.sound7=new(model.baseId+"-Upgrade8",new(model.baseId+"-Upgrade8"));
+                    csoum.sound8=new(model.baseId+"-Upgrade9",new(model.baseId+"-Upgrade9"));
+                }
             }
         }
         public static byte[]GetBytesFromStream(Stream stream){
