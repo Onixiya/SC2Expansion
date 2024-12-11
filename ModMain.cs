@@ -80,7 +80,7 @@ namespace SC2ExpansionLoader{
                         }
                         if(tower.HasBundle){
                             tower.Bundle=AssetBundle.LoadFromMemory(GetBytesFromStream(assembly.GetManifestResourceStream(
-                                assembly.GetManifestResourceNames().First(a=>a.Contains(tower.Name.ToLower()+".bundle")))));
+                                assembly.GetManifestResourceNames().First(a=>a.Contains(tower.BundleName)))));
                         }
 						towerList.Add(tower);
 					}catch(Exception ex){
@@ -92,18 +92,18 @@ namespace SC2ExpansionLoader{
 			if(towerList.Any()){
 				towerList=towerList.OrderBy(a=>a.Order).ToList();
 				foreach(SC2Tower tower in towerList){
-					TowerTypes.Add(tower.Name,tower);
+					TowerTypes.Add(tower.Identifier,tower);
 				}
 			}
 		}
-        public static void SetSounds(TowerModel model,bool place,bool select,bool upgrade,bool sameSound){
+        public static void SetSounds(TowerModel model,string id,bool place,bool select,bool upgrade,bool sameSound){
             if(place){
                 CreateSoundOnTowerPlaceModel csontpm=model.behaviors.GetModel<CreateSoundOnTowerPlaceModel>();
                 if(sameSound){
-                    string sound=model.baseId+"-"+new System.Random().Next(1,10);
+                    string sound=id+"-"+new System.Random().Next(1,10);
                     csontpm.sound1=new(sound,new(sound));
                 }else{
-                    csontpm.sound1=new(model.baseId+"-Birth",new(model.baseId+"-Birth"));
+                    csontpm.sound1=new(id+"-Birth",new(id+"-Birth"));
                 }
                 csontpm.sound2=csontpm.sound1;
                 csontpm.heroSound1=csontpm.sound1;
@@ -114,47 +114,47 @@ namespace SC2ExpansionLoader{
             if(select){
                 CreateSoundOnSelectedModel csosm=model.behaviors.GetModel<CreateSoundOnSelectedModel>();
                 if(sameSound){
-                    csosm.sound1=new(model.baseId+"-1",new(model.baseId+"-1"));
-                    csosm.sound2=new(model.baseId+"-2",new(model.baseId+"-2"));
-                    csosm.sound3=new(model.baseId+"-3",new(model.baseId+"-3"));
-                    csosm.sound4=new(model.baseId+"-4",new(model.baseId+"-4"));
-                    csosm.sound5=new(model.baseId+"-5",new(model.baseId+"-5"));
-                    csosm.sound6=new(model.baseId+"-6",new(model.baseId+"-6"));
-                    csosm.altSound1=new(model.baseId+"-7",new(model.baseId+"-7"));
-                    csosm.altSound2=new(model.baseId+"-8",new(model.baseId+"-8"));
+                    csosm.sound1=new(id+"-1",new(id+"-1"));
+                    csosm.sound2=new(id+"-2",new(id+"-2"));
+                    csosm.sound3=new(id+"-3",new(id+"-3"));
+                    csosm.sound4=new(id+"-4",new(id+"-4"));
+                    csosm.sound5=new(id+"-5",new(id+"-5"));
+                    csosm.sound6=new(id+"-6",new(id+"-6"));
+                    csosm.altSound1=new(id+"-7",new(id+"-7"));
+                    csosm.altSound2=new(id+"-8",new(id+"-8"));
                 }else{
-                    csosm.sound1=new(model.baseId+"-Select1",new(model.baseId+"-Select1"));
-                    csosm.sound2=new(model.baseId+"-Select2",new(model.baseId+"-Select2"));
-                    csosm.sound3=new(model.baseId+"-Select3",new(model.baseId+"-Select3"));
-                    csosm.sound4=new(model.baseId+"-Select4",new(model.baseId+"-Select4"));
-                    csosm.sound5=new(model.baseId+"-Select5",new(model.baseId+"-Select5"));
-                    csosm.sound6=new(model.baseId+"-Select6",new(model.baseId+"-Select6"));
-                    csosm.altSound1=new(model.baseId+"-Select7",new(model.baseId+"-Select7"));
-                    csosm.altSound2=new(model.baseId+"-Select8",new(model.baseId+"-Select8"));
+                    csosm.sound1=new(id+"-Select1",new(id+"-Select1"));
+                    csosm.sound2=new(id+"-Select2",new(id+"-Select2"));
+                    csosm.sound3=new(id+"-Select3",new(id+"-Select3"));
+                    csosm.sound4=new(id+"-Select4",new(id+"-Select4"));
+                    csosm.sound5=new(id+"-Select5",new(id+"-Select5"));
+                    csosm.sound6=new(id+"-Select6",new(id+"-Select6"));
+                    csosm.altSound1=new(id+"-Select7",new(id+"-Select7"));
+                    csosm.altSound2=new(id+"-Select8",new(id+"-Select8"));
                 }
             }
             if(upgrade){
                 CreateSoundOnUpgradeModel csoum=model.behaviors.GetModel<CreateSoundOnUpgradeModel>();
                 if(sameSound){
-                    csoum.sound=new(model.baseId+"-1",new(model.baseId+"-1"));
-                    csoum.sound1=new(model.baseId+"-2",new(model.baseId+"-2"));
-                    csoum.sound2=new(model.baseId+"-3",new(model.baseId+"-3"));
-                    csoum.sound3=new(model.baseId+"-4",new(model.baseId+"-4"));
-                    csoum.sound4=new(model.baseId+"-5",new(model.baseId+"-5"));
-                    csoum.sound5=new(model.baseId+"-6",new(model.baseId+"-6"));
-                    csoum.sound6=new(model.baseId+"-7",new(model.baseId+"-7"));
-                    csoum.sound7=new(model.baseId+"-8",new(model.baseId+"-8"));
-                    csoum.sound8=new(model.baseId+"-9",new(model.baseId+"-9"));
+                    csoum.sound=new(id+"-1",new(id+"-1"));
+                    csoum.sound1=new(id+"-2",new(id+"-2"));
+                    csoum.sound2=new(id+"-3",new(id+"-3"));
+                    csoum.sound3=new(id+"-4",new(id+"-4"));
+                    csoum.sound4=new(id+"-5",new(id+"-5"));
+                    csoum.sound5=new(id+"-6",new(id+"-6"));
+                    csoum.sound6=new(id+"-7",new(id+"-7"));
+                    csoum.sound7=new(id+"-8",new(id+"-8"));
+                    csoum.sound8=new(id+"-9",new(id+"-9"));
                 }else{
-                    csoum.sound=new(model.baseId+"-Upgrade1",new(model.baseId+"-Upgrade1"));
-                    csoum.sound1=new(model.baseId+"-Upgrade2",new(model.baseId+"-Upgrade2"));
-                    csoum.sound2=new(model.baseId+"-Upgrade3",new(model.baseId+"-Upgrade3"));
-                    csoum.sound3=new(model.baseId+"-Upgrade4",new(model.baseId+"-Upgrade4"));
-                    csoum.sound4=new(model.baseId+"-Upgrade5",new(model.baseId+"-Upgrade5"));
-                    csoum.sound5=new(model.baseId+"-Upgrade6",new(model.baseId+"-Upgrade6"));
-                    csoum.sound6=new(model.baseId+"-Upgrade7",new(model.baseId+"-Upgrade7"));
-                    csoum.sound7=new(model.baseId+"-Upgrade8",new(model.baseId+"-Upgrade8"));
-                    csoum.sound8=new(model.baseId+"-Upgrade9",new(model.baseId+"-Upgrade9"));
+                    csoum.sound=new(id+"-Upgrade1",new(id+"-Upgrade1"));
+                    csoum.sound1=new(id+"-Upgrade2",new(id+"-Upgrade2"));
+                    csoum.sound2=new(id+"-Upgrade3",new(id+"-Upgrade3"));
+                    csoum.sound3=new(id+"-Upgrade4",new(id+"-Upgrade4"));
+                    csoum.sound4=new(id+"-Upgrade5",new(id+"-Upgrade5"));
+                    csoum.sound5=new(id+"-Upgrade6",new(id+"-Upgrade6"));
+                    csoum.sound6=new(id+"-Upgrade7",new(id+"-Upgrade7"));
+                    csoum.sound7=new(id+"-Upgrade8",new(id+"-Upgrade8"));
+                    csoum.sound8=new(id+"-Upgrade9",new(id+"-Upgrade9"));
                 }
             }
         }

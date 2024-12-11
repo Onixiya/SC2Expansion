@@ -1,7 +1,6 @@
 ﻿namespace SC2ExpansionLoader{
     public class SC2Tower{
         public virtual string Name=>"";
-        public virtual byte[]TowerBundle=>null;
         public virtual ShopTowerDetailsModel ShopDetails()=>null;
 		public virtual HeroDetailsModel GenerateHeroDetails()=>null;
 		public HeroDetailsModel HeroDetails=null;
@@ -11,7 +10,8 @@
         public virtual UpgradeModel[]GenerateUpgradeModels()=>null;
         public UpgradeModel[]UpgradeModels=null;
         public AssetBundle Bundle=null;
-        //public byte[]BundleBytes=null;
+        public virtual string BundleName=>Name.ToLower()+".bundle";
+        public virtual string Identifier=>Name;
         public virtual void Attack(Weapon weapon){}
         public virtual void Upgrade(int tier,Tower tower){}
         public virtual bool Ability(string ability,Tower tower){
