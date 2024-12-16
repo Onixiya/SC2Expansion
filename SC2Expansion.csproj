@@ -1,0 +1,100 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <DefaultItemExcludes>$(DefaultItemExcludes);SC2ExpansionProject;SC2ExpansionProject\**\*</DefaultItemExcludes>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/net6/0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Common">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\net6\Il2CppInterop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Generator">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\net6\Il2CppInterop.Generator.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppSystem.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MelonLoader">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/net6/MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="NinjaKiwi.Common">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNinjaKiwi.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\Unity.Addressables.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UIElementsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppNewtonsoft.Json">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppNewtonsoft.Json.dll</HintPath>
+    </Reference>
+	  <Reference Include="Il2CppDebugLog">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Il2CppDebugLog.dll</HintPath>
+    </Reference>
+	  <Reference Include="UnityEngine.UI">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UI.dll</HintPath>
+    </Reference>
+	  <Reference Include="Unity.ResourceManager">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/Unity.ResourceManager.dll</HintPath>
+    </Reference>
+	  <Reference Include="Il2Cpp">
+      <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Dependencies/SupportModules/Il2Cpp.dll</HintPath>
+    </Reference>
+    <EmbeddedResource Include="Bundles/protossupgrademenu.bundle" />
+    <EmbeddedResource Include="Bundles/terranupgrademenu.bundle" />
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetPath) &quot;\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods&quot;" />
+  </Target>
+</Project>
