@@ -1,15 +1,3 @@
-using Il2CppAssets.Scripts.Simulation.Audio;
-using Il2CppAssets.Scripts.Unity.UI_New.InGame.StoreMenu;
-using Il2CppAssets.Scripts.Unity.UI_New.Utils;
-using Il2CppInterop.Runtime.Runtime;
-using Il2CppNinjaKiwi.Common.ResourceUtils;
-using Il2CppSystem.Linq;
-using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.U2D;
-using static Il2CppNinjaKiwi.Common.ResourceUtils.ResourceLoader;
 namespace SC2ExpansionLoader{
     public class AssetLoading{
         [HarmonyPatch(typeof(Factory.__c__DisplayClass21_0),nameof(Factory.__c__DisplayClass21_0._CreateAsync_b__0))]

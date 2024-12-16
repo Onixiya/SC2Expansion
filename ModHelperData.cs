@@ -1,7 +1,7 @@
-namespace SC2ExpansionLoader{
+namespace SC2ExpansionLoader.Data{
     public static class ModHelperData{
-        public const string WorksOnVersion="45.3";
-        public const string Version="3.1.0";
+        public const string WorksOnVersion="46";
+        public const string Version="3.2.0";
         public const string Name="SC2ExpansionLoader";
         public const string Description="Loader for any SC2Expansion mods, this mod adds nothing by itself. Will be automatically downloaded if required";
         public const string RepoOwner="Onixiya";

@@ -1,9 +1,3 @@
-using Il2CppInterop.Runtime.Injection;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.AddressableAssets;
-using Il2CppSystem.Linq;
-using Il2CppAssets.Scripts.Models.Towers.Behaviors;
-using Il2CppAssets.Scripts.Models.Towers.Behaviors.Abilities.Behaviors;
 namespace SC2ExpansionLoader{
     public static class HarmonyPatches{
         [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]

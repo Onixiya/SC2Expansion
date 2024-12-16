@@ -1,25 +1,8 @@
-﻿using Il2CppAssets.Scripts.Unity.Display.Animation;
-using Il2CppAssets.Scripts.Unity.UI_New.InGame.StoreMenu;
-using Il2CppAssets.Scripts.Unity.UI_New.Utils;
-using Il2CppInterop.Common;
-using Il2CppInterop.Runtime.XrefScans;
-using Il2CppNinjaKiwi.Common.ResourceUtils;
-using Il2CppSystem.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceLocations;
-using UnityEngine.InputSystem;
-using Il2CppAssets.Scripts.Models.Towers.Behaviors;
-using Il2CppAssets.Scripts.Models.Audio;
-[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(ModMain),ModHelperData.Name,ModHelperData.Version,"Silentstorm")]
+﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
+[assembly:MelonInfo(typeof(ModMain),SC2ExpansionLoader.Data.ModHelperData.Name,SC2ExpansionLoader.Data.ModHelperData.Version,"Silentstorm")]
 namespace SC2ExpansionLoader{
     public class ModMain:MelonMod{
         public static readonly Dictionary<string,SC2Tower>TowerTypes=new();
-		public static Dictionary<string,SC2Tower>HeroTypes=new();
         private static AbilityModel _blankAbilityModel;
         public static AbilityModel BlankAbilityModel{
             get{
@@ -92,7 +75,7 @@ namespace SC2ExpansionLoader{
 			if(towerList.Any()){
 				towerList=towerList.OrderBy(a=>a.Order).ToList();
 				foreach(SC2Tower tower in towerList){
-					TowerTypes.Add(tower.Identifier,tower);
+					TowerTypes.Add(tower.Name,tower);
 				}
 			}
 		}
