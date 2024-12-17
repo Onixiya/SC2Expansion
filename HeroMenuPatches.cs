@@ -23,7 +23,9 @@ namespace SC2ExpansionLoader.HeroPatches{
     public class HeroUpgradeDetailsSortHerosByUnlockLevel{
         public static void Postfix(ref HeroUpgradeDetails __instance){
             foreach(SC2Tower tower in TowerTypes.Values.Where(a=>a.Hero)){
-                __instance.selectedHeroes.Add(tower.HeroDetails);
+                if(!__instance.selectedHeroes.Contains(tower.HeroDetails)){
+                    __instance.selectedHeroes.Add(tower.HeroDetails);
+                }
             }
         }
     }

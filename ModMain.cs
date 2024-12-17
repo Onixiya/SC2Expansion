@@ -53,7 +53,8 @@ namespace SC2ExpansionLoader{
 	        _mllog=LoggerInstance;
 			FlyingAreaTypes=new(new AreaType[4]{0,(AreaType)1,(AreaType)2,(AreaType)4});
 			List<SC2Tower>towerList=new();
-			foreach(MelonMod mod in RegisteredMelons.Where(a=>a.OptionalDependencies!=null&&a.OptionalDependencies.AssemblyNames.Contains("SC2ExpansionLoader"))){
+            foreach(MelonMod mod in RegisteredMelons.Where(a=>a.Info.SystemType.Name=="SC2ModMain")){
+			//foreach(MelonMod mod in RegisteredMelons.Where(a=>a.OptionalDependencies!=null&&a.OptionalDependencies.AssemblyNames.Contains("SC2ExpansionLoader"))){
                 Assembly assembly=mod.MelonAssembly.Assembly;
 				foreach(Type type in assembly.GetTypes().Where(a=>a.BaseType==typeof(SC2Tower))){
 					try{
