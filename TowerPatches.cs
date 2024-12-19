@@ -1,6 +1,6 @@
 namespace SC2ExpansionLoader{
     public class TowerPatches{
-        [HarmonyPatch(typeof(Weapon),"SpawnDart")]
+        [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
         public class WeaponSpawnDart_Patch{
             [HarmonyPostfix]
             public static void Postfix(Weapon __instance){
@@ -14,7 +14,7 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(Simulation),"RoundStart")]
+        [HarmonyPatch(typeof(Simulation),nameof(Simulation.RoundStart))]
         public class SimulationRoundStart_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
@@ -27,7 +27,7 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(Simulation),"RoundEnd")]
+        [HarmonyPatch(typeof(Simulation),nameof(Simulation.RoundEnd))]
         public class SimulationRoundEnd_Patch{
             [HarmonyPostfix]
             public static void Postfix(){
@@ -40,7 +40,7 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(Tower),"OnPlace")]
+        [HarmonyPatch(typeof(Tower),nameof(Tower.OnPlace))]
         public class TowerOnPlace_Patch{
             [HarmonyPostfix]
             public static void Postfix(Tower __instance){
@@ -54,7 +54,7 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(Ability),"Activate")]
+        [HarmonyPatch(typeof(Ability),nameof(Ability.Activate))]
         public class AbilityActivate_Patch{
             [HarmonyPostfix]
             public static bool Prefix(Ability __instance){
@@ -70,7 +70,7 @@ namespace SC2ExpansionLoader{
 				return true;
             }
         }
-		[HarmonyPatch(typeof(TowerManager),"UpgradeTower")]
+		[HarmonyPatch(typeof(TowerManager),nameof(TowerManager.UpgradeTower))]
         public class TowerManagerUpgradeTower_Patch{
             [HarmonyPostfix]
             public static void Postfix(Tower tower,TowerModel def){
@@ -84,7 +84,7 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-		[HarmonyPatch(typeof(UnityToSimulation),"UpgradeTower_Impl")]
+		/*[HarmonyPatch(typeof(UnityToSimulation),"UpgradeTower_Impl")]
         public class UnityToSimulationUpgradeTowerImpl_Patch{
             [HarmonyPrefix]
             public static bool Prefix(ref UnityToSimulation __instance,Il2CppAssets.Scripts.ObjectId id,int pathIndex,int inputId){
@@ -102,7 +102,7 @@ namespace SC2ExpansionLoader{
 				}
 				return true;
 			}
-		}
+		}*/
         [HarmonyPatch(typeof(TowerSelectionMenu),"SelectTower")]
         public class TowerSelectionMenuSelectTower_Patch{
             [HarmonyPostfix]
