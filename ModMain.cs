@@ -80,11 +80,22 @@ namespace SC2ExpansionLoader{
 				}
 			}
 		}
+        public static void SetUpgradeSounds(CreateSoundOnUpgradeModel model,string id){
+            model.sound=new(id+"Birth",new(id+"Birth"));
+            model.sound1=model.sound;
+            model.sound2=model.sound;
+            model.sound3=model.sound;
+            model.sound4=model.sound;
+            model.sound5=model.sound;
+            model.sound6=model.sound;
+            model.sound7=model.sound;
+            model.sound8=model.sound;
+        }
         public static void SetSounds(TowerModel model,string id,bool place,bool select,bool upgrade,bool sameSound){
             if(place){
                 CreateSoundOnTowerPlaceModel csontpm=model.behaviors.GetModel<CreateSoundOnTowerPlaceModel>();
                 if(sameSound){
-                    string sound=id+"-"+new System.Random().Next(1,10);
+                    string sound=id+new System.Random().Next(1,10);
                     csontpm.sound1=new(sound,new(sound));
                 }else{
                     csontpm.sound1=new(id+"Birth",new(id+"Birth"));

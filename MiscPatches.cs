@@ -1,17 +1,16 @@
 namespace SC2ExpansionLoader{
     public static class HarmonyPatches{
-        [HarmonyPatch(typeof(Btd6Player),"CheckForNewParagonPipEvent")]
+        [HarmonyPatch(typeof(Btd6Player),nameof(Btd6Player.CheckForNewParagonPipEvent))]
         public class Btd6Player_CheckForNewParagonPipEvent_Patch{
-            [HarmonyPrefix]
             public static bool Prefix(){
                 return false;
             }
         }
-        [HarmonyPatch(typeof(ProfileModel),"Validate")]
+        [HarmonyPatch(typeof(ProfileModel),nameof(ProfileModel.Validate))]
         public class ProfileModel_Validate_Patch{
             public static void Prefix(ProfileModel __instance){
 				if(gameModel.GetTowerFromId(__instance.primaryHero)==null){
-					Log("Selected hero is NULL! Resetting to Quincy");
+					Log("Selected hero is NULL! Resetting to Quincy to avoid crashing!");
 					__instance.primaryHero="Quincy";
 				}
 			}
@@ -26,7 +25,6 @@ namespace SC2ExpansionLoader{
 								__instance.acquiredUpgrades.AddIfNotPresent(upgrade.name);
 							}
                         }
-                        //if(!tower.Hero)continue;
                         __instance.unlockedHeroes.AddIfNotPresent(tower.Name);
                         __instance.seenUnlockedHeroes.AddIfNotPresent(tower.Name);
                         __instance.seenNewHeroNotification.AddIfNotPresent(tower.Name);
@@ -36,9 +34,8 @@ namespace SC2ExpansionLoader{
                 }
             }
         }
-        [HarmonyPatch(typeof(GameModelUtil.__c__DisplayClass4_0),"_LoadGameModelAsync_b__0")]
+        [HarmonyPatch(typeof(GameModelUtil.__c__DisplayClass4_0),nameof(GameModelUtil.__c__DisplayClass4_0._LoadGameModelAsync_b__0))]
         public class GameModelUtil_LoadGameModelAsync_Patch{
-            [HarmonyPostfix]
             public static void Postfix(ref GameModel __result){
                 gameModel=__result;
                 LocManager=LocalizationManager.Instance;
@@ -92,40 +89,39 @@ namespace SC2ExpansionLoader{
                 List<UpgradeModel>upgrades=gameModel.upgrades.ToList();
 				List<TowerDetailsModel>heroSet=gameModel.heroSet.ToList();
                 List<string>towerNames=new();
-                try{
-                    foreach(SC2Tower tower in TowerTypes.Values){
+                foreach(SC2Tower tower in TowerTypes.Values){
+                    try{
                         towerNames.Add(tower.Name);
-                        if(tower.AddToShop){
-                            towerSet.Add(tower.ShopDetails());
-                        }
-						if(tower.Hero){
-							tower.HeroDetails=tower.GenerateHeroDetails();
-							heroSet.Add(tower.HeroDetails);
-							GameData.Instance.skinsData.AddSkins(new(new[]{tower.HeroSkin()}));
-						}
-						var towerTypes=TowerType.towers.ToList();
-						towerTypes.Add(tower.Name);
-						TowerType.towers=towerTypes.ToArray();
                         if(tower.Upgradable){
                             tower.UpgradeModels=tower.GenerateUpgradeModels();
                             upgrades.AddRange(tower.UpgradeModels);
                         }
-						tower.TowerModels=tower.GenerateTowerModels();
+                        if(tower.AddToShop){
+                            towerSet.Add(tower.ShopDetails());
+                        }
+					    if(tower.Hero){
+						    tower.HeroDetails=tower.GenerateHeroDetails();
+						    heroSet.Add(tower.HeroDetails);
+						    GameData.Instance.skinsData.AddSkins(new(new[]{tower.HeroSkin()}));
+					    }
+					    var towerTypes=TowerType.towers.ToList();
+					    towerTypes.Add(tower.Name);
+					    TowerType.towers=towerTypes.ToArray();
+					    tower.TowerModels=tower.GenerateTowerModels();
                         towers.AddRange(tower.TowerModels);
                         gameModel.towers=towers.ToArray();
                         gameModel.towerSet=towerSet.ToArray();
                         gameModel.upgrades=upgrades.ToArray();
-						gameModel.heroSet=heroSet.ToArray();
+					    gameModel.heroSet=heroSet.ToArray();
                         Log("Loaded "+tower.Name);
+                    }catch(Exception error){
+                        PrintError(error,"Failed to add "+towerNames.Last());
                     }
-                }catch(Exception error){
-                    PrintError(error,"Failed to add "+towerNames.Last());
                 }
             }
         }
-		[HarmonyPatch(typeof(TowerInventory),"CreatedTower")]
+		[HarmonyPatch(typeof(TowerInventory),nameof(TowerInventory.CreatedTower))]
         public class TowerInventory_CreatedTower_Patch{
-            [HarmonyPrefix]
             public static bool Prefix(TowerInventory __instance,TowerModel def){
                 if(!__instance.towerCounts.ContainsKey(def.baseId)){
                     __instance.towerCounts.Add(def.baseId,0);
@@ -134,7 +130,7 @@ namespace SC2ExpansionLoader{
 		        return false;
             }
         }
-        [HarmonyPatch(typeof(TowerInventory),"DestroyedTower")]
+        [HarmonyPatch(typeof(TowerInventory),nameof(TowerInventory.DestroyedTower))]
         public class TowerInventoryDestroyedTower_Patch{
             [HarmonyPrefix]
             public static bool Prefix(ref TowerInventory __instance,ref TowerModel def){
@@ -145,7 +141,7 @@ namespace SC2ExpansionLoader{
 		        return false;
             }
         }
-        [HarmonyPatch(typeof(FighterMovement),"Process")]
+        [HarmonyPatch(typeof(FighterMovement),nameof(FighterMovement.Process))]
         public class FighterMovementProcess_Patch{
             [HarmonyPrefix]
             public static bool Prefix(ref FighterMovement __instance,int elapsed){
@@ -157,7 +153,7 @@ namespace SC2ExpansionLoader{
                 return false;
             }
         }
-        [HarmonyPatch(typeof(SubTowerFilter),"FilterEmission")]
+        [HarmonyPatch(typeof(SubTowerFilter),nameof(SubTowerFilter.FilterEmission))]
         public class SubTowerFilter_FilterEmission_Patch{
             [HarmonyPrefix]
             public static bool Prefix(SubTowerFilter __instance,ref bool __result){
@@ -169,7 +165,7 @@ namespace SC2ExpansionLoader{
                 return false;
             }
         }
-        [HarmonyPatch(typeof(CreateSoundOnUpgrade),"OnUpgrade")]
+        [HarmonyPatch(typeof(CreateSoundOnUpgrade),nameof(CreateSoundOnUpgrade.OnUpgrade))]
         public class CreateSoundOnUpgrade_OnUpgrade_Patch{
             public static bool Prefix(ref CreateSoundOnUpgrade __instance){
                 if(TowerTypes.ContainsKey(__instance.tower.towerModel.baseId)){
