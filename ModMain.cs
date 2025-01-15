@@ -1,41 +1,19 @@
 ﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
-[assembly:MelonInfo(typeof(ModMain),SC2ExpansionLoader.Data.ModHelperData.Name,SC2ExpansionLoader.Data.ModHelperData.Version,"Silentstorm")]
-namespace SC2ExpansionLoader{
+[assembly:MelonInfo(typeof(ModMain),SC2Expansion.Data.ModHelperData.Name,SC2Expansion.Data.ModHelperData.Version,"Silentstorm")]
+namespace SC2Expansion{
     public class ModMain:MelonMod{
-        public static readonly Dictionary<string,SC2Tower>TowerTypes=new();
-        private static AbilityModel _blankAbilityModel;
-        public static AbilityModel BlankAbilityModel{
-            get{
-                return _blankAbilityModel.Clone<AbilityModel>();
-            }
-            set{
-                _blankAbilityModel=value;
-            }
-        }
+        public static Dictionary<string,SC2Tower>TowerTypes=new();
+        public static Dictionary<string,SC2Map>MapTypes=new();
+        public static Dictionary<string,Il2CppSystem.Type>ComponentList=new();
+        public static AbilityModel BlankAbilityModel;
         private static MelonLogger.Instance _mllog;
-        private static AttackModel _createTowerAttackModel;
-        public static AttackModel CreateTowerAttackModel{
-            get{
-                return _createTowerAttackModel.Clone<AttackModel>();
-            }
-            set{
-                _createTowerAttackModel=value;
-            }
-        }
+        public static AttackModel CreateTowerAttackModel;
         public static GameModel gameModel;
         public static LocalizationManager LocManager;
 		public static Il2CppStructArray<AreaType>FlyingAreaTypes;
         public static AudioFactory Audio;
         public static AssetPoolBehaviour AssetPool;
-        private static CreateSoundOnSelectedModel _selectedSoundModel;
-        public static CreateSoundOnSelectedModel SelectedSoundModel{
-            get{
-                return _selectedSoundModel.Clone<CreateSoundOnSelectedModel>();
-            }
-            set{
-                _selectedSoundModel=value;
-            }
-        }
+        public static CreateSoundOnSelectedModel SelectedSoundModel;
         public static void Log(object thing,string type="msg"){
             switch(type){
                 case"msg":
@@ -54,21 +32,31 @@ namespace SC2ExpansionLoader{
 			FlyingAreaTypes=new(new AreaType[4]{0,(AreaType)1,(AreaType)2,(AreaType)4});
 			List<SC2Tower>towerList=new();
             foreach(MelonMod mod in RegisteredMelons.Where(a=>a.Info.SystemType.Name=="SC2ModMain")){
-			//foreach(MelonMod mod in RegisteredMelons.Where(a=>a.OptionalDependencies!=null&&a.OptionalDependencies.AssemblyNames.Contains("SC2ExpansionLoader"))){
                 Assembly assembly=mod.MelonAssembly.Assembly;
-				foreach(Type type in assembly.GetTypes().Where(a=>a.BaseType==typeof(SC2Tower))){
+				foreach(Type type in assembly.GetTypes().Where(a=>a.BaseType.BaseType==typeof(SC2Content))){
 					try{
-                        SC2Tower tower=(SC2Tower)Activator.CreateInstance(type);
-						if(tower.Name==""){
+                        SC2Content content=(SC2Content)Activator.CreateInstance(type);
+						if(content.Name==""){
                             continue;
                         }
-                        if(tower.HasBundle){
-                            tower.Bundle=AssetBundle.LoadFromMemory(GetBytesFromStream(assembly.GetManifestResourceStream(
-                                assembly.GetManifestResourceNames().First(a=>a.Contains(tower.BundleName)))));
+                        if(content.HasBundle){
+                            content.Bundle=AssetBundle.LoadFromMemory(GetBytesFromStream(assembly.GetManifestResourceStream(
+                                assembly.GetManifestResourceNames().First(a=>a.Contains(content.BundleName)))));
                         }
-						towerList.Add(tower);
+                        switch(content.GetType().BaseType){
+                            case Type tower when tower==typeof(SC2Tower):
+                                towerList.Add((SC2Tower)content);
+                                break;
+                            case Type map when map==typeof(SC2Map):
+                                MapTypes.Add(content.Name,(SC2Map)content);
+                                break;
+                        }
 					}catch(Exception ex){
+                        foreach(string resource in assembly.GetManifestResourceNames()){
+                            Log(resource);
+                        }
                         PrintError(ex,"Failed to process "+mod.Info.Name);
+                        break;
                     }
 				}
 			}
@@ -77,6 +65,9 @@ namespace SC2ExpansionLoader{
 				towerList=towerList.OrderBy(a=>a.Order).ToList();
 				foreach(SC2Tower tower in towerList){
 					TowerTypes.Add(tower.Name,tower);
+                    foreach(KeyValuePair<string,Il2CppSystem.Type>keyValue in tower.Components){
+                        ComponentList.Add(keyValue.Key,keyValue.Value);
+                    }
 				}
 			}
 		}
@@ -94,17 +85,25 @@ namespace SC2ExpansionLoader{
         public static void SetSounds(TowerModel model,string id,bool place,bool select,bool upgrade,bool sameSound){
             if(place){
                 CreateSoundOnTowerPlaceModel csontpm=model.behaviors.GetModel<CreateSoundOnTowerPlaceModel>();
-                if(sameSound){
-                    string sound=id+new System.Random().Next(1,10);
-                    csontpm.sound1=new(sound,new(sound));
+                string sound=id+new System.Random().Next(1,10);
+                if(model.behaviors.HasModel<HeroModel>()){
+                    if(sameSound){
+                        csontpm.heroSound1=new(sound,new(sound));
+                        csontpm.heroSound2=csontpm.heroSound2;
+                    }else{
+                        csontpm.heroSound1=new(id+"Birth",new(id+"Birth"));
+                        csontpm.heroSound2=csontpm.heroSound1;
+                    }
                 }else{
-                    csontpm.sound1=new(id+"Birth",new(id+"Birth"));
+                    if(sameSound){
+                        csontpm.sound1=new(sound,new(sound));
+                    }else{
+                        csontpm.sound1=new(id+"Birth",new(id+"Birth"));
+                    }
+                    csontpm.sound2=csontpm.sound1;
+                    csontpm.waterSound1=csontpm.sound1;
+                    csontpm.waterSound2=csontpm.sound1;
                 }
-                csontpm.sound2=csontpm.sound1;
-                csontpm.heroSound1=csontpm.sound1;
-                csontpm.heroSound2=csontpm.sound1;
-                csontpm.waterSound1=csontpm.sound1;
-                csontpm.waterSound2=csontpm.sound1;
             }
             if(select){
                 CreateSoundOnSelectedModel csosm=model.behaviors.GetModel<CreateSoundOnSelectedModel>();
@@ -159,10 +158,23 @@ namespace SC2ExpansionLoader{
             stream.Dispose();
             return bytes;
         }
-		public static void PrintError(Exception exception,string message=null){
+        public static void StackWalk(){
+            Log("~-----<=====[ Native Stack Walk ]=====>-----~");
+            foreach(NativeStackWalk.NativeStackFrame function in NativeStackWalk.GetNativeStackFrames()){
+                if(function.Function!=null){
+                    Log("Function: "+function.Function);
+                }else{
+                    Log("Function null");
+                }
+            }
+        }
+		public static void PrintError(Exception exception,string message=null,bool stackWalk=false){
 			if(message!=null){
 				Log(message);
 			}
+            if(stackWalk){
+                StackWalk();
+            }
             string error=exception.Message;
 			error+="\n"+exception.TargetSite;
             error+="\n"+exception.StackTrace;
@@ -258,8 +270,8 @@ namespace SC2ExpansionLoader{
 					}
 					if(method.GetParameters().Length>0){
 						Log("-=Method parameters=-");
-						foreach(var thing in method.GetParameters()){
-							Log(thing.Name+" "+thing.ParameterType.FullName);
+						foreach(ParameterInfo funcParameters in method.GetParameters()){
+							Log(funcParameters.Name+" "+funcParameters.ParameterType.FullName);
 						}
 					}
 					if(match==3){

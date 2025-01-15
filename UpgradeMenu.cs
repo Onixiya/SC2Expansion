@@ -1,6 +1,6 @@
 /*using Il2CppInterop.Runtime.Attributes;
 
-namespace SC2ExpansionLoader{
+namespace SC2Expansion{
     public class UpgradeMenu{
         public static AssetBundle LoadedUIBundle=null;
         [HarmonyPatch(typeof(InGame),"ShowUpgradeTree")]

@@ -1,9 +1,8 @@
-namespace SC2ExpansionLoader{
+namespace SC2Expansion{
     public class TowerPatches{
         [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
         public class WeaponSpawnDart_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(Weapon __instance){
+            public static void Postfix(ref Weapon __instance){
                 string towerName=__instance.attack.tower.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
@@ -13,10 +12,30 @@ namespace SC2ExpansionLoader{
                     }
                 }
             }
+            public static bool Prefix(ref Weapon __instance){
+               string towerName=__instance.attack.tower.towerModel.baseId;
+                if(TowerTypes.ContainsKey(towerName)){
+                    try{
+                        return TowerTypes[towerName].PreAttack(__instance);
+                    }catch(Exception error){
+                        PrintError(error,"Failed to run PreAttack for "+towerName);
+                    }
+                }
+                return true;
+            }
+        }
+        [HarmonyPatch(typeof(Attack),nameof(Attack.FilterTarget))]
+        public class AttackFilterTarget_patch{
+            public static bool Prefix(ref Attack __instance){
+                string id=__instance.tower.towerModel.baseId;
+                if(TowerTypes.ContainsKey(id)){
+                    return TowerTypes[id].AttackTargetFilter(__instance);
+                }
+                return true;
+            }
         }
         [HarmonyPatch(typeof(Simulation),nameof(Simulation.RoundStart))]
         public class SimulationRoundStart_Patch{
-            [HarmonyPostfix]
             public static void Postfix(){
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
@@ -29,7 +48,6 @@ namespace SC2ExpansionLoader{
         }
         [HarmonyPatch(typeof(Simulation),nameof(Simulation.RoundEnd))]
         public class SimulationRoundEnd_Patch{
-            [HarmonyPostfix]
             public static void Postfix(){
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
@@ -42,12 +60,13 @@ namespace SC2ExpansionLoader{
         }
         [HarmonyPatch(typeof(Tower),nameof(Tower.OnPlace))]
         public class TowerOnPlace_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(Tower __instance){
+            public static void Postfix(ref Tower __instance){
                 string towerName=__instance.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
-                        TowerTypes[towerName].Create(__instance);
+                        SC2Tower tower=TowerTypes[towerName];
+                        tower.SimTowers.Add(__instance);
+                        tower.Create(__instance);
                     }catch(Exception error){
                         PrintError(error,"Failed to run Create for "+towerName);
                     }
@@ -56,8 +75,7 @@ namespace SC2ExpansionLoader{
         }
         [HarmonyPatch(typeof(Ability),nameof(Ability.Activate))]
         public class AbilityActivate_Patch{
-            [HarmonyPostfix]
-            public static bool Prefix(Ability __instance){
+            public static bool Prefix(ref Ability __instance){
                 string towerName=__instance.tower.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
@@ -70,10 +88,22 @@ namespace SC2ExpansionLoader{
 				return true;
             }
         }
+        [HarmonyPatch(typeof(TowerManager),nameof(TowerManager.DestroyTower))]
+        public class TowerManagerDestroyTower_Patch{
+            public static void Postfix(ref Tower tower){
+                string towerName=tower.towerModel.baseId;
+                if(TowerTypes.ContainsKey(towerName)){
+                    try{
+                        TowerTypes[towerName].Sell(tower);
+                    }catch(Exception error){
+                        PrintError(error,"Failed to run Sell for "+towerName);
+                    }
+                }
+            }
+        }
 		[HarmonyPatch(typeof(TowerManager),nameof(TowerManager.UpgradeTower))]
         public class TowerManagerUpgradeTower_Patch{
-            [HarmonyPostfix]
-            public static void Postfix(Tower tower,TowerModel def){
+            public static void Postfix(ref Tower tower,ref TowerModel def){
                 string towerName=tower.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
@@ -103,9 +133,8 @@ namespace SC2ExpansionLoader{
 				return true;
 			}
 		}*/
-        [HarmonyPatch(typeof(TowerSelectionMenu),"SelectTower")]
+        [HarmonyPatch(typeof(TowerSelectionMenu),nameof(TowerSelectionMenu.SelectTower))]
         public class TowerSelectionMenuSelectTower_Patch{
-            [HarmonyPostfix]
             public static void Postfix(TowerSelectionMenu __instance){
                 string towerName=__instance.selectedTower.tower.towerModel.baseId;
                 if(TowerTypes.ContainsKey(towerName)){

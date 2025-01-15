@@ -1,4 +1,4 @@
-namespace SC2ExpansionLoader.HeroPatches{
+namespace SC2Expansion.HeroPatches{
 	[HarmonyPatch(typeof(CosmeticHelper),nameof(CosmeticHelper.ApplyTowerSkinToTowerModel))]
 	public class CosmeticHelperApplyTowerSkinToTowerModel_Patch{
 		public static bool Prefix(TowerModel towerModel){

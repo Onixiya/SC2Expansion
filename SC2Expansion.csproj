@@ -70,6 +70,9 @@
     <Reference Include="UnityEngine.InputModule">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\UnityEngine.InputModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -94,8 +97,6 @@
 	  <Reference Include="Il2Cpp">
       <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Dependencies/SupportModules/Il2Cpp.dll</HintPath>
     </Reference>
-    <EmbeddedResource Include="Bundles/protossupgrademenu.bundle" />
-    <EmbeddedResource Include="Bundles/terranupgrademenu.bundle" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy $(TargetPath) &quot;\Program Files (x86)\Steam\steamapps\common\BloonsTD6\Mods&quot;" />
