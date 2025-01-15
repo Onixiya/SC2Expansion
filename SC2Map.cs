@@ -1,7 +1,7 @@
 ﻿namespace SC2Expansion{
 	public abstract class SC2Map:SC2Content{
         public abstract MapDetails Details();
-		[HarmonyPatch(typeof(MainMenu),nameof(MainMenu.Start))]
+		/*[HarmonyPatch(typeof(MainMenu),nameof(MainMenu.Start))]
 		public class mapselectscreenloadmap_patch{
 			public static void Postfix(){
 				InGameData.Editable.selectedDifficulty="Easy";
@@ -10,7 +10,7 @@
 				UI.instance.LoadGame();
 				Log("mainmenu start "+InGameData.Editable.selectedMap);
 			}
-		}
+		}*/
         [HarmonyPatch(typeof(Il2CppAssets.Scripts.Simulation.Track.Map),nameof(Il2CppAssets.Scripts.Simulation.Track.Map.Initialise))]
         public class mapinitialize_patch{
             public static void Prefix(ref Model modelToUse){
