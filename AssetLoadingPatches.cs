@@ -228,21 +228,11 @@ namespace SC2Expansion{
                     if(!SceneManager.GetSceneByName(mapName).IsValid()){
                         SceneManager.LoadScene(map.Bundle.GetAllScenePaths()[0],LoadSceneMode.Additive);
                         __result=true; //returning true makes movenext run again
-                        return false;
+                        return false; //scenes require a frame or two to be setup
                     }
                     SceneManager.UnloadScene(SceneManager.GetSceneByName("CommonBackgroundUi"));
-                    Map mapObj=null;
-                    foreach(var rootObj in SceneManager.GetSceneByName(mapName).GetRootGameObjects()){
-                        Log(rootObj.name);
-                        //for some fucking reason, the maps object hierarchy is all over the place when its built into a bundle
-                        if(rootObj.GetComponent<Camera>()!=null){
-                            Log("found camera");
-                            mapObj=__instance.__4__this.currentMap=rootObj.AddComponent<Map>();
-                            break;
-                        }
-                    }
-                    Log(mapObj.name);
-                    if(map.VisualizeMap){
+                    __instance.__4__this.currentMap=SceneManager.GetSceneByName(mapName).GetRootGameObjects()[0].AddComponent<Map>();
+                    /*if(map.VisualizeMap){
                         for(int i=0;i<map.Model.paths[0].points.Count;i++){
                             var point=map.Model.paths[0].points[i];
                             Log("1 "+mapObj.gameObject.name);
@@ -261,7 +251,7 @@ namespace SC2Expansion{
                             text1.horizontalAlignment=HorizontalAlignmentOptions.Center;
                             text1.fontSize=1;
                         }
-                    }
+                    }*/
                     __instance.__4__this.currentMapName=mapName;
                     __result=false;
                     return false;

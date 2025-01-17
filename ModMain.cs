@@ -1,4 +1,5 @@
-﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
+﻿using System.IO;
+[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(ModMain),SC2Expansion.Data.ModHelperData.Name,SC2Expansion.Data.ModHelperData.Version,"Silentstorm")]
 namespace SC2Expansion{
     public class ModMain:MelonMod{

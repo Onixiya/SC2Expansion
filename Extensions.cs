@@ -8,7 +8,7 @@ namespace SC2Expansion{
         }
         public static void WriteIl2CppObjToFile(this Il2CppSystem.Object obj,string path){
             try{
-                File.WriteAllText(path,Il2CppNewtonsoft.Json.JsonConvert.SerializeObject(obj,new JsonSerializerSettings(){Formatting=Formatting.Indented}));
+                System.IO.File.WriteAllText(path,Il2CppNewtonsoft.Json.JsonConvert.SerializeObject(obj,new JsonSerializerSettings(){Formatting=Formatting.Indented}));
                 Log("object dumped to "+path);
             }catch(Exception error){
                 PrintError(error);
