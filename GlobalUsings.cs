@@ -64,4 +64,5 @@ global using Il2CppAssets.Scripts.Simulation.Towers.Behaviors.Attack;
 global using Il2CppAssets.Scripts.Simulation.Objects;
 global using Il2CppAssets.Scripts.Unity.UI_New;
 global using Il2CppAssets.Scripts.Unity.UI_New.Main;
+global using System.IO;
 namespace SC2Expansion{}

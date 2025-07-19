@@ -29,4 +29,18 @@ namespace SC2Expansion.HeroPatches{
             }
         }
     }
+    [HarmonyPatch(typeof(GameModel),nameof(GameModel.GetHeroWithNameAndLevel))]
+    public class GetHeroWithNameAndLevel_Patch{
+        public static bool Prefix(GameModel __instance,string name,int tier,ref TowerModel __result){
+            if(TowerTypes.ContainsKey(name)){
+                if(tier==1){
+                    __result=__instance.GetTowerFromId(name);
+                }else{
+                    __result=__instance.GetTowerFromId(name+" "+tier);
+                }
+                return false;
+            }
+            return true;
+        }
+    }
 }

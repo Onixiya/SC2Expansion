@@ -1,10 +1,9 @@
-﻿using System.IO;
-[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
+﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(ModMain),SC2Expansion.Data.ModHelperData.Name,SC2Expansion.Data.ModHelperData.Version,"Silentstorm")]
 namespace SC2Expansion{
     public class ModMain:MelonMod{
         public static Dictionary<string,SC2Tower>TowerTypes=new();
-        public static Dictionary<string,SC2Map>MapTypes=new();
+        //public static Dictionary<string,SC2Map>MapTypes=new();
         public static Dictionary<string,Il2CppSystem.Type>ComponentList=new();
         public static AbilityModel BlankAbilityModel;
         private static MelonLogger.Instance _mllog;
@@ -48,9 +47,10 @@ namespace SC2Expansion{
                             case Type tower when tower==typeof(SC2Tower):
                                 towerList.Add((SC2Tower)content);
                                 break;
-                            case Type map when map==typeof(SC2Map):
-                                MapTypes.Add(content.Name,(SC2Map)content);
-                                break;
+                            /*case Type map when map==typeof(SC2Map):
+                                //MapTypes.Add(content.Name,(SC2Map)content);
+                                Log("Maps are not supported");
+                                break;*/
                         }
 					}catch(Exception ex){
                         foreach(string resource in assembly.GetManifestResourceNames()){
@@ -161,6 +161,7 @@ namespace SC2Expansion{
         }
         public static void StackWalk(){
             Log("~-----<=====[ Native Stack Walk ]=====>-----~");
+            #pragma warning disable CA1416
             foreach(NativeStackWalk.NativeStackFrame function in NativeStackWalk.GetNativeStackFrames()){
                 if(function.Function!=null){
                     Log("Function: "+function.Function);

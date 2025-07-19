@@ -49,6 +49,12 @@
     <Reference Include="Unity.InputSystem">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\Unity.InputSystem.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\BloonsTD6\MelonLoader\Il2CppAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>\Program Files (x86)\Steam\steamapps\common\BloonsTD6/MelonLoader/Il2CppAssemblies/UnityEngine.dll</HintPath>
     </Reference>

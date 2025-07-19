@@ -5,7 +5,6 @@ namespace SC2Expansion{
             public static bool Prefix(ref UnityDisplayNode prototype,ref Factory.__c__DisplayClass21_0 __instance){
                 string guid=__instance.objectId.guidRef;
                 string tower=guid.Split('-')[0];
-                //Log(guid);
                 if(TowerTypes.ContainsKey(tower)){
                     SC2Tower sc2Tower=TowerTypes[tower];
                     GameObject gObj;
@@ -13,19 +12,15 @@ namespace SC2Expansion{
                         gObj=LoadAsset<GameObject>(guid,sc2Tower.Bundle);
                         gObj.hideFlags=HideFlags.DontUnloadUnusedAsset;
                         AssetPool.PrefabPool.Add(guid,gObj);
-                        //Log("pooled");
                     }
                     gObj=uObject.Instantiate(AssetPool.PrefabPool[guid],__instance.__4__this.DisplayRoot);
-                    //Log("instantiated");
                     gObj.transform.position=new(0,9999999);
                     prototype=gObj.AddComponent<UnityDisplayNode>();
                     if(ComponentList.ContainsKey(guid)){
                         gObj.AddComponent(ComponentList[guid]);
-                        //Log("component added");
                     }
                     __instance.__4__this.active.Add(prototype);
                     __instance.onComplete.Invoke(prototype);
-                    //Log("complete");
                     return false;
                 }
                 return true;
@@ -64,10 +59,11 @@ namespace SC2Expansion{
                             }
                         }
                     }catch(Exception ex){
-                        PrintError(ex,"Failed to load "+tower.Name+" audio clips");
+                        PrintError(ex,"Failed to load "+tower.Name+" audio files");
+                    }finally{
+                        Log($"{tower.Name} audio files loaded");
                     }
                 }
-                Log("Audio files loaded");
             }
         }
         [HarmonyPatch(typeof(AudioFactory),nameof(AudioFactory.PlaySoundFromUnity))]
@@ -108,7 +104,7 @@ namespace SC2Expansion{
                     displayModel.display=proj.display;
                     CreateTowerAttackModel=attack;
 				}catch(Exception ex){
-					PrintError(ex,"Failed to create CreateTowerAttackModel");
+					PrintError(ex,"Failed to create CreateTowerAttackModel. No tower will be added");
 				}
 				try{
                     AbilityModel ability=gameModel.GetTowerFromId("Quincy 4").behaviors.GetModelClone<AbilityModel>();
@@ -122,21 +118,22 @@ namespace SC2Expansion{
                     ability.behaviors=behaviors.ToArray();
                     BlankAbilityModel=ability;
                 }catch(Exception ex){
-                    PrintError(ex,"Failed to create BlankAbilityModel");
+                    PrintError(ex,"Failed to create BlankAbilityModel. No tower will be added");
                 }
                 try{
                     CreateSoundOnSelectedModel csosm=gameModel.GetTowerFromId("Quincy").behaviors.GetModelClone<CreateSoundOnSelectedModel>();
                     csosm.name="SC2Expansion-Select";
                     SelectedSoundModel=csosm;
                 }catch(Exception ex){
-                    PrintError(ex,"Failed to create SelectedSoundModel");
+                    PrintError(ex,"Failed to create SelectedSoundModel. No tower will be added");
+                    return;
                 }
                 List<TowerModel>towers=gameModel.towers.ToList();
                 List<TowerDetailsModel>towerSet=gameModel.towerSet.ToList();
                 List<UpgradeModel>upgrades=gameModel.upgrades.ToList();
 				List<TowerDetailsModel>heroSet=gameModel.heroSet.ToList();
+                List<SkinData>skins=new();
                 List<string>towerNames=new();
-                bool error=false;
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
                         towerNames.Add(tower.Name);
@@ -150,6 +147,7 @@ namespace SC2Expansion{
 					    if(tower.Hero){
 						    tower.HeroDetails=tower.GenerateHeroDetails();
 						    heroSet.Add(tower.HeroDetails);
+                            skins.Add(tower.HeroSkin());
 					    }
 					    List<string>towerTypes=TowerType.towers.ToList();
 					    towerTypes.Add(tower.Name);
@@ -157,12 +155,11 @@ namespace SC2Expansion{
 					    tower.TowerModels=tower.GenerateTowerModels();
                         towers.AddRange(tower.TowerModels);
                     }catch(Exception ex){
-                        PrintError(ex,"Failed to add "+tower.Name+" tower");
-                        error=true;
-                        break;
+                        PrintError(ex,$"Failed to process {tower.Name}. No tower will be added");
+                        return;
                     }
                 }
-                List<MapDetails>maps=GameData.Instance.mapSet.Maps.items.ToList();
+                /*List<MapDetails>maps=GameData.Instance.mapSet.Maps.items.ToList();
                 foreach(SC2Map map in MapTypes.Values){
                     try{
                         maps.Add(map.Details());
@@ -170,25 +167,21 @@ namespace SC2Expansion{
                         PrintError(ex,"Failed to add "+map.Name+" map");
                         error=true;
                     }
-                }
-                //if no exceptions happened, good to add everything
-                if(error==false){
-                    foreach(SC2Tower tower in TowerTypes.Values){
-                        List<string>towerTypes=TowerType.towers.ToList();
-					    towerTypes.Add(tower.Name);
-					    TowerType.towers=towerTypes.ToArray();
-                        if(tower.Hero){
-                            //still has a chance of messing up but unlikely if it got this far
-                            GameData.Instance.skinsData.AddSkins(new(new[]{tower.HeroSkin()}));
-                        }
+                }*/
+                foreach(SC2Tower tower in TowerTypes.Values){
+                    List<string>towerTypes=TowerType.towers.ToList();
+					towerTypes.Add(tower.Name);
+					TowerType.towers=towerTypes.ToArray();
+                    if(tower.Hero){
+                        GameData.Instance.skinsData.AddSkins(skins.ToArray());
                     }
-                    gameModel.towers=towers.ToArray();
-                    gameModel.towerSet=towerSet.ToArray();
-                    gameModel.upgrades=upgrades.ToArray();
-                    gameModel.heroSet=heroSet.ToArray();
-                    GameData.Instance.mapSet.Maps.items=maps.ToArray();
-                    Log("All content loaded");
                 }
+                gameModel.towers=towers.ToArray();
+                gameModel.towerSet=towerSet.ToArray();
+                gameModel.upgrades=upgrades.ToArray();
+                gameModel.heroSet=heroSet.ToArray();
+                //GameData.Instance.mapSet.Maps.items=maps.ToArray();
+                Log("All content loaded");
             }
         }
         [HarmonyPatch(typeof(ProfileModel),nameof(ProfileModel.Validate))]
@@ -219,9 +212,9 @@ namespace SC2Expansion{
                 }
             }
         }
-        [HarmonyPatch(typeof(MapLoader._LoadScene_d__19),nameof(MapLoader._LoadScene_d__19.MoveNext))]
+        /*[HarmonyPatch(typeof(MapLoader._LoadScene_d__22),nameof(MapLoader._LoadScene_d__22.MoveNext))]
 		public class MapLoaderLoadScene_Patch{
-			public static bool Prefix(ref MapLoader._LoadScene_d__19 __instance,ref bool __result){
+			public static bool Prefix(ref MapLoader._LoadScene_d__22 __instance,ref bool __result){
                 string mapName=__instance.__4__this.currentMapName;
                 if(MapTypes.ContainsKey(mapName)){
                     SC2Map map=MapTypes[mapName];
@@ -251,13 +244,13 @@ namespace SC2Expansion{
                             text1.horizontalAlignment=HorizontalAlignmentOptions.Center;
                             text1.fontSize=1;
                         }
-                    }*/
+                    }//
                     __instance.__4__this.currentMapName=mapName;
                     __result=false;
                     return false;
                 }
                 return true;
 			}
-		}
+		}*/
     }
 }
