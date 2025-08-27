@@ -14,6 +14,7 @@ namespace SC2Expansion{
         public static AudioFactory Audio;
         public static AssetPoolBehaviour AssetPool;
         public static CreateSoundOnSelectedModel SelectedSoundModel;
+        public static GameObject BeamPrefab;
         public static void Log(object thing,string type="msg"){
             switch(type){
                 case"msg":
@@ -40,8 +41,8 @@ namespace SC2Expansion{
                             continue;
                         }
                         if(content.HasBundle){
-                            content.Bundle=AssetBundle.LoadFromMemory(GetBytesFromStream(assembly.GetManifestResourceStream(
-                                assembly.GetManifestResourceNames().First(a=>a.Contains(content.BundleName)))));
+                            content.Bundle=AssetBundle.LoadFromStream(new Il2CppSystem.IO.MemoryStream(GetBytesFromStream(assembly.
+                                GetManifestResourceStream(assembly.GetManifestResourceNames().First(a=>a.Contains(content.BundleName))))));
                         }
                         switch(content.GetType().BaseType){
                             case Type tower when tower==typeof(SC2Tower):
@@ -198,9 +199,9 @@ namespace SC2Expansion{
         }
         public static T LoadAsset<T>(string assetToLoad,AssetBundle bundle)where T:uObject{
             try{
-                return bundle.LoadAsset<T>(assetToLoad);
+                return bundle.LoadAssetAsync<T>(assetToLoad).GetResult().Cast<T>();
             }catch(Exception error){
-				PrintError(error,"Failed to load "+assetToLoad);
+				PrintError(error,$"Failed to load {assetToLoad} of type {typeof(T).FullName}");
                 try{
                     Log("Attempting to get available assets");
                     foreach(string asset in bundle.GetAllAssetNames()){
@@ -218,73 +219,75 @@ namespace SC2Expansion{
         public static void PlayAnimation(Animator animator,string anim,float duration=0.2f){
         	animator.CrossFade(anim,duration,0,0);
         }
-		public static void ConfigureAnimationBaker<T>(Il2CppSystem.Collections.Generic.List<T>list,int index,int animationIndex,int priority,AnimationClip animationClip,
-			InterruptBehaviour interruptBehaviour=InterruptBehaviour.SameOrHigher)where T:AnimationBakerStateConfig{
-			var animBaker=list.ToArray()[index];
-			animBaker.animationIndex=animationIndex;
-			animBaker.priority=priority;
-			animBaker.animationClip=animationClip;
-			animBaker.interruptibleBehaviour=interruptBehaviour;
+		public static void ConfigureAnimationBaker<T>(Il2CppSystem.Collections.Generic.List<T>list,int index,int animationIndex,
+            int priority,AnimationClip animationClip,InterruptBehaviour interruptBehaviour=InterruptBehaviour.SameOrHigher)
+            where T:AnimationBakerStateConfig{
+			    var animBaker=list.ToArray()[index];
+			    animBaker.animationIndex=animationIndex;
+			    animBaker.priority=priority;
+			    animBaker.animationClip=animationClip;
+			    animBaker.interruptibleBehaviour=interruptBehaviour;
 		}
-		public static unsafe NativeHook<T>CreateNativeHook<T>(Type type,string methodName,ref T patchDelegate,Type[]generics=null,Type[]parameters=null)where T:Delegate{
-			if(parameters==null){
-				parameters=Array.Empty<Type>();
-			}
-			NativeHook<T>hook;
-			try{
-				if(generics==null){
-					generics=Array.Empty<Type>();
-					hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
-						GetMethod(methodName,generics.Length,parameters)).GetValue(null),Marshal.GetFunctionPointerForDelegate(patchDelegate));
-				}else{
-					hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
-						GetMethod(methodName,generics.Length,parameters).MakeGenericMethod(generics)).GetValue(null),
-						Marshal.GetFunctionPointerForDelegate(patchDelegate));
-				}
-			}catch{
-				Log("Native hook failed, method not found, ICall maybe?");
-				Log("Available methods are ");
-				int match=0;
-				foreach(MethodInfo method in type.GetMethods()){
-					Log("{---=MethodInfo=---}");
-					Log("Name: "+method.Name+", generic: "+method.IsGenericMethod);
-					if(methodName==method.Name){
-						match+=1;
-						Log("Name matches");
-					}
-					if(method.GetGenericArguments()==generics){
-						match+=1;
-						Log("Potential generics match");
-					}
-					if(method.IsGenericMethod){
-						Log("-=Generic parameters=-");
-						foreach(Type generic in method.GetGenericArguments()){
-							if(generic!=null&&generic.FullName!=null){
-								Log(generic.FullName);
-							}else{
-								Log("=====GENERIC NULL=====");
-							}
-						}
-					}
-					if(method.GetParameters().Length==parameters.Length){
-						match+=1;
-						Log("Potential parameter count match");
-					}
-					if(method.GetParameters().Length>0){
-						Log("-=Method parameters=-");
-						foreach(ParameterInfo funcParameters in method.GetParameters()){
-							Log(funcParameters.Name+" "+funcParameters.ParameterType.FullName);
-						}
-					}
-					if(match==3){
-						Log("================Method potentially matches!================");
-					}
-					match=0;
-				}
-				return null;
-			}
-			hook.Attach();
-			return hook;
+		public static unsafe NativeHook<T>CreateNativeHook<T>(Type type,string methodName,ref T patchDelegate,Type[]generics=null,
+            Type[]parameters=null)where T:Delegate{
+			    if(parameters==null){
+				    parameters=Array.Empty<Type>();
+			    }
+			    NativeHook<T>hook;
+			    try{
+				    if(generics==null){
+					    generics=Array.Empty<Type>();
+					    hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
+						    GetMethod(methodName,generics.Length,parameters)).GetValue(null),Marshal.GetFunctionPointerForDelegate(patchDelegate));
+				    }else{
+					    hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
+						    GetMethod(methodName,generics.Length,parameters).MakeGenericMethod(generics)).GetValue(null),
+						    Marshal.GetFunctionPointerForDelegate(patchDelegate));
+				    }
+			    }catch{
+				    Log("Native hook failed, method not found, ICall maybe?");
+				    Log("Available methods are ");
+				    int match=0;
+				    foreach(MethodInfo method in type.GetMethods()){
+					    Log("{---=MethodInfo=---}");
+					    Log("Name: "+method.Name+", generic: "+method.IsGenericMethod);
+					    if(methodName==method.Name){
+						    match+=1;
+						    Log("Name matches");
+					    }
+					    if(method.GetGenericArguments()==generics){
+						    match+=1;
+						    Log("Potential generics match");
+					    }
+					    if(method.IsGenericMethod){
+						    Log("-=Generic parameters=-");
+						    foreach(Type generic in method.GetGenericArguments()){
+							    if(generic!=null&&generic.FullName!=null){
+								    Log(generic.FullName);
+							    }else{
+								    Log("=====GENERIC NULL=====");
+							    }
+						    }
+					    }
+					    if(method.GetParameters().Length==parameters.Length){
+						    match+=1;
+						    Log("Potential parameter count match");
+					    }
+					    if(method.GetParameters().Length>0){
+						    Log("-=Method parameters=-");
+						    foreach(ParameterInfo funcParameters in method.GetParameters()){
+							    Log(funcParameters.Name+" "+funcParameters.ParameterType.FullName);
+						    }
+					    }
+					    if(match==3){
+						    Log("================Method potentially matches!================");
+					    }
+					    match=0;
+				    }
+				    return null;
+			    }
+			    hook.Attach();
+			    return hook;
 		}
     }
 }

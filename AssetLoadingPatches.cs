@@ -1,3 +1,7 @@
+using Il2CppNinjaKiwi.Common.ResourceUtils;
+using UnityEngine.Playables;
+using UnityEngine.ResourceManagement.AsyncOperations;
+
 namespace SC2Expansion{
     public class AssetLoading{
         [HarmonyPatch(typeof(Factory.__c__DisplayClass21_0),nameof(Factory.__c__DisplayClass21_0._CreateAsync_b__0))]
@@ -9,9 +13,31 @@ namespace SC2Expansion{
                     SC2Tower sc2Tower=TowerTypes[tower];
                     GameObject gObj;
                     if(!AssetPool.PrefabPool.ContainsKey(guid)){
-                        gObj=LoadAsset<GameObject>(guid,sc2Tower.Bundle);
-                        gObj.hideFlags=HideFlags.DontUnloadUnusedAsset;
-                        AssetPool.PrefabPool.Add(guid,gObj);
+                        if(sc2Tower.Beams.ContainsKey(guid)){
+                            if(BeamPrefab==null){
+                                BeamPrefab=uObject.Instantiate(ResourceLoader.LoadAsync<GameObject>("b740dac7b6bc850438df2a7a10b01bfb").WaitForCompletion());
+                                BeamPrefab.hideFlags=HideFlags.DontUnloadUnusedAsset;
+                                BeamPrefab.name="BeamPrefab";
+                                BeamPrefab.transform.position=new(0,9999999);
+                                AssetPool.PrefabPool.Add("BeamPrefab",BeamPrefab);
+                            }
+                            gObj=uObject.Instantiate(BeamPrefab);
+                            gObj.name=guid;
+                            gObj.AddComponent(sc2Tower.Beams[guid]);
+                            AssetPool.PrefabPool.Add(guid,gObj);
+                        }else if(sc2Tower.SpritePrefabLayers.ContainsKey(guid)){
+                            gObj=LoadAsset<GameObject>(guid,sc2Tower.Bundle);
+                            gObj.hideFlags=HideFlags.DontUnloadUnusedAsset;
+                            SpriteRenderer sprite=gObj.GetComponentInChildren<SpriteRenderer>();
+                            Tuple<string,int>layer=sc2Tower.SpritePrefabLayers[guid];
+                            sprite.sortingLayerName=layer.Item1;
+                            sprite.sortingLayerID=layer.Item2;
+                            AssetPool.PrefabPool.Add(guid,gObj);
+                        }else{
+                            gObj=LoadAsset<GameObject>(guid,sc2Tower.Bundle);
+                            gObj.hideFlags=HideFlags.DontUnloadUnusedAsset;
+                            AssetPool.PrefabPool.Add(guid,gObj);
+                        }
                     }
                     gObj=uObject.Instantiate(AssetPool.PrefabPool[guid],__instance.__4__this.DisplayRoot);
                     gObj.transform.position=new(0,9999999);
@@ -60,8 +86,6 @@ namespace SC2Expansion{
                         }
                     }catch(Exception ex){
                         PrintError(ex,"Failed to load "+tower.Name+" audio files");
-                    }finally{
-                        Log($"{tower.Name} audio files loaded");
                     }
                 }
             }
@@ -105,6 +129,7 @@ namespace SC2Expansion{
                     CreateTowerAttackModel=attack;
 				}catch(Exception ex){
 					PrintError(ex,"Failed to create CreateTowerAttackModel. No tower will be added");
+                    return;
 				}
 				try{
                     AbilityModel ability=gameModel.GetTowerFromId("Quincy 4").behaviors.GetModelClone<AbilityModel>();
@@ -119,6 +144,7 @@ namespace SC2Expansion{
                     BlankAbilityModel=ability;
                 }catch(Exception ex){
                     PrintError(ex,"Failed to create BlankAbilityModel. No tower will be added");
+                    return;
                 }
                 try{
                     CreateSoundOnSelectedModel csosm=gameModel.GetTowerFromId("Quincy").behaviors.GetModelClone<CreateSoundOnSelectedModel>();
@@ -128,12 +154,13 @@ namespace SC2Expansion{
                     PrintError(ex,"Failed to create SelectedSoundModel. No tower will be added");
                     return;
                 }
-                List<TowerModel>towers=gameModel.towers.ToList();
-                List<TowerDetailsModel>towerSet=gameModel.towerSet.ToList();
-                List<UpgradeModel>upgrades=gameModel.upgrades.ToList();
-				List<TowerDetailsModel>heroSet=gameModel.heroSet.ToList();
+                List<TowerModel>towers=new();
+                List<TowerDetailsModel>towerSets=new();
+                List<UpgradeModel>upgrades=new();
+				List<TowerDetailsModel>heroSets=new();
                 List<SkinData>skins=new();
                 List<string>towerNames=new();
+                Dictionary<string,string>texts=new();
                 foreach(SC2Tower tower in TowerTypes.Values){
                     try{
                         towerNames.Add(tower.Name);
@@ -142,18 +169,19 @@ namespace SC2Expansion{
                             upgrades.AddRange(tower.UpgradeModels);
                         }
                         if(tower.AddToShop){
-                            towerSet.Add(tower.ShopDetails());
+                            towerSets.Add(tower.ShopDetails());
                         }
 					    if(tower.Hero){
 						    tower.HeroDetails=tower.GenerateHeroDetails();
-						    heroSet.Add(tower.HeroDetails);
+						    heroSets.Add(tower.HeroDetails);
                             skins.Add(tower.HeroSkin());
 					    }
-					    List<string>towerTypes=TowerType.towers.ToList();
-					    towerTypes.Add(tower.Name);
-					    TowerType.towers=towerTypes.ToArray();
+                        foreach(KeyValuePair<string,string>text in tower.Text){
+                            texts.Add(text.Key,text.Value);
+                        }
 					    tower.TowerModels=tower.GenerateTowerModels();
                         towers.AddRange(tower.TowerModels);
+                        tower.Loaded=true;
                     }catch(Exception ex){
                         PrintError(ex,$"Failed to process {tower.Name}. No tower will be added");
                         return;
@@ -168,18 +196,28 @@ namespace SC2Expansion{
                         error=true;
                     }
                 }*/
-                foreach(SC2Tower tower in TowerTypes.Values){
-                    List<string>towerTypes=TowerType.towers.ToList();
-					towerTypes.Add(tower.Name);
-					TowerType.towers=towerTypes.ToArray();
-                    if(tower.Hero){
-                        GameData.Instance.skinsData.AddSkins(skins.ToArray());
-                    }
+                foreach(TowerModel towerModel in towers){
+                    gameModel.AddChildDependant(towerModel);
                 }
-                gameModel.towers=towers.ToArray();
-                gameModel.towerSet=towerSet.ToArray();
-                gameModel.upgrades=upgrades.ToArray();
-                gameModel.heroSet=heroSet.ToArray();
+                foreach(UpgradeModel upgradeModel in upgrades){
+                    gameModel.AddChildDependant(upgradeModel);
+                }
+                foreach(TowerDetailsModel heroSet in heroSets){
+                    gameModel.AddChildDependant(heroSet);
+                }
+                foreach(TowerDetailsModel towerSet in towerSets){
+                    gameModel.AddChildDependant(towerSet);
+                }
+                TowerType.towers=TowerType.towers.Concat(towerNames).ToArray();
+                gameModel.towers=gameModel.towers.Concat(towers).ToArray();
+                gameModel.towerSet=gameModel.towerSet.Concat(towerSets).ToArray();
+                gameModel.upgrades=gameModel.upgrades.Concat(upgrades).ToArray();
+                gameModel.heroSet=gameModel.heroSet.Concat(heroSets).ToArray();
+                foreach(KeyValuePair<string,string>text in texts){
+                    LocManager.textTable.Add(text.Key,text.Value);
+                }
+                GameData.Instance.skinsData.AddSkins(skins.ToArray());
+                
                 //GameData.Instance.mapSet.Maps.items=maps.ToArray();
                 Log("All content loaded");
             }

@@ -10,7 +10,7 @@ namespace SC2Expansion.HeroPatches{
 		    return true;
 		}
 	}
-    [HarmonyPatch(typeof(Helpers),nameof(Helpers.GetHeroMmCost))]
+    /*[HarmonyPatch(typeof(Helpers),nameof(Helpers.GetHeroMmCost))]
     public class HelpersGetHeroMmCost{
         public static void Prefix(ref string baseHeroId,ref string skinName){
             if(TowerTypes.ContainsKey(baseHeroId)){
@@ -18,7 +18,7 @@ namespace SC2Expansion.HeroPatches{
                 skinName=null;
             }
         }
-    }
+    }*/
     [HarmonyPatch(typeof(HeroUpgradeDetails),nameof(HeroUpgradeDetails.SortHerosByUnlockLevel))]
     public class HeroUpgradeDetailsSortHerosByUnlockLevel{
         public static void Postfix(ref HeroUpgradeDetails __instance){
@@ -29,7 +29,7 @@ namespace SC2Expansion.HeroPatches{
             }
         }
     }
-    [HarmonyPatch(typeof(GameModel),nameof(GameModel.GetHeroWithNameAndLevel))]
+    /*[HarmonyPatch(typeof(GameModel),nameof(GameModel.GetHeroWithNameAndLevel))]
     public class GetHeroWithNameAndLevel_Patch{
         public static bool Prefix(GameModel __instance,string name,int tier,ref TowerModel __result){
             if(TowerTypes.ContainsKey(name)){
@@ -42,5 +42,5 @@ namespace SC2Expansion.HeroPatches{
             }
             return true;
         }
-    }
+    }*/
 }
