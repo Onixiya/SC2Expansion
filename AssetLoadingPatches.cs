@@ -1,3 +1,4 @@
+using Il2CppAssets.Scripts.Unity.UI_New.InGame.StoreMenu;
 using Il2CppNinjaKiwi.Common.ResourceUtils;
 using UnityEngine.Playables;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -15,10 +16,12 @@ namespace SC2Expansion{
                     if(!AssetPool.PrefabPool.ContainsKey(guid)){
                         if(sc2Tower.Beams.ContainsKey(guid)){
                             if(BeamPrefab==null){
-                                BeamPrefab=uObject.Instantiate(ResourceLoader.LoadAsync<GameObject>("b740dac7b6bc850438df2a7a10b01bfb").WaitForCompletion());
+                                BeamPrefab=uObject.Instantiate(ResourceLoader.LoadAsync<GameObject>("b740dac7b6bc850438df2a7a10b01bfb").
+                                    WaitForCompletion());
                                 BeamPrefab.hideFlags=HideFlags.DontUnloadUnusedAsset;
                                 BeamPrefab.name="BeamPrefab";
                                 BeamPrefab.transform.position=new(0,9999999);
+                                BeamPrefab.active=false;
                                 AssetPool.PrefabPool.Add("BeamPrefab",BeamPrefab);
                             }
                             gObj=uObject.Instantiate(BeamPrefab);
@@ -32,14 +35,17 @@ namespace SC2Expansion{
                             Tuple<string,int>layer=sc2Tower.SpritePrefabLayers[guid];
                             sprite.sortingLayerName=layer.Item1;
                             sprite.sortingLayerID=layer.Item2;
+                            gObj.active=false;
                             AssetPool.PrefabPool.Add(guid,gObj);
                         }else{
                             gObj=LoadAsset<GameObject>(guid,sc2Tower.Bundle);
                             gObj.hideFlags=HideFlags.DontUnloadUnusedAsset;
+                            gObj.active=false;
                             AssetPool.PrefabPool.Add(guid,gObj);
                         }
                     }
                     gObj=uObject.Instantiate(AssetPool.PrefabPool[guid],__instance.__4__this.DisplayRoot);
+                    gObj.active=true;
                     gObj.transform.position=new(0,9999999);
                     prototype=gObj.AddComponent<UnityDisplayNode>();
                     if(ComponentList.ContainsKey(guid)){
@@ -68,6 +74,15 @@ namespace SC2Expansion{
                 return true;
             }
         }
+        [HarmonyPatch(typeof(TowerPurchaseButton),nameof(TowerPurchaseButton.Bind))]
+        public class testIcon{
+            public static void Postfix(TowerPurchaseButton __instance,Model model){
+                TowerModel towerModel=model.Cast<TowerModel>();
+                if(TowerTypes.ContainsKey(towerModel.baseId)){
+                    TowerTypes[towerModel.baseId].TowerButton(__instance,towerModel);
+                }
+            }
+        }
         //https://github.com/gurrenm3/BTD-Mod-Helper/blob/master/BloonsTD6%20Mod%20Helper/Patches/Resources/AudioFactory_Start.cs
         [HarmonyPatch(typeof(AudioFactory),nameof(AudioFactory.Start))]
         public class AudioFactoryStart_Patch{
@@ -81,7 +96,8 @@ namespace SC2Expansion{
                                 AudioClip clip=asset.Cast<AudioClip>();
                                 clip.hideFlags=HideFlags.DontUnloadUnusedAsset;
                                 AssetPool.AudioPool.Add(clip);
-                                __instance.audioClipHandles.Add(new(clip.name),Addressables.Instance.ResourceManager.CreateCompletedOperation(clip,""));
+                                __instance.audioClipHandles.Add(new(clip.name),Addressables.Instance.ResourceManager.
+                                    CreateCompletedOperation(clip,""));
                             }
                         }
                     }catch(Exception ex){
@@ -95,7 +111,8 @@ namespace SC2Expansion{
             public static void Prefix(ref AudioFactory __instance){
                 if(AssetPool.AudioPool.Count>0&&!__instance.audioClipHandles.ContainsKey(new(AssetPool.AudioPool._items[0].name))){
                     foreach(AudioClip clip in AssetPool.AudioPool){
-                        __instance.audioClipHandles.Add(new(clip.name),Addressables.Instance.ResourceManager.CreateCompletedOperation(clip,""));
+                        __instance.audioClipHandles.Add(new(clip.name),Addressables.Instance.ResourceManager.
+                            CreateCompletedOperation(clip,""));
                     }
                 }
             }
@@ -147,7 +164,8 @@ namespace SC2Expansion{
                     return;
                 }
                 try{
-                    CreateSoundOnSelectedModel csosm=gameModel.GetTowerFromId("Quincy").behaviors.GetModelClone<CreateSoundOnSelectedModel>();
+                    CreateSoundOnSelectedModel csosm=gameModel.GetTowerFromId("Quincy").behaviors.
+                        GetModelClone<CreateSoundOnSelectedModel>();
                     csosm.name="SC2Expansion-Select";
                     SelectedSoundModel=csosm;
                 }catch(Exception ex){

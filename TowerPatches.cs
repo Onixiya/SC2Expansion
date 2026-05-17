@@ -1,3 +1,6 @@
+using Il2CppAssets.Scripts;
+using Il2CppAssets.Scripts.Simulation.SMath;
+
 namespace SC2Expansion{
     public class TowerPatches{
         [HarmonyPatch(typeof(Weapon),nameof(Weapon.SpawnDart))]
@@ -58,15 +61,17 @@ namespace SC2Expansion{
                 }
             }
         }
-        [HarmonyPatch(typeof(Tower),nameof(Tower.OnPlace))]
+        //tower.onplace post
+        [HarmonyPatch(typeof(TowerManager),nameof(TowerManager.CreateTower))]
         public class TowerOnPlace_Patch{
-            public static void Postfix(ref Tower __instance){
-                string towerName=__instance.towerModel.baseId;
+            public static void Prefix(TowerManager __instance,TowerModel def,Il2CppAssets.Scripts.Simulation.SMath.Vector3 position,
+                int inputIndex,ObjectId areaPlacedOn,ObjectId parentTowerId){
+                string towerName=def.baseId;
                 if(TowerTypes.ContainsKey(towerName)){
                     try{
                         SC2Tower tower=TowerTypes[towerName];
-                        tower.SimTowers.Add(__instance);
-                        tower.Create(__instance);
+                        //tower.SimTowers.Add(__instance);
+                        tower.Create(__instance,def,position,inputIndex,areaPlacedOn,parentTowerId);
                     }catch(Exception error){
                         PrintError(error,"Failed to run Create for "+towerName);
                     }

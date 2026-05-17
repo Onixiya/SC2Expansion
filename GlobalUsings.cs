@@ -65,4 +65,5 @@ global using Il2CppAssets.Scripts.Simulation.Objects;
 global using Il2CppAssets.Scripts.Unity.UI_New;
 global using Il2CppAssets.Scripts.Unity.UI_New.Main;
 global using System.IO;
+global using Il2CppNinjaKiwi.Localization;
 namespace SC2Expansion{}

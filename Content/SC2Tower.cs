@@ -1,4 +1,8 @@
-﻿namespace SC2Expansion{
+﻿using Il2CppAssets.Scripts;
+using Il2CppAssets.Scripts.Simulation.SMath;
+using Il2CppAssets.Scripts.Unity.UI_New.InGame.StoreMenu;
+
+namespace SC2Expansion{
     public class SC2Tower:SC2Content{
         public virtual ShopTowerDetailsModel ShopDetails()=>null;
 		public virtual HeroDetailsModel GenerateHeroDetails()=>null;
@@ -13,7 +17,8 @@
         public virtual bool Ability(string ability,Tower tower){
 			return true;
 		}
-        public virtual void Create(Tower tower){}
+        public virtual void Create(TowerManager manager,TowerModel model,Il2CppAssets.Scripts.Simulation.SMath.Vector3 position,int inputIndex,
+            ObjectId areaPlacedOn,ObjectId parentTowerId){}
 		public virtual SkinData HeroSkin()=>null;
         public virtual void Select(Tower tower){}
         public virtual void Sell(Tower tower){}
@@ -39,5 +44,6 @@
         public List<Tower>SimTowers=new();
         public virtual Dictionary<string,Il2CppSystem.Type>Beams=>new();
         public virtual Dictionary<string,Tuple<string,int>>SpritePrefabLayers=>new();
+        public virtual void TowerButton(TowerPurchaseButton button,TowerModel model){}
     }
 }

@@ -1,4 +1,6 @@
-﻿[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
+﻿using UnityEngine.Video;
+
+[assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(ModMain),SC2Expansion.Data.ModHelperData.Name,SC2Expansion.Data.ModHelperData.Version,"Silentstorm")]
 namespace SC2Expansion{
     public class ModMain:MelonMod{
@@ -88,6 +90,7 @@ namespace SC2Expansion{
             if(place){
                 CreateSoundOnTowerPlaceModel csontpm=model.behaviors.GetModel<CreateSoundOnTowerPlaceModel>();
                 string sound=id+new System.Random().Next(1,10);
+                model.behaviors.HasModel<HeroModel>();
                 if(model.behaviors.HasModel<HeroModel>()){
                     if(sameSound){
                         csontpm.heroSound1=new(sound,new(sound));
@@ -196,6 +199,7 @@ namespace SC2Expansion{
             public Il2CppSystem.Collections.Generic.Dictionary<string,GameObject>PrefabPool=new();
             public Il2CppSystem.Collections.Generic.Dictionary<string,Sprite>SpritePool=new();
             public Il2CppSystem.Collections.Generic.List<AudioClip>AudioPool=new();
+            public Il2CppSystem.Collections.Generic.Dictionary<string,VideoClip>VideoPool=new(); 
         }
         public static T LoadAsset<T>(string assetToLoad,AssetBundle bundle)where T:uObject{
             try{
@@ -238,7 +242,8 @@ namespace SC2Expansion{
 				    if(generics==null){
 					    generics=Array.Empty<Type>();
 					    hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
-						    GetMethod(methodName,generics.Length,parameters)).GetValue(null),Marshal.GetFunctionPointerForDelegate(patchDelegate));
+						    GetMethod(methodName,generics.Length,parameters)).GetValue(null),Marshal.
+                            GetFunctionPointerForDelegate(patchDelegate));
 				    }else{
 					    hook=new(*(IntPtr*)(IntPtr)Il2CppInteropUtils.GetIl2CppMethodInfoPointerFieldForGeneratedMethod(type.
 						    GetMethod(methodName,generics.Length,parameters).MakeGenericMethod(generics)).GetValue(null),

@@ -1,5 +1,8 @@
 namespace SC2Expansion{
     public static class ModelArrayExtensions{
+        public static AbilityModel GetAbility(this Il2CppReferenceArray<Model>array,string name){
+            return array.GetModels<AbilityModel>().First(a=>a.modelName==name);
+        }
         public static T GetModel<T>(this Il2CppReferenceArray<Model>array)where T:Model{
             return array.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).Cast<T>();
         }
@@ -8,7 +11,8 @@ namespace SC2Expansion{
         }
         public static void WriteIl2CppObjToFile(this Il2CppSystem.Object obj,string path){
             try{
-                System.IO.File.WriteAllText(path,Il2CppNewtonsoft.Json.JsonConvert.SerializeObject(obj,new JsonSerializerSettings(){Formatting=Formatting.Indented}));
+                System.IO.File.WriteAllText(path,Il2CppNewtonsoft.Json.JsonConvert.SerializeObject(obj,new JsonSerializerSettings(){
+                    Formatting=Formatting.Indented,_referenceLoopHandling=new(ReferenceLoopHandling.Ignore)}));
                 Log("object dumped to "+path);
             }catch(Exception error){
                 PrintError(error);
@@ -46,6 +50,10 @@ namespace SC2Expansion{
         }
     }
     public static class ModelListExtensions{
+        //for some fucking reason, name does not work on abilities and modelname is what you do instead. wtf
+        public static AbilityModel GetAbility(this List<Model>list,string name){
+            return list.GetModels<AbilityModel>().First(a=>a.modelName==name);
+        }
         public static T GetModel<T>(this List<Model>list)where T:Model{
             return list.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).Cast<T>();
         }
@@ -58,8 +66,14 @@ namespace SC2Expansion{
         public static T GetModel<T>(this List<Model>list,string modelName)where T:Model{
             return list.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()&&a.name.Contains(modelName)).Cast<T>();
         }
-        public static List<Model>GetModels<T>(this List<Model>list)where T:Model{
-            return list.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).ToList();
+        public static List<T>GetModels<T>(this List<Model>list)where T:Model{
+            //as much as i would love to cast the result via the builtin methods, runtime says no.
+            //no casting il2cpp types like that and already have this on il2cppreferencearray so...
+			List<T>returnList=new List<T>();
+			foreach(Model model in list.Where(a=>a.GetIl2CppType()==Il2CppType.Of<T>())){
+				returnList.Add(model.Cast<T>());
+			}
+			return returnList;
         }
         public static T GetModelClone<T>(this List<Model>list)where T:Model{
             return list.First(a=>a.GetIl2CppType()==Il2CppType.Of<T>()).Clone<T>();
