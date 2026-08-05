@@ -1,5 +1,4 @@
 ﻿using UnityEngine.Video;
-
 [assembly:MelonGame("Ninja Kiwi","BloonsTD6")]
 [assembly:MelonInfo(typeof(ModMain),SC2Expansion.Data.ModHelperData.Name,SC2Expansion.Data.ModHelperData.Version,"Silentstorm")]
 namespace SC2Expansion{
@@ -32,6 +31,7 @@ namespace SC2Expansion{
         }
         public override void OnLateInitializeMelon(){
 	        _mllog=LoggerInstance;
+            MiscPatches.NativePatches.RunNativePatches();
 			FlyingAreaTypes=new(new AreaType[4]{0,(AreaType)1,(AreaType)2,(AreaType)4});
 			List<SC2Tower>towerList=new();
             foreach(MelonMod mod in RegisteredMelons.Where(a=>a.Info.SystemType.Name=="SC2ModMain")){
@@ -56,6 +56,7 @@ namespace SC2Expansion{
                                 break;*/
                         }
 					}catch(Exception ex){
+                        Log("Resources in "+((MelonInfoAttribute)assembly.GetCustomAttribute(typeof(MelonInfoAttribute))).Name);
                         foreach(string resource in assembly.GetManifestResourceNames()){
                             Log(resource);
                         }
@@ -74,7 +75,7 @@ namespace SC2Expansion{
                     }
 				}
 			}
-		}
+        }
         public static void SetUpgradeSounds(CreateSoundOnUpgradeModel model,string id){
             model.sound=new(id+"Birth",new(id+"Birth"));
             model.sound1=model.sound;
@@ -232,7 +233,7 @@ namespace SC2Expansion{
 			    animBaker.animationClip=animationClip;
 			    animBaker.interruptibleBehaviour=interruptBehaviour;
 		}
-		public static unsafe NativeHook<T>CreateNativeHook<T>(Type type,string methodName,ref T patchDelegate,Type[]generics=null,
+		/*public static unsafe NativeHook<T>CreateNativeHook<T>(Type type,string methodName,ref T patchDelegate,Type[]generics=null,
             Type[]parameters=null)where T:Delegate{
 			    if(parameters==null){
 				    parameters=Array.Empty<Type>();
@@ -293,6 +294,6 @@ namespace SC2Expansion{
 			    }
 			    hook.Attach();
 			    return hook;
-		}
+		}*/
     }
 }

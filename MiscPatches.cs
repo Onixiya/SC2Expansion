@@ -1,5 +1,40 @@
+using Il2CppNinjaKiwi.Analytics;
 namespace SC2Expansion{
-    public static class HarmonyPatches{
+    public static class MiscPatches{
+        public class NativePatches{
+            public static void RunNativePatches(){
+                AnalyticsDataAddPair_Patch.AddPatch();
+            }
+            public class AnalyticsDataAddPair_Patch{
+                public static unsafe void AddPatch(){
+                    Type type=typeof(AnalyticsData).GetNestedType("MethodInfoStoreGeneric_AddPair_Public_AnalyticsData_String_T_0`1",
+                        BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance).MakeGenericType(typeof(int));
+                    IntPtr originalMethod=*(IntPtr*)(IntPtr)type.GetField("Pointer",BindingFlags.NonPublic|BindingFlags.Static).
+                        GetValue(type);
+                    _patchDelegate=Target;
+                    IntPtr delegatePointer=Marshal.GetFunctionPointerForDelegate(_patchDelegate);
+                    NativeHook<AnalyticsDataAddPairDelegate>hook=new NativeHook<AnalyticsDataAddPairDelegate>(originalMethod,
+                        delegatePointer);
+                    hook.Attach();
+                    Hook=hook;
+                }
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+                public delegate IntPtr AnalyticsDataAddPairDelegate(
+                    IntPtr instance,
+                    IntPtr parameterName,
+                    IntPtr parameterValue,
+                    IntPtr methodInfo
+                );
+                public static NativeHook<AnalyticsDataAddPairDelegate>Hook;
+                public static AnalyticsDataAddPairDelegate _patchDelegate;
+                public static IntPtr Target(IntPtr instance,IntPtr parameterName,IntPtr parameterValue,IntPtr methodInfo){
+                    if(TowerTypes.ContainsKey(IL2CPP.PointerToValueGeneric<string>(parameterName,false,false))){
+                        return instance;
+                    }
+                    return Hook.Trampoline(instance,parameterName,parameterValue,methodInfo);;
+                }
+            }
+        }
         [HarmonyPatch(typeof(Btd6Player),nameof(Btd6Player.CheckForNewParagonPipEvent))]
         public class Btd6PlayerCheckForNewParagonPipEvent_Patch{
             public static bool Prefix(){
